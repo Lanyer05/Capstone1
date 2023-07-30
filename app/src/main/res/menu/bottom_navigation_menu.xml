@@ -17,6 +17,12 @@
         android:icon="@drawable/ic_baseline_card_giftcard_24"
         android:title="Reward"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_transaction"
+        android:icon="@drawable/ic_baseline_monetization_on_24"
+        android:title="Transaction"
+        app:showAsAction="ifRoom" />
+
 
 
 </menu>

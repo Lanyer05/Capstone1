@@ -1,23 +1,23 @@
 package com.hcdc.capstone;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class Homepage extends AppCompatActivity {
+public class Transaction extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_homepage);
-
+        setContentView(R.layout.activity_transaction);
         // Your code for setting up the home page, if any
         // For example, you can add widgets, set up views, etc.
 
@@ -28,12 +28,12 @@ public class Homepage extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_home:
-                        // Handle Home click
+                        Intent iii = new Intent(getApplicationContext(), Homepage.class);
+                        startActivity(iii);
                         return true;
 
                     case R.id.action_task:
-                        // Handle "Task" item click if needed
-                        // For example, navigate to TaskActivity
+                        // Handle "Task"
                         Intent i = new Intent(getApplicationContext(), Task.class);
                         startActivity(i);
                         return true;
@@ -46,15 +46,11 @@ public class Homepage extends AppCompatActivity {
                         return true;
 
                     case R.id.action_transaction:
-                        // Handle "Transaction" item click if needed
-                        // For example, navigate to TransactionActivity
-                        Intent iii = new Intent(getApplicationContext(), Transaction.class);
-                        startActivity(iii);
-                        return true;
-                 }
+                        // Handle "Transaction"
+
+                }
                 return false;
             }
         });
-        }
     }
-
+}

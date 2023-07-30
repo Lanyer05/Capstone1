@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/login"
+<RelativeLayout
+    android:id="@+id/rewardtab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#DAD7CD"
     android:clipToOutline="true"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".Rewards">
 
     <ImageView
@@ -69,25 +71,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="154dp"
-        android:layout_marginRight="154dp"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="237dp"
         android:fontFamily="sans-serif-black"
-        android:gravity="top"
+        android:gravity="center"
         android:lineSpacingExtra="8sp"
         android:text="REWARDS"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#000000"
+        app:textAllCaps="false" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_above="@id/claimbtn"
+        android:layout_below="@id/claimable_r"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="-1dp">
 
         <LinearLayout
+            android:id="@+id/rewardsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rewardsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/claimbtn"
+                android:layout_below="@id/rewardsLayout"
+                android:scrollbars="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        </LinearLayout>
     </ScrollView>
 
     <Button
@@ -114,5 +131,7 @@
         app:backgroundTint="#588157"
         app:itemIconTint="#FFFFFF"
         app:itemTextColor="#FFFFFF"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_menu" />
+
 </RelativeLayout>

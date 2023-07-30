@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/login"
+    android:id="@+id/hometab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#DAD7CD"
@@ -18,21 +18,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
 
-
-    <Button
-        android:id="@+id/transactionbtn"
-        android:layout_width="325dp"
-        android:layout_height="62dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="65dp"
-        android:backgroundTint="#588157"
-        android:text="Transaction"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/container"
@@ -90,6 +75,7 @@
         app:backgroundTint="#588157"
         app:itemIconTint="#FFFFFF"
         app:itemTextColor="#FFFFFF"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_navigation_menu" />
 
 </RelativeLayout>
