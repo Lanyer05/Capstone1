@@ -90,9 +90,9 @@ public class RegisterActivity extends AppCompatActivity {
                             userID = auth.getCurrentUser().getUid();
                             DocumentReference documentReference = fstore.collection("users").document(userID);
                             Map<String, Object> user = new HashMap<>();
-                            user.put("name", regName);
-                            user.put("Barangay", regBrgy);
-                            user.put("email", regEmail);
+                            user.put("name", regName.getText().toString());;
+                            user.put("Barangay", regBrgy.getText().toString());;
+                            user.put("email", regEmail.getText().toString());;
                             user.put("Uid", userID);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -101,9 +101,9 @@ public class RegisterActivity extends AppCompatActivity {
                                     Log.d(TAG, "onSuccess: user profile is created for" + userID);
                                 }
                             });
-                            startActivity(new Intent(RegisterActivity.this, Homepage.class));
+                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         } else {
-                            Toast.makeText(RegisterActivity.this, "Sign Up Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Sign Up Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         }
                 });
