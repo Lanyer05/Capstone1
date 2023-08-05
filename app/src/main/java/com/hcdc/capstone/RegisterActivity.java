@@ -33,7 +33,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private Button regButton;
     private TextView regRedirect;
-    private  String userID;
+    private String userID;
+
+    private RegistrationApprovalManager approvalManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
 
-        regName= findViewById(R.id.register_username);
+        regName = findViewById(R.id.register_username);
         regEmail = findViewById(R.id.register_email);
         regBrgy = findViewById(R.id.register_barangay);
         regPassword = findViewById(R.id.register_password);
@@ -93,6 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("Barangay", regBrgy.getText().toString());
                             user.put("email", regEmail.getText().toString());
                             user.put("Uid", userID);
+                            user.put("isApproved", false);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -106,6 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
                             registrationData.put("name", Rname);
                             registrationData.put("Barangay", Rbrgy);
                             registrationData.put("email", Remail);
+                            user.put("Uid", userID);
                             registrationData.put("isApproved", false); // Newly registered users are not approved yet
 
                             DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
@@ -133,6 +137,9 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
-            }
-        }
 
+        // Start listening for registration approvals
+        approvalManager = new RegistrationApprovalManager();
+        approvalManager.startListeningForApprovals();
+    }
+}
