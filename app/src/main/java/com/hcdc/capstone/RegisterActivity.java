@@ -60,7 +60,6 @@ public class RegisterActivity extends AppCompatActivity {
                 String Rbrgy = regBrgy.getText().toString();
                 String Rpass = regPassword.getText().toString().trim();
 
-
                 if (Rname.isEmpty()) {
                     regName.setError("Name cannot be empty");
                     return;
@@ -90,9 +89,9 @@ public class RegisterActivity extends AppCompatActivity {
                             userID = auth.getCurrentUser().getUid();
                             DocumentReference documentReference = fstore.collection("users").document(userID);
                             Map<String, Object> user = new HashMap<>();
-                            user.put("name", regName.getText().toString());;
-                            user.put("Barangay", regBrgy.getText().toString());;
-                            user.put("email", regEmail.getText().toString());;
+                            user.put("name", regName.getText().toString());
+                            user.put("Barangay", regBrgy.getText().toString());
+                            user.put("email", regEmail.getText().toString());
                             user.put("Uid", userID);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -101,21 +100,39 @@ public class RegisterActivity extends AppCompatActivity {
                                     Log.d(TAG, "onSuccess: user profile is created for" + userID);
                                 }
                             });
+
+                            // After successful registration, add registration data to registration_requests collection
+                            Map<String, Object> registrationData = new HashMap<>();
+                            registrationData.put("name", Rname);
+                            registrationData.put("Barangay", Rbrgy);
+                            registrationData.put("email", Remail);
+                            registrationData.put("isApproved", false); // Newly registered users are not approved yet
+
+                            DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
+                            registrationRequestRef.set(registrationData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d(TAG, "onSuccess: user registration request saved for" + userID);
+                                    // Show a message to the user that their registration is pending approval
+                                    Toast.makeText(RegisterActivity.this, "Registration request sent for approval", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
                             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         } else {
                             Toast.makeText(RegisterActivity.this, "Sign Up Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        }
+                    }
                 });
             }
         });
 
-                regRedirect.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                    }
-                });
+        regRedirect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            }
+        });
             }
         }
 
