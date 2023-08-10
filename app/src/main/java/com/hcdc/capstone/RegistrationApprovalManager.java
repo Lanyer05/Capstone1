@@ -31,8 +31,16 @@ public class RegistrationApprovalManager {
     private void moveUserToUsersCollection(String userID) {
         firestore.collection("registration_requests").document(userID).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                if (task.getResult() != null) {
-                    firestore.collection("users").document(userID).set(task.getResult().getData());
+                if (task.getResult() != null && task.getResult().exists()) {
+                    firestore.collection("users").document(userID).set(task.getResult().getData())
+                            .addOnSuccessListener(aVoid -> {
+                                // User data successfully copied, you can perform further actions if needed
+                                // For example, you might want to update the "isApproved" field in the "users" collection
+                                // or delete the user's data from the "registration_requests" collection
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle error
+                            });
                     firestore.collection("registration_requests").document(userID).delete();
                 }
             }

@@ -95,6 +95,8 @@ public class RegisterActivity extends AppCompatActivity {
                             user.put("Barangay", regBrgy.getText().toString());
                             user.put("email", regEmail.getText().toString());
                             user.put("Uid", userID);
+
+                            // Set isApproved to false initially for new users
                             user.put("isApproved", false);
 
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -109,7 +111,6 @@ public class RegisterActivity extends AppCompatActivity {
                             registrationData.put("name", Rname);
                             registrationData.put("Barangay", Rbrgy);
                             registrationData.put("email", Remail);
-                            user.put("Uid", userID);
                             registrationData.put("isApproved", false); // Newly registered users are not approved yet
 
                             DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
