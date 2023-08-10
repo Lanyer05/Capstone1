@@ -20,9 +20,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -44,15 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_password);
         signupRedirect = findViewById(R.id.singupRedirect);
         loginBttn = findViewById(R.id.loginbtn);
-
-        //WALA PA FUNCTION ANG GMAIL NA BUTTON
-        login_gmail = findViewById(R.id.logingmail);
-        login_gmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         loginPassword.setTransformationMethod(new PasswordTransformationMethod());
         loginBttn.setOnClickListener(new View.OnClickListener() {

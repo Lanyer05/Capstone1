@@ -102,7 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Log.d(TAG, "onSuccess: user profile is created for" + userID);
+                                    Log.d(TAG, "Success: user profile is created for" + userID);
                                 }
                             });
 
@@ -111,13 +111,14 @@ public class RegisterActivity extends AppCompatActivity {
                             registrationData.put("name", Rname);
                             registrationData.put("Barangay", Rbrgy);
                             registrationData.put("email", Remail);
-                            registrationData.put("isApproved", false); // Newly registered users are not approved yet
+                            registrationData.put("isApproved", false);
+                            registrationData.put("Uid", userID);// Newly registered users are not approved yet
 
                             DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
                             registrationRequestRef.set(registrationData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Log.d(TAG, "onSuccess: user registration request saved for" + userID);
+                                    Log.d(TAG, "Success: user registration request saved for" + userID);
                                     // Show a message to the user that their registration is pending approval
                                     Toast.makeText(RegisterActivity.this, "Registration request sent for approval", Toast.LENGTH_SHORT).show();
                                 }
