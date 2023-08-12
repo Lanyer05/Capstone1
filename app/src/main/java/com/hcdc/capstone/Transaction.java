@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
 
@@ -41,7 +40,7 @@ public class Transaction extends AppCompatActivity {
                     case R.id.action_reward:
                         // Handle "Reward" item click if needed
                         // For example, navigate to RewardActivity
-                        Intent ii = new Intent(getApplicationContext(), Rewards.class);
+                        Intent ii = new Intent(getApplicationContext(), Reward.class);
                         startActivity(ii);
                         return true;
 

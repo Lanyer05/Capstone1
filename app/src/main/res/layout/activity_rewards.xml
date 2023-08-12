@@ -8,7 +8,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Rewards">
+    tools:context=".Reward">
 
     <ImageView
         android:id="@+id/greenbar"
@@ -85,7 +85,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/claimbtn"
+        android:layout_above="@id/bottom_navigation_view"
         android:layout_below="@id/claimable_r"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="-1dp">
@@ -97,30 +97,15 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rewardsRecyclerView"
+                android:id="@+id/rewardslist"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/claimbtn"
+                android:layout_height="416dp"
+                android:layout_above="@id/bottom_navigation_view"
                 android:layout_below="@id/rewardsLayout"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/claimbtn"
-        android:layout_width="325dp"
-        android:layout_height="62dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="65dp"
-        android:backgroundTint="#588157"
-        android:text="Claim"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
