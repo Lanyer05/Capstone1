@@ -73,7 +73,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="237dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="0dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:lineSpacingExtra="8sp"
@@ -87,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_navigation_view"
         android:layout_below="@id/claimable_r"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="159dp"
         android:layout_marginBottom="-1dp">
 
         <LinearLayout
@@ -99,7 +101,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rewardslist"
                 android:layout_width="match_parent"
-                android:layout_height="416dp"
+                android:layout_height="453dp"
                 android:layout_above="@id/bottom_navigation_view"
                 android:layout_below="@id/rewardsLayout"
                 android:scrollbars="vertical"
