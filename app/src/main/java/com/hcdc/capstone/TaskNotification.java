@@ -1,5 +1,6 @@
 package com.hcdc.capstone;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -45,11 +46,12 @@ public class TaskNotification {
         });
     }
 
+    @SuppressLint("MissingPermission")
     private void sendNotification(String title, String message) {
         // Create an explicit intent for the Task activity
         Intent taskIntent = new Intent(context, Task.class);
         taskIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, taskIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, taskIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
