@@ -82,7 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                                                         // For example, if the document doesn't exist, the user may not be registered properly.
                                                         Toast.makeText(LoginActivity.this, "User not found or registration data missing. Please register first.", Toast.LENGTH_SHORT).show();
                                                     }
-                                                } else {
+                                                }
+                                                else {
                                                     // Task failed with an exception, handle accordingly
                                                     Toast.makeText(LoginActivity.this, "Error fetching user data: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
@@ -98,7 +99,8 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         loginPassword.setError("Password cannot be empty");
                     }
-                } else if (email.isEmpty()) {
+                }
+                else if (email.isEmpty()) {
                     loginEmail.setError("Email Cannot be empty");
                 } else {
                     loginEmail.setError("Please enter valid email");

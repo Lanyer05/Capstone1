@@ -1,57 +1,23 @@
 package com.hcdc.capstone;
 
-import androidx.appcompat.app.AppCompatActivity;
+public class Rewards {
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import androidx.annotation.NonNull;
+    String points, rewardName;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+    public Rewards() {
+        // Default constructor required by Firestore
+    }
 
-public class Rewards extends AppCompatActivity {
+    public Rewards(String points, String rewardName) {
+        this.points = points;
+        this.rewardName = rewardName;
+    }
 
-    private BottomNavigationView bottomNavigationView;
+    public String getPoints() {
+        return points;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rewards);
-        // Your code for setting up the home page, if any
-        // For example, you can add widgets, set up views, etc.
-
-        bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        Intent iii = new Intent(getApplicationContext(), Homepage.class);
-                        startActivity(iii);
-                        return true;
-
-                    case R.id.action_task:
-                        // Handle "Task" item click if needed
-                        // For example, navigate to TaskActivity
-                        Intent i = new Intent(getApplicationContext(), Task.class);
-                        startActivity(i);
-                        return true;
-
-                    case R.id.action_reward:
-                        // Handle "Reward" item click if needed
-                        // For example, navigate to RewardActivity
-
-
-                    case R.id.action_transaction:
-                        // Handle "Transaction"
-                        Intent ii = new Intent(getApplicationContext(), Transaction.class);
-                        startActivity(ii);
-                        return true;
-                }
-                return false;
-            }
-        });
+    public String getRewardName() {
+        return rewardName;
     }
 }

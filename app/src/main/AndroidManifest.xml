@@ -20,7 +20,7 @@
             android:name=".Task"
             android:exported="false" />
         <activity
-            android:name=".Rewards"
+            android:name=".Reward"
             android:exported="false" />
         <activity
             android:name=".Homepage"

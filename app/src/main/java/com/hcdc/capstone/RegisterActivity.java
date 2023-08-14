@@ -82,6 +82,10 @@ public class RegisterActivity extends AppCompatActivity {
                     regConfirmpass.setError("Passwords do not match");
                     return;
                 }
+                if(!Remail.contains("@gmail.com")){
+                    regEmail.setError("Only accepts with gmail only");
+                    return;
+                }
 
                 auth.createUserWithEmailAndPassword(Remail, Rpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
