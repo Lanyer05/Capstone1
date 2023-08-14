@@ -1,32 +1,22 @@
 package com.hcdc.capstone;
 
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
+import com.google.firebase.auth.FirebaseAuth;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import java.util.concurrent.TimeUnit;
 
 public class Task extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
-
-    RecyclerView rv;
-    FirebaseFirestore db;
-    TaskAdapter ta;
-    ArrayList<Tasks> tList;
+    private TaskNotification taskNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +25,19 @@ public class Task extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
 
+        taskNotification = new TaskNotification(this);
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+                TaskWorker.class, 1, TimeUnit.MINUTES)
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance(this).enqueue(workRequest);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -42,59 +45,27 @@ public class Task extends AppCompatActivity {
                     case R.id.action_home:
                         Intent iii = new Intent(getApplicationContext(), Homepage.class);
                         startActivity(iii);
-                        overridePendingTransition(R.anim.slide_left, R.anim.slide_right);
                         return true;
 
                     case R.id.action_task:
-                        Intent intent = new Intent(getApplicationContext(), Task.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_left, R.anim.slide_right);
+                        // No need to start listening again, it's handled by the worker
                         return true;
 
                     case R.id.action_reward:
-                        Intent ii = new Intent(getApplicationContext(), Reward.class);
+                        Intent ii = new Intent(getApplicationContext(), Rewards.class);
                         startActivity(ii);
-                        overridePendingTransition(R.anim.slide_right, R.anim.slide_left);
                         return true;
 
                     case R.id.action_transaction:
                         Intent i = new Intent(getApplicationContext(), Transaction.class);
                         startActivity(i);
-                        overridePendingTransition(R.anim.slide_right, R.anim.slide_left);
                         return true;
                 }
                 return false;
             }
         });
 
-        rv = findViewById(R.id.tasklists);
-        db = FirebaseFirestore.getInstance();
-
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-
-        tList = new ArrayList<>();
-        ta = new TaskAdapter(this, tList);
-        rv.setAdapter(ta);
-
-        db.collection("tasks").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(QuerySnapshot snapshot, FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.e("FirestoreError", "Error fetching tasks: " + e.getMessage()); // Log the error
-                    return;
-                }
-
-                tList.clear();
-                for (DocumentSnapshot docSnapshot : snapshot.getDocuments()) {
-                    Tasks tasks = docSnapshot.toObject(Tasks.class);
-                    tList.add(tasks);
-                }
-
-                ta.notifyDataSetChanged();
-
-                Log.d("FirestoreSuccess", "Number of tasks fetched: " + tList.size()); // Log the success
-            }
-        });
+        Intent serviceIntent = new Intent(this, TaskForegroundService.class);
+        startService(serviceIntent);
     }
 }
