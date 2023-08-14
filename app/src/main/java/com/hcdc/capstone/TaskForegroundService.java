@@ -56,7 +56,7 @@ public class TaskForegroundService extends Service {
     private void sendNotification(String title, String message) {
         Intent taskIntent = new Intent(this, Task.class);
         taskIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, taskIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, taskIntent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.notification_icon)
