@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
-
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class Homepage extends AppCompatActivity {
+public class Homepage extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
 
@@ -18,43 +16,41 @@ public class Homepage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
 
-        // Your code for setting up the home page, if any
-        // For example, you can add widgets, set up views, etc.
-
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+
+
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        // Handle Home click
-                        return true;
+                int itemId = item.getItemId();
 
-                    case R.id.action_task:
-                        // Handle "Task" item click if needed
-                        // For example, navigate to TaskActivity
-                        Intent i = new Intent(getApplicationContext(), Task.class);
-                        startActivity(i);
-                        return true;
+                if (itemId == R.id.action_home) {
+                    return true;
 
-                    case R.id.action_reward:
-                        // Handle "Reward" item click if needed
-                        // For example, navigate to RewardActivity
-                        Intent ii = new Intent(getApplicationContext(), Reward.class);
-                        startActivity(ii);
-                        return true;
+                } else if (itemId == R.id.action_task) {
 
-                    case R.id.action_transaction:
-                        // Handle "Transaction" item click if needed
-                        // For example, navigate to TransactionActivity
-                        Intent iii = new Intent(getApplicationContext(), Transaction.class);
-                        startActivity(iii);
-                        return true;
-                 }
+                    navigateToActivity(Task.class);
+                    return true;
+                } else if (itemId == R.id.action_reward) {
+
+                    navigateToActivity(Reward.class);
+                    return true;
+                } else if (itemId == R.id.action_transaction) {
+
+                    navigateToActivity(Transaction.class);
+                    return true;
+                }
+
                 return false;
             }
         });
-        }
     }
 
+    private void navigateToActivity(Class<?> targetActivity) {
+        Intent intent = new Intent(this, targetActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+    }
+}

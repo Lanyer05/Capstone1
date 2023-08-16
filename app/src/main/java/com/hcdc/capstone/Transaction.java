@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class Transaction extends AppCompatActivity {
+public class Transaction extends BaseActivity {
 
     Button featureTest1;
 
@@ -24,8 +24,6 @@ public class Transaction extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
-        // Your code for setting up the home page, if any
-        // For example, you can add widgets, set up views, etc.
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
 
@@ -37,26 +35,19 @@ public class Transaction extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_home:
-                        Intent iii = new Intent(getApplicationContext(), Homepage.class);
-                        startActivity(iii);
+                        navigateToActivity(Homepage.class);
                         return true;
 
                     case R.id.action_task:
-                        // Handle "Task"
-                        Intent i = new Intent(getApplicationContext(), Task.class);
-                        startActivity(i);
+                        navigateToActivity(Task.class);
                         return true;
 
                     case R.id.action_reward:
-                        // Handle "Reward" item click if needed
-                        // For example, navigate to RewardActivity
-                        Intent ii = new Intent(getApplicationContext(), Reward.class);
-                        startActivity(ii);
+                        navigateToActivity(Reward.class);
                         return true;
 
                     case R.id.action_transaction:
-                        // Handle "Transaction"
-
+                        return true;
                 }
                 return false;
             }
@@ -70,5 +61,11 @@ public class Transaction extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void navigateToActivity(Class<?> targetActivity) {
+        Intent intent = new Intent(this, targetActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
     }
 }
