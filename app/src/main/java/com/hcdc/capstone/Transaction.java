@@ -2,17 +2,24 @@ package com.hcdc.capstone;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class Transaction extends AppCompatActivity {
 
+    Button featureTest1;
+
     private BottomNavigationView bottomNavigationView;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +28,9 @@ public class Transaction extends AppCompatActivity {
         // For example, you can add widgets, set up views, etc.
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+
+        //BUtton
+        featureTest1 = findViewById(R.id.timertesting);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -49,6 +59,15 @@ public class Transaction extends AppCompatActivity {
 
                 }
                 return false;
+            }
+        });
+
+        featureTest1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), timerTEST.class);
+                startActivity(i);
+                finish();
             }
         });
     }
