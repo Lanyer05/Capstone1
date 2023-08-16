@@ -127,6 +127,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="30dp"
         android:backgroundTint="#588157"
+        android:textColor="#FFFF"
         android:text="Sign In"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
