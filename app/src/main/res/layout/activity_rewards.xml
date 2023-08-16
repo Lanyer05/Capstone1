@@ -101,9 +101,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rewardslist"
                 android:layout_width="match_parent"
-                android:layout_height="453dp"
+                android:layout_height="match_parent"
                 android:layout_above="@id/bottom_navigation_view"
                 android:layout_below="@id/rewardsLayout"
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginBottom="30dp"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>

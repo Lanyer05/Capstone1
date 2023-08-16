@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,11 +19,11 @@
             android:layout_width="226dp"
             android:layout_height="135dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:src="@mipmap/ic_launcher"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/taskTitle"
@@ -39,23 +40,21 @@
             android:id="@+id/taskPoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="23dp"
             android:text="(xx pts)"
             android:textColor="@color/black"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.056"
+            android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@id/taskTitle"
-            app:layout_constraintTop_toTopOf="@id/taskTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/taskImage" />
 
         <LinearLayout
             android:id="@+id/locationLayout"
-            android:layout_width="402dp"
+            android:layout_width="0dp"
             android:layout_height="25dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.007"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/taskTitle">
 
@@ -68,8 +67,8 @@
                 android:id="@+id/taskLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
@@ -77,9 +76,9 @@
 
         <LinearLayout
             android:id="@+id/durationLayout"
-            android:layout_width="402dp"
+            android:layout_width="0dp"
             android:layout_height="25dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.004"

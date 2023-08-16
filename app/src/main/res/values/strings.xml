@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Capstone</string>
-    <string name="default_notification_channel_id" translatable="false">HEADS_UP_NOTIFICATIONS</string>
-    <string name="default_notification_channel_name">MyNotification</string>
+    <string name="channel_name">My App Notification Channel</string>
+    <string name="channel_description">Notifications from My App</string>
+    <string name="fcm_defaultSenderId">YOUR_FCM_SENDER_ID</string>
+    <string name="CHANNEL_ID">HEADS_UP_NOTIFICATIONS</string>
 </resources>

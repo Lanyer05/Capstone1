@@ -15,16 +15,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="70dp"
         android:fontFamily="sans-serif-black"
         android:gravity="top"
         android:lineSpacingExtra="-6sp"
-        android:text="Welcome to TITLE"
+        android:text="Welcome to EcoTaskReward"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/go_green_go"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.148" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/go_green_go"
@@ -32,17 +32,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal|top"
         android:lineSpacingExtra="-2sp"
         android:text="Go Green, Go Clean"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/register_username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintTop_toBottomOf="@+id/welcome" />
 
     <EditText
         android:id="@+id/register_username"
@@ -128,11 +127,11 @@
     <Button
 
         android:id="@+id/registerbtn"
-        android:layout_width="325dp"
+        android:layout_width="300dp"
         android:layout_height="62dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="30dp"
         android:backgroundTint="#588157"
         android:text="Register"
         app:layout_constraintEnd_toEndOf="parent"

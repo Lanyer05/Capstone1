@@ -49,16 +49,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int clickedPosition = holder.getAdapterPosition();
+                if (clickedPosition != RecyclerView.NO_POSITION) {
+                    Tasks selectedTask = list.get(clickedPosition);
 
-                Intent i = new Intent(context, TaskDetails.class);
+                    // Create an intent to open the TaskDetails activity
+                    Intent intent = new Intent(context, TaskDetails.class);
+                    intent.putExtra("tasktitle", selectedTask.getTaskName());
+                    intent.putExtra("taskdetails", selectedTask.getDescription());
+                    intent.putExtra("taskpoint", selectedTask.getPoints() + "pts");
+                    intent.putExtra("tasklocation", selectedTask.getLocation());
 
-                i.putExtra("tasktitle",tasks.taskName);
-                i.putExtra("taskpoint",tasks.points);
-                i.putExtra("tasklocation",tasks.location);
-                i.putExtra("taskdetails",tasks.description);
-
-                context.startActivity(i);
-
+                    context.startActivity(intent);
+                }
             }
         });
     }

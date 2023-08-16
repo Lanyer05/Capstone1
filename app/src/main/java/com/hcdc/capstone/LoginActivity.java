@@ -94,10 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(LoginActivity.this, "Please enter correct password", Toast.LENGTH_SHORT).show();
-
-                                         // for dev testing please remove for user test
-                                        // startActivity(new Intent(LoginActivity.this, Homepage.class));
-                                       //  finish();
                                     }
                                 });
                     } else {

@@ -16,10 +16,12 @@
 
         <ImageView
             android:id="@+id/rewardImage"
-            android:layout_width="226dp"
+            android:layout_width="0dp"
             android:layout_height="135dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
             android:src="@mipmap/ic_launcher"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"
@@ -29,14 +31,13 @@
         <TextView
             android:id="@+id/rewardTitle"
             android:layout_width="wrap_content"
-            android:layout_height="31dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="Task Title"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rewardImage" />
 
@@ -44,7 +45,7 @@
             android:id="@+id/pointLayout"
             android:layout_width="61dp"
             android:layout_height="38dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +65,7 @@
                 android:layout_marginTop="7dp"
                 android:text="asd"
                 android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
 

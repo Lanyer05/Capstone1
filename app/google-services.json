@@ -1,42 +1,33 @@
 {
   "project_info": {
-    "project_number": "710765135722",
-    "firebase_url": "https://capstone1-1b3d1-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "capstone1-1b3d1",
-    "storage_bucket": "capstone1-1b3d1.appspot.com"
+    "project_number": "221741818484",
+    "project_id": "capstone-42e7f",
+    "storage_bucket": "capstone-42e7f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:710765135722:android:4c32dfd8ffc2a513360713",
+        "mobilesdk_app_id": "1:221741818484:android:47d300446c7eef508b2721",
         "android_client_info": {
           "package_name": "com.hcdc.capstone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "710765135722-rajj98b3j0a8jpaeiap3mi33io5rg7h7.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hcdc.capstone",
-            "certificate_hash": "0ac7b6502a40128cdec3a1a73f40b7e30ff9c551"
-          }
-        },
-        {
-          "client_id": "710765135722-lt2gu3d0nsc0k48ac8rqc9q3kkpr85ac.apps.googleusercontent.com",
+          "client_id": "221741818484-5shfcrqackf7vtc4kvotvu3us5ngd2jk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD8cfOL-wP5409M78RPPNNTq3yYY2gad2o"
+          "current_key": "AIzaSyCDSDGlg9kpdPAi6yMJ_khrF_8DNymtAbk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "710765135722-lt2gu3d0nsc0k48ac8rqc9q3kkpr85ac.apps.googleusercontent.com",
+              "client_id": "221741818484-5shfcrqackf7vtc4kvotvu3us5ngd2jk.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

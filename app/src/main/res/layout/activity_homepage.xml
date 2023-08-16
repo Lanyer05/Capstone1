@@ -11,30 +11,44 @@
     <ImageView
         android:id="@+id/greenbar"
         android:layout_width="match_parent"
-        android:layout_height="254dp"
-        android:layout_marginTop="-32dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="-40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
 
 
+    <ImageView
+        android:id="@+id/rewardImage3"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logowhite" />
+
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="239dp"
-        android:layout_marginStart="52dp"
+        android:layout_marginStart="30dp"
         android:layout_marginLeft="52dp"
+        android:layout_marginTop="239dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginRight="52dp"
-        android:layout_marginEnd="52dp"
         android:elevation="100dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <View
             android:id="@+id/points"
-            android:layout_width="298dp"
+            android:layout_width="match_parent"
             android:layout_height="95dp"
             android:background="@drawable/custom_pointsbox" />
 
@@ -63,6 +77,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#000000"
             android:textSize="34sp" />
+
     </FrameLayout>
 
 

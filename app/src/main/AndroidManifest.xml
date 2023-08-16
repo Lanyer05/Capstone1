@@ -18,6 +18,9 @@
             android:name=".Transaction"
             android:exported="false" />
         <activity
+            android:name=".TaskDetails"
+            android:exported="false" />
+        <activity
             android:name=".Task"
             android:exported="false" />
         <activity
