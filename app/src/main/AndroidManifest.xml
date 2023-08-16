@@ -4,7 +4,6 @@
     package="com.hcdc.capstone">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,37 +15,42 @@
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
         <activity
-            android:name=".timerTEST"
-            android:exported="false" />
-        <activity
             android:name=".Transaction"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".TaskDetails"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".Task"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".Reward"
-            android:exported="false" />
-        <activity
-            android:name=".Rewards"
             android:exported="false"
-            tools:ignore="Instantiatable" />
+            android:theme="@style/AppTheme"/>
+        <activity
+            android:name="com.hcdc.capstone.Rewards"
+            android:exported="false"
+            tools:ignore="Instantiatable"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".Homepage"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".RegisterActivity"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,6 +61,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>
