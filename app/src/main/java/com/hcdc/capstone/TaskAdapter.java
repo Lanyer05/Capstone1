@@ -50,7 +50,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             @Override
             public void onClick(View v) {
 
-                Toast.makeText(context.getApplicationContext(), "Item clickerd", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(context, TaskDetails.class);
+
+                i.putExtra("tasktitle",tasks.taskName);
+                i.putExtra("taskpoint",tasks.points);
+                i.putExtra("tasklocation",tasks.location);
+                i.putExtra("taskdetails",tasks.description);
+
+                context.startActivity(i);
 
             }
         });
