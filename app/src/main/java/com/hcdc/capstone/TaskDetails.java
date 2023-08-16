@@ -20,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TaskDetails extends AppCompatActivity {
+public class TaskDetails extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;

@@ -21,7 +21,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 
-public class Task extends AppCompatActivity {
+public class Task extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
 
 
