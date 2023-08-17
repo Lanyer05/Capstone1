@@ -35,7 +35,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
         Rewards rewards = Rlist.get(position);
         holder.rewardname.setText(rewards.getRewardName());
-        holder.rewardpoint.setText(rewards.getPoints()+"pts");
+        holder.rewardpoint.setText(rewards.getPoints()+" points");
 
         Log.d("RewardAdapter", "Binding task: " + rewards.getRewardName());
         Log.d("RewardAdapter", "Binding task: " + rewards.getPoints());
