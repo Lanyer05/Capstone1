@@ -14,8 +14,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,11 +30,15 @@ public class TaskDetails extends BaseActivity {
     private String uID;
 
     Button acceptTask, cancelTask;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
+
+        auth = FirebaseAuth.getInstance(); // Initialize FirebaseAuth
+        firestore = FirebaseFirestore.getInstance(); // Initialize FirebaseFirestore
 
         tskTitle = findViewById(R.id.tdTitle);
         tskDesc = findViewById(R.id.tdDesc);
@@ -57,7 +62,7 @@ public class TaskDetails extends BaseActivity {
         cancelTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),Task.class);
+                Intent intent = new Intent(getApplicationContext(), Task.class);
                 startActivity(intent);
                 finish();
             }
@@ -67,17 +72,52 @@ public class TaskDetails extends BaseActivity {
             @Override
             public void onClick(View v) {
                 uID = auth.getCurrentUser().getUid();
-                DocumentReference documentReference = firestore.collection("acceptedTasks").document(uID);
-                Map<String, Object> userTaskAccepted = new HashMap<>();
-                userTaskAccepted.put("taskTitle", tskTitle.getText().toString());
-                userTaskAccepted.put("acceptedBy", uID);
 
-                documentReference.set(userTaskAccepted).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.d(TAG, "Task Accepted");
-                    }
-                });
+                // Create a batch object
+                WriteBatch batch = firestore.batch();
+
+                // Update the corresponding task's isAccepted field in the "tasks" collection
+                firestore.collection("tasks")
+                        .whereEqualTo("taskName", tskTitle.getText().toString())
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+
+                                // Update the isAccepted field using the batch
+                                batch.update(documentSnapshot.getReference(), "isAccepted", true);
+
+                                // Store accepted task details in user_acceptedTask collection
+                                Map<String, Object> userTaskAccepted = new HashMap<>();
+                                userTaskAccepted.put("taskName", tskTitle.getText().toString());
+                                userTaskAccepted.put("description", tskDesc.getText().toString());
+                                userTaskAccepted.put("location", tskLoc.getText().toString());
+                                userTaskAccepted.put("points", tskPoint.getText().toString());
+                                userTaskAccepted.put("isAccepted", true);
+                                userTaskAccepted.put("acceptedBy", uID);
+
+                                if (documentSnapshot.contains("timeFrame")) {
+                                    userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
+                                }
+
+                                // Add the userTaskAccepted document to the batch
+                                batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
+
+                                // Commit the batch
+                                batch.commit()
+                                        .addOnSuccessListener(aVoid -> {
+                                            Log.d(TAG, "Batch write successful");
+
+                                            // After batch write, you can update your UI or take further actions
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Batch write failed", e);
+                                        });
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error getting tasks for update", e);
+                        });
             }
         });
     }
