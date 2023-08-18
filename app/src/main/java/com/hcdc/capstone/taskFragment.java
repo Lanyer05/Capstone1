@@ -78,7 +78,10 @@ public class taskFragment extends Fragment {
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
                                 Tasks task = dc.getDocument().toObject(Tasks.class);
-                                tList.add(task);
+                                // Only add the task to the list if isAccepted is not true
+                                if (!task.isAccepted()) {
+                                    tList.add(task);
+                                }
                             }
                         }
 
@@ -93,5 +96,6 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
+
 
 }

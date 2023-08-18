@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -114,9 +115,15 @@ public class TaskDetails extends BaseActivity {
                                             Log.e(TAG, "Batch write failed", e);
                                         });
                             }
+
+                            Toast.makeText(getApplicationContext(),"Task Accepted",Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(),Task.class);
+                            startActivity(intent);
+                            finish();
                         })
                         .addOnFailureListener(e -> {
                             Log.e(TAG, "Error getting tasks for update", e);
+                            Toast.makeText(getApplicationContext(),"Error in accepting task! Contact Developer: JEKZXC",Toast.LENGTH_SHORT).show();
                         });
             }
         });
