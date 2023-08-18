@@ -12,12 +12,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
@@ -75,52 +77,81 @@ public class TaskDetails extends BaseActivity {
             public void onClick(View v) {
                 uID = auth.getCurrentUser().getUid();
 
-                Map<String, Object> userTaskAccepted = new HashMap<>();
-                userTaskAccepted.put("taskName", tskTitle.getText().toString());
-                userTaskAccepted.put("description", tskDesc.getText().toString());
-                userTaskAccepted.put("location", tskLoc.getText().toString());
-                userTaskAccepted.put("points", tskPoint.getText().toString());
-                userTaskAccepted.put("isAccepted", true);
-                userTaskAccepted.put("acceptedBy", uID);
-
-                firestore.collection("tasks")
-                        .whereEqualTo("taskName", tskTitle.getText().toString())
-                        .whereEqualTo("isAccepted", false)
+                // Check if the user has already accepted a task
+                firestore.collection("user_acceptedTask")
+                        .whereEqualTo("acceptedBy", uID)
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
-                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                                Map<String, Object> taskData = documentSnapshot.getData();
+                                // User already has an accepted task, show a message or take appropriate action
+                                Toast.makeText(TaskDetails.this, "  You have already accepted a task.  Complete it before accepting a new task.  ", Toast.LENGTH_SHORT).show();
+                            } else {
+                                firestore.collection("user_acceptedTask")
+                                        .whereEqualTo("taskName", tskTitle.getText().toString())
+                                        .whereEqualTo("acceptedBy", uID)
+                                        .get()
+                                        .addOnSuccessListener(querySnapshot -> {
+                                            if (!querySnapshot.isEmpty()) {
+                                                // User has already accepted this task, show a message or take appropriate action
+                                                // For example: Toast.makeText(TaskDetails.this, "You have already accepted this task.", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                // User hasn't accepted this task yet, proceed to accept the new task
+                                                Map<String, Object> userTaskAccepted = new HashMap<>();
+                                                userTaskAccepted.put("taskName", tskTitle.getText().toString());
+                                                userTaskAccepted.put("description", tskDesc.getText().toString());
+                                                userTaskAccepted.put("location", tskLoc.getText().toString());
+                                                userTaskAccepted.put("points", tskPoint.getText().toString());
+                                                userTaskAccepted.put("isAccepted", true);
+                                                userTaskAccepted.put("acceptedBy", uID);
 
-                                if (taskData.containsKey("timeFrame")) {
-                                    userTaskAccepted.put("timeFrame", taskData.get("timeFrame"));
-                                }
+                                                firestore.collection("tasks")
+                                                        .whereEqualTo("taskName", tskTitle.getText().toString())
+                                                        .whereEqualTo("isAccepted", false)
+                                                        .get()
+                                                        .addOnSuccessListener(queryDocumentSnapshots2 -> {
+                                                            if (!queryDocumentSnapshots2.isEmpty()) {
+                                                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots2.getDocuments().get(0);
+                                                                Map<String, Object> taskData = documentSnapshot.getData();
 
-                                WriteBatch batch = firestore.batch();
+                                                                if (taskData.containsKey("timeFrame")) {
+                                                                    userTaskAccepted.put("timeFrame", taskData.get("timeFrame"));
+                                                                }
 
-                                // Add to user_acceptedTask collection
-                                batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
+                                                                WriteBatch batch = firestore.batch();
 
-                                // Delete from tasks collection
-                                batch.delete(documentSnapshot.getReference());
+                                                                // Add to user_acceptedTask collection
+                                                                batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
 
-                                batch.commit()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                Log.d(TAG, "Batch write successful");
+                                                                // Delete from tasks collection
+                                                                batch.delete(documentSnapshot.getReference());
+
+                                                                batch.commit()
+                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                            @Override
+                                                                            public void onSuccess(Void aVoid) {
+                                                                                Log.d(TAG, "Batch write successful");
+                                                                            }
+                                                                        })
+                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                            @Override
+                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                Log.e(TAG, "Error executing batch write", e);
+                                                                            }
+                                                                        });
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            Log.e(TAG, "Error getting tasks for update", e);
+                                                        });
                                             }
                                         })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.e(TAG, "Error executing batch write", e);
-                                            }
+                                        .addOnFailureListener(e -> {
+                                            Log.e(TAG, "Error checking accepted tasks", e);
                                         });
                             }
                         })
                         .addOnFailureListener(e -> {
-                            Log.e(TAG, "Error getting tasks for update", e);
+                            Log.e(TAG, "Error checking accepted tasks", e);
                         });
             }
         });
