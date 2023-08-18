@@ -1,5 +1,6 @@
 package com.hcdc.capstone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -17,7 +18,7 @@ public class Task extends BaseActivity {
 
     private ViewPager2 viewPager;
     private TabLayout tabLayout;
-    private final String[] tabTitles = new String[]{"Tab 1", "Tab 2"};
+    private final String[] tabTitles = new String[]{"Tasks", "My Task"};
 
     private BottomNavigationView bottomNavigationView;
 
@@ -40,7 +41,26 @@ public class Task extends BaseActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 // Handle navigation item clicks
                 // ...
-                return true;
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.action_home) {
+                    return true;
+
+                } else if (itemId == R.id.action_task) {
+
+                    navigateToActivity(Task.class);
+                    return true;
+                } else if (itemId == R.id.action_reward) {
+
+                    navigateToActivity(Reward.class);
+                    return true;
+                } else if (itemId == R.id.action_transaction) {
+
+                    navigateToActivity(Transaction.class);
+                    return true;
+                }
+
+                return false;
             }
         });
     }
@@ -67,5 +87,11 @@ public class Task extends BaseActivity {
                     return null;
             }
         }
+    }
+
+    private void navigateToActivity(Class<?> targetActivity) {
+        Intent intent = new Intent(this, targetActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
     }
 }

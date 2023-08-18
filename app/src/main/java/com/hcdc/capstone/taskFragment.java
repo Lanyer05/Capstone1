@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -29,6 +30,8 @@ public class taskFragment extends Fragment {
     TaskAdapter ta;
     ArrayList<Tasks> tList;
 
+    TextView emptyTaskView;
+
 
     public taskFragment() {
         // Required empty public constructor
@@ -39,6 +42,8 @@ public class taskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.task_fragment, container, false);
+
+        emptyTaskView = rootView.findViewById(R.id.emptyTask);
 
 
         // Create sample data for the RecyclerView
@@ -68,6 +73,7 @@ public class taskFragment extends Fragment {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
+
                         tList.clear();
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
@@ -75,8 +81,17 @@ public class taskFragment extends Fragment {
                                 tList.add(task);
                             }
                         }
+
+                        // Update the visibility of the emptyTextView based on data availability
+                        if (tList.isEmpty()) {
+                            emptyTaskView.setVisibility(View.VISIBLE);
+                        } else {
+                            emptyTaskView.setVisibility(View.GONE);
+                        }
+
                         ta.notifyDataSetChanged();
                     }
                 });
     }
+
 }

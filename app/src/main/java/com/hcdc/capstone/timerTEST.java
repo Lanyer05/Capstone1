@@ -38,7 +38,7 @@ public class timerTEST extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_timer_test);
 
         startButton = findViewById(R.id.startButton);
         timerTextView = findViewById(R.id.timerTextView);
