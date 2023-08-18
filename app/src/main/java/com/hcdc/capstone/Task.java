@@ -1,41 +1,39 @@
 package com.hcdc.capstone;
 
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class Task extends BaseActivity {
+
+    private ViewPager2 viewPager;
+    private TabLayout tabLayout;
+    private final String[] tabTitles = new String[]{"Tab 1", "Tab 2"};
+
     private BottomNavigationView bottomNavigationView;
-
-
-    RecyclerView rv;
-    FirebaseFirestore db;
-    TaskAdapter ta;
-    ArrayList<Tasks> tList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        // Set up the bottom navigation view
+        viewPager = findViewById(R.id.viewPager);
+        tabLayout = findViewById(R.id.tabLayout);
+
+        viewPager.setAdapter(new TabPagerAdapter(this));
+
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(tabTitles[position])).attach();
+
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -45,41 +43,29 @@ public class Task extends BaseActivity {
                 return true;
             }
         });
-
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
-
-        // Set up the RecyclerView
-        rv = findViewById(R.id.tasklists);
-        rv.setHasFixedSize(true);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        tList = new ArrayList<>();
-        ta = new TaskAdapter(this, tList);
-        rv.setAdapter(ta);
-
-        // Fetch data from Firestore
-        fetchDataFromFirestore();
     }
 
-    private void fetchDataFromFirestore() {
-        db.collection("tasks")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.e("Firestore Error", error.getMessage());
-                            return;
-                        }
-                        tList.clear();
-                        for (DocumentChange dc : value.getDocumentChanges()) {
-                            if (dc.getType() == DocumentChange.Type.ADDED) {
-                                Tasks task = dc.getDocument().toObject(Tasks.class);
-                                tList.add(task);
-                            }
-                        }
-                        ta.notifyDataSetChanged();
-                    }
-                });
+    private class TabPagerAdapter extends FragmentStateAdapter {
+
+        public TabPagerAdapter(Task activity) {
+            super(activity);
+        }
+
+        @Override
+        public int getItemCount() {
+            return tabTitles.length;
+        }
+
+        @Override
+        public Fragment createFragment(int position) {
+            switch (position) {
+                case 0:
+                    return new taskFragment();
+                case 1:
+                    return new userTaskFragment();
+                default:
+                    return null;
+            }
+        }
     }
 }
-
