@@ -63,27 +63,27 @@ public class RegisterActivity extends BaseActivity {
                 String Rpass = regPassword.getText().toString().trim();
 
                 if (Rname.isEmpty()) {
-                    regName.setError("Name cannot be empty");
+                    regName.setError(" Name cannot be empty ");
                     return;
                 }
                 if (Remail.isEmpty()) {
-                    regEmail.setError("Email cannot be empty");
+                    regEmail.setError(" Email cannot be empty ");
                     return;
                 }
                 if (Rbrgy.isEmpty()) {
-                    regBrgy.setError("Barangay cannot be empty");
+                    regBrgy.setError(" Barangay cannot be empty ");
                     return;
                 }
                 if (Rpass.isEmpty()) {
-                    regPassword.setError("Password cannot be empty");
+                    regPassword.setError(" Password cannot be empty ");
                     return;
                 }
                 if (!Rpass.equals(regConfirmpass.getText().toString())) {
-                    regConfirmpass.setError("Passwords do not match");
+                    regConfirmpass.setError(" Passwords do not match ");
                     return;
                 }
                 if(!Remail.contains("@gmail.com")){
-                    regEmail.setError("Only accepts with gmail only");
+                    regEmail.setError("  Only accepts with gmail only  ");
                     return;
                 }
 
@@ -93,24 +93,8 @@ public class RegisterActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
                             userID = auth.getCurrentUser().getUid();
-                            DocumentReference documentReference = fstore.collection("users").document(userID);
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("name", regName.getText().toString());
-                            user.put("Barangay", regBrgy.getText().toString());
-                            user.put("email", regEmail.getText().toString());
-                            user.put("Uid", userID);
 
-                            // Set isApproved to false initially for new users
-                            user.put("isApproved", false);
-
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Log.d(TAG, "Success: user profile is created for" + userID);
-                                }
-                            });
-
-                            // After successful registration, add registration data to registration_requests collection
+                            // Code to add data to "registration_requests" collection
                             Map<String, Object> registrationData = new HashMap<>();
                             registrationData.put("name", Rname);
                             registrationData.put("Barangay", Rbrgy);
@@ -124,7 +108,7 @@ public class RegisterActivity extends BaseActivity {
                                 public void onSuccess(Void unused) {
                                     Log.d(TAG, "Success: user registration request saved for" + userID);
                                     // Show a message to the user that their registration is pending approval
-                                    Toast.makeText(RegisterActivity.this, "Registration request sent for approval", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "  Registration request sent for approval  ", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
