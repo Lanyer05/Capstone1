@@ -35,8 +35,8 @@
 
         <View
             android:id="@+id/points1"
-            android:layout_width="298dp"
-            android:layout_height="95dp"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
             android:background="@drawable/custom_pointsbox" />
 
         <TextView

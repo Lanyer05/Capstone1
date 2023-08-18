@@ -1,6 +1,5 @@
 package com.hcdc.capstone;
 
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -29,22 +28,15 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        boolean isActivityInStack = false;
-        Intent intent = new Intent(this, getClass());
-
-        isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
-
-        if (isActivityInStack) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-        } else {
-            super.onBackPressed();
-        }
+        // Override onBackPressed to ensure it leads to Homepage.java
+        Intent intent = new Intent(this, Homepage.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
-
     private boolean isLoggedIn() {
-        return true;
+        return true; // Replace with your login check logic
     }
 
     private void redirectToLogin() {
@@ -53,3 +45,4 @@ public class BaseActivity extends AppCompatActivity {
         finish();
     }
 }
+

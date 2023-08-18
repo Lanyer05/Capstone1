@@ -32,7 +32,7 @@
             android:id="@+id/rewardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:text="Task Title"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -44,7 +44,7 @@
         <LinearLayout
             android:id="@+id/pointLayout"
             android:layout_width="100dp"
-            android:layout_height="38dp"
+            android:layout_height="40dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,15 +54,15 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="10dp"
                 android:src="@drawable/point_s" />
 
             <TextView
                 android:id="@+id/rewardPoint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="10dp"
                 android:text="asd"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
