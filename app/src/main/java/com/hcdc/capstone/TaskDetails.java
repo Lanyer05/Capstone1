@@ -2,6 +2,7 @@ package com.hcdc.capstone;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -73,45 +75,47 @@ public class TaskDetails extends BaseActivity {
             public void onClick(View v) {
                 uID = auth.getCurrentUser().getUid();
 
-                // Create a batch object
-                WriteBatch batch = firestore.batch();
+                Map<String, Object> userTaskAccepted = new HashMap<>();
+                userTaskAccepted.put("taskName", tskTitle.getText().toString());
+                userTaskAccepted.put("description", tskDesc.getText().toString());
+                userTaskAccepted.put("location", tskLoc.getText().toString());
+                userTaskAccepted.put("points", tskPoint.getText().toString());
+                userTaskAccepted.put("isAccepted", true);
+                userTaskAccepted.put("acceptedBy", uID);
 
-                // Update the corresponding task's isAccepted field in the "tasks" collection
                 firestore.collection("tasks")
                         .whereEqualTo("taskName", tskTitle.getText().toString())
+                        .whereEqualTo("isAccepted", false)
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
                                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                Map<String, Object> taskData = documentSnapshot.getData();
 
-                                // Update the isAccepted field using the batch
-                                batch.update(documentSnapshot.getReference(), "isAccepted", true);
-
-                                // Store accepted task details in user_acceptedTask collection
-                                Map<String, Object> userTaskAccepted = new HashMap<>();
-                                userTaskAccepted.put("taskName", tskTitle.getText().toString());
-                                userTaskAccepted.put("description", tskDesc.getText().toString());
-                                userTaskAccepted.put("location", tskLoc.getText().toString());
-                                userTaskAccepted.put("points", tskPoint.getText().toString());
-                                userTaskAccepted.put("isAccepted", true);
-                                userTaskAccepted.put("acceptedBy", uID);
-
-                                if (documentSnapshot.contains("timeFrame")) {
-                                    userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
+                                if (taskData.containsKey("timeFrame")) {
+                                    userTaskAccepted.put("timeFrame", taskData.get("timeFrame"));
                                 }
 
-                                // Add the userTaskAccepted document to the batch
+                                WriteBatch batch = firestore.batch();
+
+                                // Add to user_acceptedTask collection
                                 batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
 
-                                // Commit the batch
-                                batch.commit()
-                                        .addOnSuccessListener(aVoid -> {
-                                            Log.d(TAG, "Batch write successful");
+                                // Delete from tasks collection
+                                batch.delete(documentSnapshot.getReference());
 
-                                            // After batch write, you can update your UI or take further actions
+                                batch.commit()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "Batch write successful");
+                                            }
                                         })
-                                        .addOnFailureListener(e -> {
-                                            Log.e(TAG, "Batch write failed", e);
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e(TAG, "Error executing batch write", e);
+                                            }
                                         });
                             }
                         })
