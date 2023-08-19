@@ -40,6 +40,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.taskpoint.setText(tasks.getPoints()+"pts");
         holder.taskloc.setText(tasks.getLocation());
         holder.taskdesc.setText(tasks.getDescription());
+        holder.taskTimer.setText("Hour/s: "+ tasks.getHours()+" Minutes: "+tasks.getMinutes());
 
         Log.d("TaskAdapter", "Binding task: " + tasks.getTaskName());
         Log.d("TaskAdapter", "Binding task: " + tasks.getPoints());
@@ -59,6 +60,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     intent.putExtra("taskdetails", selectedTask.getDescription());
                     intent.putExtra("taskpoint", selectedTask.getPoints() + "pts");
                     intent.putExtra("tasklocation", selectedTask.getLocation());
+                    intent.putExtra("taskDuration","Hour/s :"+ selectedTask.getHours()+ " Minute/s: "+selectedTask.getMinutes());
 
                     context.startActivity(intent);
                 }
@@ -73,7 +75,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder{
 
-        TextView tasktitle, taskdesc, taskpoint, taskloc;
+        TextView tasktitle, taskdesc, taskpoint, taskloc, taskTimer;
         public TaskViewHolder(@NonNull View taskView)
         {
             super(taskView);
@@ -82,6 +84,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             taskdesc = taskView.findViewById(R.id.taskDesc);
             taskpoint = taskView.findViewById(R.id.taskPoint);
             taskloc = taskView.findViewById(R.id.taskLocation);
+            taskTimer = taskView.findViewById(R.id.taskDuration);
         }
     }
 }

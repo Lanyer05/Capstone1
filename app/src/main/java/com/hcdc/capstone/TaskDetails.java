@@ -25,7 +25,7 @@ public class TaskDetails extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView tskTitle, tskPoint, tskDesc, tskLoc;
+    private TextView tskTitle, tskPoint, tskDesc, tskLoc,tskDura;
 
     private String uID;
 
@@ -44,6 +44,7 @@ public class TaskDetails extends BaseActivity {
         tskDesc = findViewById(R.id.tdDesc);
         tskPoint = findViewById(R.id.tdPoints);
         tskLoc = findViewById(R.id.tdLocation);
+        tskDura = findViewById(R.id.tdDuration);
 
         acceptTask = findViewById(R.id.tdAccept);
         cancelTask = findViewById(R.id.tdCancel);
@@ -53,11 +54,13 @@ public class TaskDetails extends BaseActivity {
         String tDesc = extra.getString("taskdetails");
         String tPoints = extra.getString("taskpoint");
         String tLoc = extra.getString("tasklocation");
+        String tDura = extra.getString("taskDuration");
 
         tskTitle.setText(tTitle);
         tskDesc.setText(tDesc);
         tskLoc.setText(tLoc);
         tskPoint.setText(tPoints);
+        tskDura.setText(tDura);
 
         cancelTask.setOnClickListener(new View.OnClickListener() {
             @Override
