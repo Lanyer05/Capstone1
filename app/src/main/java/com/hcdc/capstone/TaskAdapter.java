@@ -36,7 +36,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Tasks tasks = list.get(position);
         holder.tasktitle.setText(tasks.getTaskName());
-        holder.taskpoint.setText(tasks.getPoints() + "points");
+        holder.taskpoint.setText(tasks.getPoints() + " points");
         holder.taskloc.setText(tasks.getLocation());
         holder.taskdesc.setText(tasks.getDescription());
 

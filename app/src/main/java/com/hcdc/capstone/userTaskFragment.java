@@ -67,7 +67,7 @@ public class userTaskFragment extends Fragment {
                                 taskMinutes = ((Long) timeFrameMap.get("minutes")).intValue();
 
                                 if (taskHours > 0 || taskMinutes > 0) {
-                                    taskTimeFrame = "Time Frame: " + taskHours + " hours " + taskMinutes + " minutes";
+                                    taskTimeFrame = taskHours + " hours " + taskMinutes + " minutes";
                                 }
                             }
 
