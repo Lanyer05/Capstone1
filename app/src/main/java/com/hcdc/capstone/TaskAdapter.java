@@ -60,7 +60,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     Intent intent = new Intent(context, TaskDetails.class);
                     intent.putExtra("tasktitle", selectedTask.getTaskName());
                     intent.putExtra("taskdetails", selectedTask.getDescription());
-                    intent.putExtra("taskpoint", selectedTask.getPoints() + "points");
+                    intent.putExtra("taskpoint", selectedTask.getPoints());
                     intent.putExtra("tasklocation", selectedTask.getLocation());
                     intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
 
