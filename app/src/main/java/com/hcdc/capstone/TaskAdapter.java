@@ -34,18 +34,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-
         Tasks tasks = list.get(position);
         holder.tasktitle.setText(tasks.getTaskName());
-        holder.taskpoint.setText(tasks.getPoints()+"pts");
+        holder.taskpoint.setText(tasks.getPoints() + "points");
         holder.taskloc.setText(tasks.getLocation());
         holder.taskdesc.setText(tasks.getDescription());
-        holder.taskTimer.setText("Hour/s: "+ tasks.getHours()+" Minutes: "+tasks.getMinutes());
 
-        Log.d("TaskAdapter", "Binding task: " + tasks.getTaskName());
-        Log.d("TaskAdapter", "Binding task: " + tasks.getPoints());
-        Log.d("TaskAdapter", "Binding task: " + tasks.getLocation());
-        Log.d("TaskAdapter", "Binding task: " + tasks.getDescription());
+        // Check if the task has a timeFrame
+        if (tasks.getHours() > 0 || tasks.getMinutes() > 0) {
+            String timeFrameText = "Time Frame: " + tasks.getHours() + " hours " + tasks.getMinutes() + " minutes";
+            holder.taskTimer.setText(timeFrameText);
+            holder.taskTimer.setVisibility(View.VISIBLE);
+        } else {
+            holder.taskTimer.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,9 +60,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     Intent intent = new Intent(context, TaskDetails.class);
                     intent.putExtra("tasktitle", selectedTask.getTaskName());
                     intent.putExtra("taskdetails", selectedTask.getDescription());
-                    intent.putExtra("taskpoint", selectedTask.getPoints() + "pts");
+                    intent.putExtra("taskpoint", selectedTask.getPoints() + "points");
                     intent.putExtra("tasklocation", selectedTask.getLocation());
-                    intent.putExtra("taskDuration","Hour/s :"+ selectedTask.getHours()+ " Minute/s: "+selectedTask.getMinutes());
+                    intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
 
                     context.startActivity(intent);
                 }
@@ -84,7 +86,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             taskdesc = taskView.findViewById(R.id.taskDesc);
             taskpoint = taskView.findViewById(R.id.taskPoint);
             taskloc = taskView.findViewById(R.id.taskLocation);
-            taskTimer = taskView.findViewById(R.id.taskDuration);
+            taskTimer = taskView.findViewById(R.id.taskTimeFrame);
         }
     }
 }
