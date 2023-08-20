@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class taskFragment extends Fragment {
@@ -63,7 +64,6 @@ public class taskFragment extends Fragment {
     }
 
 
-
     private void fetchDataFromFirestore() {
         db.collection("tasks")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -78,8 +78,19 @@ public class taskFragment extends Fragment {
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
                                 Tasks task = dc.getDocument().toObject(Tasks.class);
-                                // Only add the task to the list if isAccepted is not true
+
+                                // Check if the task is accepted before adding it to the list
                                 if (!task.isAccepted()) {
+                                    // Retrieve the timeFrame map
+                                    Map<String, Object> timeFrameMap = (Map<String, Object>) dc.getDocument().get("timeFrame");
+                                    if (timeFrameMap != null) {
+                                        // Retrieve hours and minutes from the timeFrame map
+                                        int hours = ((Long) timeFrameMap.get("hours")).intValue();
+                                        int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                        task.hours = hours;
+                                        task.minutes = minutes;
+                                    }
+
                                     tList.add(task);
                                 }
                             }
@@ -96,6 +107,4 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
-
-
 }

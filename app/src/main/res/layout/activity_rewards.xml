@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_navigation_view"
         android:layout_below="@id/claimable_r"
-        android:layout_marginTop="159dp"
+        android:layout_marginTop="163dp"
         android:layout_marginBottom="-1dp">
 
         <LinearLayout
