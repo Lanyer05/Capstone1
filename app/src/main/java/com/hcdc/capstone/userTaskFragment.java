@@ -15,6 +15,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Map;
+
 public class userTaskFragment extends Fragment {
 
     private FirebaseAuth auth;
@@ -55,17 +57,18 @@ public class userTaskFragment extends Fragment {
                             String taskPoints = document.getString("points");
                             String taskLocation = document.getString("location");
                             String taskDescription = document.getString("description");
-
-                            // Handle time frame
-                            Long hoursLong = document.getLong("hours");
-                            Long minutesLong = document.getLong("minutes");
-
-                            int taskHours = hoursLong != null ? hoursLong.intValue() : 0;
-                            int taskMinutes = minutesLong != null ? minutesLong.intValue() : 0;
-
+                            Map<String, Object> timeFrameMap = (Map<String, Object>) document.get("timeFrame");
+                            int taskHours = 0;
+                            int taskMinutes = 0;
                             String taskTimeFrame = "";
-                            if (taskHours > 0 || taskMinutes > 0) {
-                                taskTimeFrame = "Time Frame: " + taskHours + " hours " + taskMinutes + " minutes";
+
+                            if (timeFrameMap != null) {
+                                taskHours = ((Long) timeFrameMap.get("hours")).intValue();
+                                taskMinutes = ((Long) timeFrameMap.get("minutes")).intValue();
+
+                                if (taskHours > 0 || taskMinutes > 0) {
+                                    taskTimeFrame = "Time Frame: " + taskHours + " hours " + taskMinutes + " minutes";
+                                }
                             }
 
                             taskNameTextView.setText(taskName);
