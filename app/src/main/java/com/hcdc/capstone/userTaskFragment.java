@@ -1,11 +1,13 @@
 package com.hcdc.capstone;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,13 +26,15 @@ public class userTaskFragment extends Fragment {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView;
-    private Button cancelButton;
+    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, userTaskEmpty;
+    private Button cancelButton, startTask;
+    private ImageView im4, imLoc, imTime;
 
     public userTaskFragment() {
         // Required empty public constructor
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -45,6 +49,11 @@ public class userTaskFragment extends Fragment {
         taskTimeFrameTextView = view.findViewById(R.id.taskTimeFrame);
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
         cancelButton = view.findViewById(R.id.button2);
+        im4 = view.findViewById(R.id.imageView4);
+        imLoc = view.findViewById(R.id.loc);
+        imTime = view.findViewById(R.id.ctTimer);
+        userTaskEmpty = view.findViewById(R.id.taskEmptyuser);
+        startTask = view.findViewById(R.id.button);
 
         String currentUserUID = auth.getCurrentUser().getUid();
 
@@ -78,7 +87,7 @@ public class userTaskFragment extends Fragment {
                             taskNameTextView.setText(taskName);
                             taskPointsTextView.setText(taskPoints);
                             taskLocationTextView.setText(taskLocation);
-                            taskTimeFrameTextView.setText(taskTimeFrame);
+                            taskTimeFrameTextView.setText(taskTimeFrame + " Points");
                             taskDescriptionTextView.setText(taskDescription);
 
                             int finalTaskHours = taskHours;
@@ -140,6 +149,19 @@ public class userTaskFragment extends Fragment {
                                     alertDialog.dismiss();
                                 });
                             });
+                        }
+                        else {
+                            userTaskEmpty.setVisibility(View.VISIBLE);
+                            taskNameTextView.setVisibility(View.GONE);
+                            taskPointsTextView.setVisibility(View.GONE);
+                            taskLocationTextView.setVisibility(View.GONE);
+                            taskTimeFrameTextView.setVisibility(View.GONE);
+                            taskDescriptionTextView.setVisibility(View.GONE);
+                            cancelButton.setVisibility(View.GONE);
+                            im4.setVisibility(View.GONE);
+                            imTime.setVisibility(View.GONE);
+                            imLoc.setVisibility(View.GONE);
+                            startTask.setVisibility(View.GONE);
                         }
                     }
                 });
