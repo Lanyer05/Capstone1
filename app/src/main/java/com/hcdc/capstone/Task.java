@@ -63,6 +63,10 @@ public class Task extends BaseActivity {
                 return false;
             }
         });
+        boolean navigateToMyTasks = getIntent().getBooleanExtra("navigateToMyTasks", false);
+        if (navigateToMyTasks) {
+            viewPager.setCurrentItem(1); // Select the My Task tab
+        }
     }
 
     private class TabPagerAdapter extends FragmentStateAdapter {

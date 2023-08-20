@@ -4,12 +4,14 @@ import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,8 +36,8 @@ public class TaskDetails extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_details);
 
-        auth = FirebaseAuth.getInstance(); // Initialize FirebaseAuth
-        firestore = FirebaseFirestore.getInstance(); // Initialize FirebaseFirestore
+        auth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
 
         tskTitle = findViewById(R.id.tdTitle);
         tskDesc = findViewById(R.id.tdDesc);
@@ -70,13 +72,12 @@ public class TaskDetails extends BaseActivity {
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (queryDocumentSnapshots.isEmpty()) {
-                                // User hasn't accepted any task, proceed with accepting the new task
-                                userEmail = auth.getCurrentUser().getEmail();
-                                acceptNewTask();
+                                // User hasn't accepted any task, show confirmation overlay
+                                showAcceptConfirmationOverlay();
                             } else {
-                                // User has already accepted a task, show a message or take appropriate action
+                                // User has already accepted a task, show a message
                                 Log.d(TAG, "User has already accepted a task.");
-                                // Display a message to inform the user that they cannot accept another task.
+                                Toast.makeText(TaskDetails.this, "You have already accepted a task. Please finish it before accepting a new task.", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(e -> {
@@ -125,6 +126,8 @@ public class TaskDetails extends BaseActivity {
                             userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
                         }
 
+                        batch.delete(documentSnapshot.getReference());
+
                         // Add the userTaskAccepted document to the batch
                         batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
 
@@ -143,5 +146,40 @@ public class TaskDetails extends BaseActivity {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error getting tasks for update", e);
                 });
+    }
+
+    // Show the confirmation overlay for accepting a task
+    private void showAcceptConfirmationOverlay() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View overlayView = getLayoutInflater().inflate(R.layout.accept_confirmation_overlay, null);
+        Button confirmButton = overlayView.findViewById(R.id.confirmButton);
+        Button cancelButton = overlayView.findViewById(R.id.cancelButton);
+
+        builder.setView(overlayView);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // User confirmed, proceed with accepting the task
+                dialog.dismiss();
+                userEmail = auth.getCurrentUser().getEmail();
+                acceptNewTask();
+
+                Intent intent = new Intent(getApplicationContext(), Task.class);
+                intent.putExtra("navigateToMyTasks", true);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // User canceled, dismiss the dialog
+                dialog.dismiss();
+            }
+        });
     }
 }

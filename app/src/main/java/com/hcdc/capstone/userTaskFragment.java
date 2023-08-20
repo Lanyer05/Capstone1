@@ -1,9 +1,11 @@
 package com.hcdc.capstone;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class userTaskFragment extends Fragment {
@@ -22,6 +25,7 @@ public class userTaskFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView;
+    private Button cancelButton;
 
     public userTaskFragment() {
         // Required empty public constructor
@@ -40,6 +44,7 @@ public class userTaskFragment extends Fragment {
         taskLocationTextView = view.findViewById(R.id.taskLocation);
         taskTimeFrameTextView = view.findViewById(R.id.taskTimeFrame);
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
+        cancelButton = view.findViewById(R.id.button2);
 
         String currentUserUID = auth.getCurrentUser().getUid();
 
@@ -50,7 +55,6 @@ public class userTaskFragment extends Fragment {
                     if (task.isSuccessful()) {
                         QuerySnapshot documents = task.getResult();
                         if (documents != null && !documents.isEmpty()) {
-                            // Assuming there's only one accepted task per user
                             QueryDocumentSnapshot document = (QueryDocumentSnapshot) documents.getDocuments().get(0);
 
                             String taskName = document.getString("taskName");
@@ -76,6 +80,66 @@ public class userTaskFragment extends Fragment {
                             taskLocationTextView.setText(taskLocation);
                             taskTimeFrameTextView.setText(taskTimeFrame);
                             taskDescriptionTextView.setText(taskDescription);
+
+                            int finalTaskHours = taskHours;
+                            int finalTaskMinutes = taskMinutes;
+                            cancelButton.setOnClickListener(v -> {
+                                // Show the confirmation overlay
+                                View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                alertDialogBuilder.setView(overlayView);
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
+
+                                // Get references to the confirm and cancel buttons in the overlay
+                                Button confirmButton = overlayView.findViewById(R.id.confirmButton);
+                                Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
+
+                                confirmButton.setOnClickListener(viewConfirm -> {
+                                    // Delete the task from user_acceptedTask collection
+                                    document.getReference().delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                // Add the task back to the tasks collection
+                                                Map<String, Object> taskData = new HashMap<>();
+                                                taskData.put("taskName", taskName);
+                                                taskData.put("description", taskDescription);
+                                                taskData.put("location", taskLocation);
+                                                taskData.put("points", taskPoints);
+                                                taskData.put("isAccepted", false);
+
+                                                // Only add the timeFrame if hours or minutes are greater than 0
+                                                if (finalTaskHours > 0 || finalTaskMinutes > 0) {
+                                                    Map<String, Object> timeFrameMapNew = new HashMap<>();
+                                                    timeFrameMapNew.put("hours", finalTaskHours);
+                                                    timeFrameMapNew.put("minutes", finalTaskMinutes);
+                                                    taskData.put("timeFrame", timeFrameMapNew);
+                                                }
+
+                                                firestore.collection("tasks")
+                                                        .add(taskData)
+                                                        .addOnSuccessListener(documentReference -> {
+                                                            // Successfully added task back to tasks collection
+                                                            // Update UI or take further actions
+                                                        })
+                                                        .addOnFailureListener(e -> {
+                                                            // Failed to add task back to tasks collection
+                                                            // Handle the error
+                                                        });
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Failed to delete task from user_acceptedTask collection
+                                                // Handle the error
+                                            });
+
+                                    // Dismiss the confirmation overlay
+                                    alertDialog.dismiss();
+                                });
+
+                                cancelButtonOverlay.setOnClickListener(viewCancel -> {
+                                    // Dismiss the confirmation overlay
+                                    alertDialog.dismiss();
+                                });
+                            });
                         }
                     }
                 });
