@@ -108,6 +108,8 @@ public class userTaskFragment extends Fragment {
                                                 taskData.put("location", taskLocation);
                                                 taskData.put("points", taskPoints);
                                                 taskData.put("isAccepted", false);
+                                                taskData.put("isStarted", false);
+                                                taskData.put("isCompleted", false); // Add the isStarted field
 
                                                 // Only add the timeFrame if hours or minutes are greater than 0
                                                 if (finalTaskHours > 0 || finalTaskMinutes > 0) {
@@ -145,17 +147,41 @@ public class userTaskFragment extends Fragment {
 
                             // Implement the startButton click listener here
                             startButton.setOnClickListener(v -> {
-                                // Calculate task duration in milliseconds
-                                long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+                                // Check if the task has been started
+                                boolean isStarted = document.getBoolean("isStarted");
 
-                                // Create an intent to start the timerTEST activity
-                                Intent intent = new Intent(getContext(), timerTEST.class);
+                                if (!isStarted) {
+                                    // Update the isStarted field in the user_acceptedTask document
+                                    document.getReference().update("isStarted", true)
+                                            .addOnSuccessListener(aVoid -> {
+                                                // Task start indicator updated successfully
 
-                                // Pass the calculated task duration in milliseconds to the timerTEST activity
-                                intent.putExtra("taskDurationMillis", taskDurationMillis);
+                                                // Calculate task duration in milliseconds
+                                                long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
 
-                                // Start the timerTEST activity
-                                startActivity(intent);
+                                                // Create an intent to start the timerTEST activity
+                                                Intent intent = new Intent(getContext(), timerTEST.class);
+
+                                                // Pass the necessary data to the timerTEST activity
+                                                intent.putExtra("taskName", taskName);
+                                                intent.putExtra("taskPoints", taskPoints);
+                                                intent.putExtra("taskDescription", taskDescription);
+                                                intent.putExtra("taskLocation", taskLocation);
+                                                intent.putExtra("taskDurationMillis", taskDurationMillis);
+                                                intent.putExtra("timeFrameHours", finalTaskHours);
+                                                intent.putExtra("timeFrameMinutes", finalTaskMinutes);
+
+                                                // Start the timerTEST activity
+                                                startActivity(intent);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Failed to update the task start indicator
+                                                // Handle the error
+                                            });
+                                } else {
+                                    // Task has already been started
+                                    // Handle accordingly, show a message or indicator
+                                }
                             });
                         }
                     }

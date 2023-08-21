@@ -119,6 +119,8 @@ public class TaskDetails extends BaseActivity {
                         userTaskAccepted.put("location", tskLoc.getText().toString());
                         userTaskAccepted.put("points", tskPoint.getText().toString());
                         userTaskAccepted.put("isAccepted", true);
+                        userTaskAccepted.put("isStarted", false);
+                        userTaskAccepted.put("isCompleted", false);
                         userTaskAccepted.put("acceptedBy", uID);
                         userTaskAccepted.put("acceptedByEmail", userEmail);
 

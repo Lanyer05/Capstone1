@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentReference;
+
 public class timerTEST extends AppCompatActivity {
 
     private Button startButton;
@@ -51,14 +53,37 @@ public class timerTEST extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
         doneButton = findViewById(R.id.doneButton);
         timerTextView = findViewById(R.id.timerTextView);
+        TextView taskNameTextView = findViewById(R.id.taskTitle4);
+        TextView taskPointsTextView = findViewById(R.id.taskPoint);
+        TextView taskDescriptionTextView = findViewById(R.id.taskDesc);
+        TextView taskLocationTextView = findViewById(R.id.taskLocation);
+
+        String taskName = getIntent().getStringExtra("taskName");
+        String taskPoints = getIntent().getStringExtra("taskPoints");
+        String taskDescription = getIntent().getStringExtra("taskDescription");
+        String taskLocation = getIntent().getStringExtra("taskLocation");
+
+        taskNameTextView.setText(taskName);
+        taskPointsTextView.setText(taskPoints);
+        taskDescriptionTextView.setText(taskDescription);
+        taskLocationTextView.setText(taskLocation);
+
+
 
         // Retrieve task duration in milliseconds from the intent
         taskDurationMillis = getIntent().getLongExtra("taskDurationMillis", 0);
 
+        // Retrieve timeFrame data from the intent or wherever it's stored
+        int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
+        int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
+
+        // Convert time frame data into milliseconds
+        long timeFrameMillis = (timeFrameHours * 60 + timeFrameMinutes) * 60 * 1000;
+
         // Set the initial time on the timerTextView
-        int initialHours = (int) (taskDurationMillis / (60 * 60 * 1000));
-        int initialMinutes = (int) ((taskDurationMillis % (60 * 60 * 1000)) / (60 * 1000));
-        int initialSeconds = (int) ((taskDurationMillis % (60 * 1000)) / 1000);
+        int initialHours = timeFrameHours;
+        int initialMinutes = timeFrameMinutes;
+        int initialSeconds = (int) ((timeFrameMillis % (60 * 1000)) / 1000);
         timerTextView.setText(String.format("%02d:%02d:%02d", initialHours, initialMinutes, initialSeconds));
 
         startButton.setOnClickListener(new View.OnClickListener() {
