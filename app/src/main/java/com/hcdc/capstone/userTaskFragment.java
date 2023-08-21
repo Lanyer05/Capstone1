@@ -1,6 +1,7 @@
 package com.hcdc.capstone;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,7 @@ public class userTaskFragment extends Fragment {
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView;
-    private Button cancelButton;
+    private Button cancelButton, startButton;
 
     public userTaskFragment() {
         // Required empty public constructor
@@ -45,6 +46,7 @@ public class userTaskFragment extends Fragment {
         taskTimeFrameTextView = view.findViewById(R.id.taskTimeFrame);
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
         cancelButton = view.findViewById(R.id.button2);
+        startButton = view.findViewById(R.id.button);
 
         String currentUserUID = auth.getCurrentUser().getUid();
 
@@ -139,6 +141,21 @@ public class userTaskFragment extends Fragment {
                                     // Dismiss the confirmation overlay
                                     alertDialog.dismiss();
                                 });
+                            });
+
+                            // Implement the startButton click listener here
+                            startButton.setOnClickListener(v -> {
+                                // Calculate task duration in milliseconds
+                                long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+
+                                // Create an intent to start the timerTEST activity
+                                Intent intent = new Intent(getContext(), timerTEST.class);
+
+                                // Pass the calculated task duration in milliseconds to the timerTEST activity
+                                intent.putExtra("taskDurationMillis", taskDurationMillis);
+
+                                // Start the timerTEST activity
+                                startActivity(intent);
                             });
                         }
                     }
