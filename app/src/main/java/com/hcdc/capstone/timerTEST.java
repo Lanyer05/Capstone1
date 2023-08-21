@@ -80,8 +80,6 @@ public class timerTEST extends AppCompatActivity {
                 finish(); // Finish the activity and return to the previous one
             }
         });
-
-        doneButton.setVisibility(View.GONE); // Hide the Done button initially
     }
 
     @Override
