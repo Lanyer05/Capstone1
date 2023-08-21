@@ -57,25 +57,20 @@ public class timerTEST extends AppCompatActivity {
         TextView taskPointsTextView = findViewById(R.id.taskPoint);
         TextView taskDescriptionTextView = findViewById(R.id.taskDesc);
         TextView taskLocationTextView = findViewById(R.id.taskLocation);
+        TextView taskTimeFrameTextView = findViewById(R.id.taskTimeFrame);
 
         String taskName = getIntent().getStringExtra("taskName");
         String taskPoints = getIntent().getStringExtra("taskPoints");
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
 
+        int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
+        int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
+
         taskNameTextView.setText(taskName);
         taskPointsTextView.setText(taskPoints);
         taskDescriptionTextView.setText(taskDescription);
         taskLocationTextView.setText(taskLocation);
-
-
-
-        // Retrieve task duration in milliseconds from the intent
-        taskDurationMillis = getIntent().getLongExtra("taskDurationMillis", 0);
-
-        // Retrieve timeFrame data from the intent or wherever it's stored
-        int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
-        int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
 
         // Convert time frame data into milliseconds
         long timeFrameMillis = (timeFrameHours * 60 + timeFrameMinutes) * 60 * 1000;
@@ -85,6 +80,10 @@ public class timerTEST extends AppCompatActivity {
         int initialMinutes = timeFrameMinutes;
         int initialSeconds = (int) ((timeFrameMillis % (60 * 1000)) / 1000);
         timerTextView.setText(String.format("%02d:%02d:%02d", initialHours, initialMinutes, initialSeconds));
+
+        // Set the task time frame
+        String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
+        taskTimeFrameTextView.setText(taskTimeFrame);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,4 +112,5 @@ public class timerTEST extends AppCompatActivity {
         timerRunning = false;
         handler.removeCallbacks(timerRunnable);
     }
+
 }
