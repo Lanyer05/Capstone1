@@ -147,41 +147,37 @@ public class userTaskFragment extends Fragment {
 
                             // Implement the startButton click listener here
                             startButton.setOnClickListener(v -> {
-                                // Check if the task has been started
-                                boolean isStarted = document.getBoolean("isStarted");
+                                View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.start_confirmation_overlay, null);
+                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                alertDialogBuilder.setView(overlayView);
+                                AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.show();
 
-                                if (!isStarted) {
-                                    // Update the isStarted field in the user_acceptedTask document
-                                    document.getReference().update("isStarted", true)
-                                            .addOnSuccessListener(aVoid -> {
-                                                // Task start indicator updated successfully
+                                Button confirmButton = overlayView.findViewById(R.id.confirmButton);
+                                Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
-                                                // Calculate task duration in milliseconds
-                                                long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+                                confirmButton.setOnClickListener(viewConfirm -> {
+                                    // Calculate task duration in milliseconds
+                                    long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
 
-                                                // Create an intent to start the timerTEST activity
-                                                Intent intent = new Intent(getContext(), timerTEST.class);
+                                    Intent intent = new Intent(getContext(), timerTEST.class);
 
-                                                // Pass the necessary data to the timerTEST activity
-                                                intent.putExtra("taskName", taskName);
-                                                intent.putExtra("taskPoints", taskPoints);
-                                                intent.putExtra("taskDescription", taskDescription);
-                                                intent.putExtra("taskLocation", taskLocation);
-                                                intent.putExtra("taskDurationMillis", taskDurationMillis);
-                                                intent.putExtra("timeFrameHours", finalTaskHours);
-                                                intent.putExtra("timeFrameMinutes", finalTaskMinutes);
+                                    intent.putExtra("taskName", taskName);
+                                    intent.putExtra("taskPoints", taskPoints);
+                                    intent.putExtra("taskDescription", taskDescription);
+                                    intent.putExtra("taskLocation", taskLocation);
+                                    intent.putExtra("taskDurationMillis", taskDurationMillis);
+                                    intent.putExtra("timeFrameHours", finalTaskHours);
+                                    intent.putExtra("timeFrameMinutes", finalTaskMinutes);
 
-                                                // Start the timerTEST activity
-                                                startActivity(intent);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                // Failed to update the task start indicator
-                                                // Handle the error
-                                            });
-                                } else {
-                                    // Task has already been started
-                                    // Handle accordingly, show a message or indicator
-                                }
+                                    startActivity(intent);
+
+                                    alertDialog.dismiss();
+                                });
+
+                                cancelButtonOverlay.setOnClickListener(viewCancel -> {
+                                    alertDialog.dismiss();
+                                });
                             });
                         }
                     }
