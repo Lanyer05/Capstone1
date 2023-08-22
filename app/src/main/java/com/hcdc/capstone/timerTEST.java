@@ -1,5 +1,6 @@
 package com.hcdc.capstone;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -8,10 +9,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 public class timerTEST extends AppCompatActivity {
 
+    private FirebaseFirestore db;
+    private FirebaseAuth auth;
     private Button startButton;
     private Button doneButton;
     private TextView timerTextView;
@@ -19,6 +27,7 @@ public class timerTEST extends AppCompatActivity {
     private long startTime = 0L;
     private long taskDurationMillis; // Task duration in milliseconds
     private Handler handler = new Handler();
+
     private Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -58,11 +67,14 @@ public class timerTEST extends AppCompatActivity {
         TextView taskDescriptionTextView = findViewById(R.id.taskDesc);
         TextView taskLocationTextView = findViewById(R.id.taskLocation);
         TextView taskTimeFrameTextView = findViewById(R.id.taskTimeFrame);
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
 
         String taskName = getIntent().getStringExtra("taskName");
         String taskPoints = getIntent().getStringExtra("taskPoints");
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
+        String currentUserUID = auth.getCurrentUser().getUid();
 
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
@@ -74,6 +86,9 @@ public class timerTEST extends AppCompatActivity {
 
         // Convert time frame data into milliseconds
         long timeFrameMillis = (timeFrameHours * 60 + timeFrameMinutes) * 60 * 1000;
+
+        // Store the task duration in milliseconds
+        taskDurationMillis = timeFrameMillis;
 
         // Set the initial time on the timerTextView
         int initialHours = timeFrameHours;
@@ -101,7 +116,45 @@ public class timerTEST extends AppCompatActivity {
             public void onClick(View v) {
                 // Mark the task as done in the database or handle it as needed
                 // ...
-                finish(); // Finish the activity and return to the previous one
+
+                // Update isCompleted field to true in the user_acceptedTask table
+                db.collection("user_acceptedTask")
+                        .whereEqualTo("acceptedBy", currentUserUID)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()) {
+                                    // Assuming there's only one document per user
+                                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                    String documentId = documentSnapshot.getId();
+
+                                    // Update the isCompleted field
+                                    db.collection("user_acceptedTask")
+                                            .document(documentId)
+                                            .update("isCompleted", true)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    // Update successful
+                                                    finish(); // Finish the activity and return to the previous one
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Handle failure
+                                                }
+                                            });
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Handle failure
+                            }
+                        });
             }
         });
     }
