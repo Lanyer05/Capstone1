@@ -18,6 +18,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public class timerTEST extends AppCompatActivity {
 
+
+
     private FirebaseFirestore db;
     private FirebaseAuth auth;
     private Button startButton;
