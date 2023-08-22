@@ -150,6 +150,8 @@ public class TaskDetails extends BaseActivity {
                 });
     }
 
+
+
     // Show the confirmation overlay for accepting a task
     private void showAcceptConfirmationOverlay() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -184,4 +186,5 @@ public class TaskDetails extends BaseActivity {
             }
         });
     }
+
 }

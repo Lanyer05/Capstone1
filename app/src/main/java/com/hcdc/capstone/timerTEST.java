@@ -12,9 +12,12 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Map;
 
 public class timerTEST extends AppCompatActivity {
 
@@ -130,6 +133,7 @@ public class timerTEST extends AppCompatActivity {
                                     // Assuming there's only one document per user
                                     DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                     String documentId = documentSnapshot.getId();
+                                    Map<String, Object> acceptedTaskData = documentSnapshot.getData();
 
                                     // Update the isCompleted field
                                     db.collection("user_acceptedTask")
@@ -138,8 +142,40 @@ public class timerTEST extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    // Update successful
-                                                    finish(); // Finish the activity and return to the previous one
+                                                    // Document updated to isCompleted=true
+
+                                                    // Add the data to completed_task collection with isCompleted set to true
+                                                    acceptedTaskData.put("isCompleted", true);
+                                                    db.collection("completed_task")
+                                                            .add(acceptedTaskData)
+                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                @Override
+                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                    // Data added to completed_task, delete the document
+                                                                    db.collection("user_acceptedTask")
+                                                                            .document(documentId)
+                                                                            .delete()
+                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                @Override
+                                                                                public void onSuccess(Void aVoid) {
+                                                                                    // Document deleted, finish the activity
+                                                                                    finish();
+                                                                                }
+                                                                            })
+                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                @Override
+                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                    // Handle failure
+                                                                                }
+                                                                            });
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    // Handle failure
+                                                                }
+                                                            });
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -159,6 +195,7 @@ public class timerTEST extends AppCompatActivity {
                         });
             }
         });
+
     }
 
     @Override
