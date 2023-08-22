@@ -24,7 +24,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/cirlce_solid_noborder1"
-            android:text="Confirm"
+            android:text="Yes"
             android:textColor="@color/white" />
 
         <Space
@@ -37,7 +37,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/cirlce_solid_noborder1"
-            android:text="Cancel"
+            android:text="No"
             android:textColor="#fe6969" />
     </LinearLayout>
 </LinearLayout>

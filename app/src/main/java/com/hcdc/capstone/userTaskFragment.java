@@ -1,13 +1,12 @@
 package com.hcdc.capstone;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,15 +25,13 @@ public class userTaskFragment extends Fragment {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, userTaskEmpty;
-    private Button cancelButton, startTask;
-    private ImageView im4, imLoc, imTime;
+    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView;
+    private Button cancelButton, startButton;
 
     public userTaskFragment() {
         // Required empty public constructor
     }
 
-    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -49,11 +46,7 @@ public class userTaskFragment extends Fragment {
         taskTimeFrameTextView = view.findViewById(R.id.taskTimeFrame);
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
         cancelButton = view.findViewById(R.id.button2);
-        im4 = view.findViewById(R.id.imageView4);
-        imLoc = view.findViewById(R.id.loc);
-        imTime = view.findViewById(R.id.ctTimer);
-        userTaskEmpty = view.findViewById(R.id.taskEmptyuser);
-        startTask = view.findViewById(R.id.button);
+        startButton = view.findViewById(R.id.button);
 
         String currentUserUID = auth.getCurrentUser().getUid();
 
@@ -87,7 +80,7 @@ public class userTaskFragment extends Fragment {
                             taskNameTextView.setText(taskName);
                             taskPointsTextView.setText(taskPoints);
                             taskLocationTextView.setText(taskLocation);
-                            taskTimeFrameTextView.setText(taskTimeFrame + " Points");
+                            taskTimeFrameTextView.setText(taskTimeFrame);
                             taskDescriptionTextView.setText(taskDescription);
 
                             int finalTaskHours = taskHours;
@@ -115,6 +108,8 @@ public class userTaskFragment extends Fragment {
                                                 taskData.put("location", taskLocation);
                                                 taskData.put("points", taskPoints);
                                                 taskData.put("isAccepted", false);
+                                                taskData.put("isStarted", false);
+                                                taskData.put("isCompleted", false); // Add the isStarted field
 
                                                 // Only add the timeFrame if hours or minutes are greater than 0
                                                 if (finalTaskHours > 0 || finalTaskMinutes > 0) {
@@ -149,19 +144,45 @@ public class userTaskFragment extends Fragment {
                                     alertDialog.dismiss();
                                 });
                             });
-                        }
-                        else {
-                            userTaskEmpty.setVisibility(View.VISIBLE);
-                            taskNameTextView.setVisibility(View.GONE);
-                            taskPointsTextView.setVisibility(View.GONE);
-                            taskLocationTextView.setVisibility(View.GONE);
-                            taskTimeFrameTextView.setVisibility(View.GONE);
-                            taskDescriptionTextView.setVisibility(View.GONE);
-                            cancelButton.setVisibility(View.GONE);
-                            im4.setVisibility(View.GONE);
-                            imTime.setVisibility(View.GONE);
-                            imLoc.setVisibility(View.GONE);
-                            startTask.setVisibility(View.GONE);
+
+                            // Implement the startButton click listener here
+                            startButton.setOnClickListener(v -> {
+                                // Check if the task has been started
+                                boolean isStarted = document.getBoolean("isStarted");
+
+                                if (!isStarted) {
+                                    // Update the isStarted field in the user_acceptedTask document
+                                    document.getReference().update("isStarted", true)
+                                            .addOnSuccessListener(aVoid -> {
+                                                // Task start indicator updated successfully
+
+                                                // Calculate task duration in milliseconds
+                                                long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+
+                                                // Create an intent to start the timerTEST activity
+                                                Intent intent = new Intent(getContext(), timerTEST.class);
+
+                                                // Pass the necessary data to the timerTEST activity
+                                                intent.putExtra("taskName", taskName);
+                                                intent.putExtra("taskPoints", taskPoints);
+                                                intent.putExtra("taskDescription", taskDescription);
+                                                intent.putExtra("taskLocation", taskLocation);
+                                                intent.putExtra("taskDurationMillis", taskDurationMillis);
+                                                intent.putExtra("timeFrameHours", finalTaskHours);
+                                                intent.putExtra("timeFrameMinutes", finalTaskMinutes);
+
+                                                // Start the timerTEST activity
+                                                startActivity(intent);
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                // Failed to update the task start indicator
+                                                // Handle the error
+                                            });
+                                } else {
+                                    // Task has already been started
+                                    // Handle accordingly, show a message or indicator
+                                }
+                            });
                         }
                     }
                 });

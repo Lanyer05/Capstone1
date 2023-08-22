@@ -119,6 +119,8 @@ public class TaskDetails extends BaseActivity {
                         userTaskAccepted.put("location", tskLoc.getText().toString());
                         userTaskAccepted.put("points", tskPoint.getText().toString());
                         userTaskAccepted.put("isAccepted", true);
+                        userTaskAccepted.put("isStarted", false);
+                        userTaskAccepted.put("isCompleted", false);
                         userTaskAccepted.put("acceptedBy", uID);
                         userTaskAccepted.put("acceptedByEmail", userEmail);
 
@@ -147,6 +149,8 @@ public class TaskDetails extends BaseActivity {
                     Log.e(TAG, "Error getting tasks for update", e);
                 });
     }
+
+
 
     // Show the confirmation overlay for accepting a task
     private void showAcceptConfirmationOverlay() {
@@ -182,4 +186,5 @@ public class TaskDetails extends BaseActivity {
             }
         });
     }
+
 }
