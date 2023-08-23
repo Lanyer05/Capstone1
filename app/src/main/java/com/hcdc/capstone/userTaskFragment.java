@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,8 +26,10 @@ public class userTaskFragment extends Fragment {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView;
+    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView;
     private Button cancelButton, startButton;
+
+    private ImageView imgLoc, imgTime;
 
     public userTaskFragment() {
         // Required empty public constructor
@@ -45,8 +48,14 @@ public class userTaskFragment extends Fragment {
         taskLocationTextView = view.findViewById(R.id.taskLocation);
         taskTimeFrameTextView = view.findViewById(R.id.taskTimeFrame);
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
+
+        taskEmptyTextView = view.findViewById(R.id.taskEmptyuser);
+
         cancelButton = view.findViewById(R.id.button2);
         startButton = view.findViewById(R.id.button);
+
+        imgLoc = view.findViewById(R.id.loc);
+        imgTime = view.findViewById(R.id.ctTimer);
 
         String currentUserUID = auth.getCurrentUser().getUid();
 
@@ -179,6 +188,23 @@ public class userTaskFragment extends Fragment {
                                     alertDialog.dismiss();
                                 });
                             });
+                        }
+                        else{
+
+                            taskNameTextView.setVisibility(View.GONE);
+                            taskPointsTextView.setVisibility(View.GONE);
+                            taskLocationTextView.setVisibility(View.GONE);
+                            taskTimeFrameTextView.setVisibility(View.GONE);
+                            taskDescriptionTextView.setVisibility(View.GONE);
+
+                            taskEmptyTextView.setVisibility(View.VISIBLE);
+
+                            cancelButton.setVisibility(View.GONE);
+                            startButton.setVisibility(View.GONE);
+
+                            imgTime.setVisibility(View.GONE);
+                            imgLoc.setVisibility(View.GONE);
+
                         }
                     }
                 });

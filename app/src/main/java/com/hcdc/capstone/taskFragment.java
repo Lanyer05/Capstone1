@@ -94,13 +94,7 @@ public class taskFragment extends Fragment {
                                     tList.add(task);
                                 }
                             }
-                        }
 
-                        // Update the visibility of the emptyTextView based on data availability
-                        if (tList.isEmpty()) {
-                            emptyTaskView.setVisibility(View.VISIBLE);
-                        } else {
-                            emptyTaskView.setVisibility(View.GONE);
                         }
 
                         ta.notifyDataSetChanged();

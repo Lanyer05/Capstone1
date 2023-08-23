@@ -1,12 +1,18 @@
 package com.hcdc.capstone;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,8 +32,8 @@ public class timerTEST extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private Button startButton;
-    private Button doneButton;
+    private Button startButton, doneButton , submitButton;
+    private ImageButton cancelButton;
     private TextView timerTextView;
     private boolean timerRunning = false;
     private long startTime = 0L;
@@ -106,58 +112,27 @@ public class timerTEST extends AppCompatActivity {
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
-        startButton.setOnClickListener(new View.OnClickListener() {
+        //Task Submission Dialog Box
+        View tasksubmitCustomDialog = LayoutInflater.from(timerTEST.this).inflate(R.layout.tasksubmit_dialog,null);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(timerTEST.this);
+
+        alertDialog.setView(tasksubmitCustomDialog);
+        cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
+        submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
+
+        final AlertDialog dialog = alertDialog.create();
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!timerRunning) {
-                    timerRunning = true;
-                    startTime = System.currentTimeMillis();
-                    handler.postDelayed(timerRunnable, 0);
-
-                    // Update the isStarted field in the user_acceptedTask document
-                    db.collection("user_acceptedTask")
-                            .whereEqualTo("acceptedBy", currentUserUID)
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    if (!queryDocumentSnapshots.isEmpty()) {
-                                        // Assuming there's only one document per user
-                                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                                        String documentId = documentSnapshot.getId();
-
-                                        // Update the isStarted field
-                                        db.collection("user_acceptedTask")
-                                                .document(documentId)
-                                                .update("isStarted", true)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        // isStarted field updated successfully
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        // Handle failure
-                                                    }
-                                                });
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    // Handle failure
-                                }
-                            });
-                }
+                dialog.cancel();
             }
         });
 
-        doneButton.setOnClickListener(new View.OnClickListener() {
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 // Update isCompleted field to true in the user_acceptedTask table
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
@@ -207,6 +182,8 @@ public class timerTEST extends AppCompatActivity {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
                                                                                     // Document deleted, finish the activity
+                                                                                    Intent intent = new Intent(timerTEST.this,taskFragment.class);
+                                                                                    startActivity(intent);
                                                                                     finish();
                                                                                 }
                                                                             })
@@ -241,6 +218,67 @@ public class timerTEST extends AppCompatActivity {
                                 // Handle failure
                             }
                         });
+
+            }
+        });
+
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!timerRunning) {
+                    timerRunning = true;
+                    startTime = System.currentTimeMillis();
+                    handler.postDelayed(timerRunnable, 0);
+
+                    startButton.setVisibility(View.GONE);
+                    doneButton.setVisibility(View.VISIBLE);
+
+                    // Update the isStarted field in the user_acceptedTask document
+                    db.collection("user_acceptedTask")
+                            .whereEqualTo("acceptedBy", currentUserUID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if (!queryDocumentSnapshots.isEmpty()) {
+                                        // Assuming there's only one document per user
+                                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                        String documentId = documentSnapshot.getId();
+
+                                        // Update the isStarted field
+                                        db.collection("user_acceptedTask")
+                                                .document(documentId)
+                                                .update("isStarted", true)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // isStarted field updated successfully
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        // Handle failure
+                                                    }
+                                                });
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure
+                                }
+                            });
+                }
+            }
+        });
+
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
             }
         });
     }
