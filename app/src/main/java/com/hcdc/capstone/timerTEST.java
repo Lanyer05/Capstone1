@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -112,6 +113,44 @@ public class timerTEST extends AppCompatActivity {
                     timerRunning = true;
                     startTime = System.currentTimeMillis();
                     handler.postDelayed(timerRunnable, 0);
+
+                    // Update the isStarted field in the user_acceptedTask document
+                    db.collection("user_acceptedTask")
+                            .whereEqualTo("acceptedBy", currentUserUID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if (!queryDocumentSnapshots.isEmpty()) {
+                                        // Assuming there's only one document per user
+                                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                        String documentId = documentSnapshot.getId();
+
+                                        // Update the isStarted field
+                                        db.collection("user_acceptedTask")
+                                                .document(documentId)
+                                                .update("isStarted", true)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        // isStarted field updated successfully
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        // Handle failure
+                                                    }
+                                                });
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // Handle failure
+                                }
+                            });
                 }
             }
         });
@@ -119,9 +158,6 @@ public class timerTEST extends AppCompatActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Mark the task as done in the database or handle it as needed
-                // ...
-
                 // Update isCompleted field to true in the user_acceptedTask table
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
@@ -144,8 +180,20 @@ public class timerTEST extends AppCompatActivity {
                                                 public void onSuccess(Void aVoid) {
                                                     // Document updated to isCompleted=true
 
+                                                    // Calculate remaining time in "hh:mm:ss" format
+                                                    long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
+                                                    int remainingSeconds = (int) (remainingMillis / 1000);
+                                                    int remainingMinutes = remainingSeconds / 60;
+                                                    remainingSeconds = remainingSeconds % 60;
+                                                    int remainingHours = remainingMinutes / 60;
+                                                    remainingMinutes = remainingMinutes % 60;
+
+                                                    String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
+
                                                     // Add the data to completed_task collection with isCompleted set to true
                                                     acceptedTaskData.put("isCompleted", true);
+                                                    acceptedTaskData.put("remainingTime", remainingTime); // Store the remaining time
+
                                                     db.collection("completed_task")
                                                             .add(acceptedTaskData)
                                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -195,8 +243,21 @@ public class timerTEST extends AppCompatActivity {
                         });
             }
         });
-
     }
+
+    @Override
+    public void onBackPressed() {
+        if (timerRunning) {
+            // If the timer is running, show a message to the user that they can't go back
+            // or handle it in any way you prefer
+            Toast.makeText(this, " Task is in progress. Cannot go back. ", Toast.LENGTH_SHORT).show();
+        } else {
+            // If the timer is not running, allow the default back behavior
+            super.onBackPressed();
+        }
+    }
+
+
 
     @Override
     protected void onStop() {
