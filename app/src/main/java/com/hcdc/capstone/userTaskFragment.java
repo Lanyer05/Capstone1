@@ -102,7 +102,6 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog alertDialog = alertDialogBuilder.create();
                                 alertDialog.show();
 
-                                // Get references to the confirm and cancel buttons in the overlay
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
@@ -188,9 +187,7 @@ public class userTaskFragment extends Fragment {
                                     alertDialog.dismiss();
                                 });
                             });
-                        }
-                        else{
-
+                        } else {
                             taskNameTextView.setVisibility(View.GONE);
                             taskPointsTextView.setVisibility(View.GONE);
                             taskLocationTextView.setVisibility(View.GONE);
@@ -204,7 +201,6 @@ public class userTaskFragment extends Fragment {
 
                             imgTime.setVisibility(View.GONE);
                             imgLoc.setVisibility(View.GONE);
-
                         }
                     }
                 });

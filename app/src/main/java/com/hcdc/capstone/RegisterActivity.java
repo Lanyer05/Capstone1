@@ -13,12 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -94,21 +96,41 @@ public class RegisterActivity extends BaseActivity {
                             Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
                             userID = auth.getCurrentUser().getUid();
 
-                            // Code to add data to "registration_requests" collection
-                            Map<String, Object> registrationData = new HashMap<>();
-                            registrationData.put("name", Rname);
-                            registrationData.put("Barangay", Rbrgy);
-                            registrationData.put("email", Remail);
-                            registrationData.put("isApproved", false);
-                            registrationData.put("Uid", userID);// Newly registered users are not approved yet
+                            // Initialize a WriteBatch
+                            WriteBatch batch = fstore.batch();
 
+                            // Create a new user document
+                            DocumentReference userRef = fstore.collection("users").document(userID);
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("name", Rname);
+                            userData.put("Barangay", Rbrgy);
+                            userData.put("email", Remail);
+                            userData.put("isApproved", false);
+                            batch.set(userRef, userData);
+
+                            // Create a registration request document
                             DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
-                            registrationRequestRef.set(registrationData).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            Map<String, Object> registrationRequestData = new HashMap<>();
+                            registrationRequestData.put("name", Rname);
+                            registrationRequestData.put("Barangay", Rbrgy);
+                            registrationRequestData.put("email", Remail);
+                            registrationRequestData.put("isApproved", false);
+                            registrationRequestData.put("Uid", userID);
+                            batch.set(registrationRequestRef, registrationRequestData);
+
+                            // Commit the batch
+                            batch.commit().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
-                                    Log.d(TAG, "Success: user registration request saved for" + userID);
+                                    Log.d(TAG, "Batch write successful: user registration request saved for " + userID);
                                     // Show a message to the user that their registration is pending approval
-                                    Toast.makeText(RegisterActivity.this, "  Registration request sent for approval  ", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Registration request sent for approval", Toast.LENGTH_SHORT).show();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Batch write failed: " + e.getMessage());
+                                    // Handle batch write failure if needed
                                 }
                             });
 
@@ -133,3 +155,4 @@ public class RegisterActivity extends BaseActivity {
         approvalManager.startListeningForApprovals();
     }
 }
+

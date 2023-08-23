@@ -47,6 +47,7 @@ public class LoginActivity extends BaseActivity {
         loginBttn = findViewById(R.id.loginbtn);
 
         loginPassword.setTransformationMethod(new PasswordTransformationMethod());
+
         loginBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

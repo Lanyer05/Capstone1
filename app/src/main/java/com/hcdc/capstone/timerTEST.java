@@ -26,13 +26,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Map;
 
-public class timerTEST extends AppCompatActivity {
-
-
+public class timerTEST extends BaseActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private Button startButton, doneButton , submitButton;
+    private Button startButton, doneButton, submitButton;
     private ImageButton cancelButton;
     private TextView timerTextView;
     private boolean timerRunning = false;
@@ -46,7 +44,6 @@ public class timerTEST extends AppCompatActivity {
             long millis = System.currentTimeMillis() - startTime;
             long remainingMillis = taskDurationMillis - millis;
             if (remainingMillis <= 0) {
-                // Time's up, mark the task as done or handle it as needed
                 timerTextView.setText("Time's up!");
                 timerRunning = false;
                 doneButton.setVisibility(View.VISIBLE);
@@ -112,8 +109,8 @@ public class timerTEST extends AppCompatActivity {
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
-        //Task Submission Dialog Box
-        View tasksubmitCustomDialog = LayoutInflater.from(timerTEST.this).inflate(R.layout.tasksubmit_dialog,null);
+        // Task Submission Dialog Box
+        View tasksubmitCustomDialog = LayoutInflater.from(timerTEST.this).inflate(R.layout.tasksubmit_dialog, null);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(timerTEST.this);
 
         alertDialog.setView(tasksubmitCustomDialog);
@@ -132,8 +129,6 @@ public class timerTEST extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // Update isCompleted field to true in the user_acceptedTask table
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
                         .get()
@@ -141,21 +136,16 @@ public class timerTEST extends AppCompatActivity {
                             @Override
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 if (!queryDocumentSnapshots.isEmpty()) {
-                                    // Assuming there's only one document per user
                                     DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                     String documentId = documentSnapshot.getId();
                                     Map<String, Object> acceptedTaskData = documentSnapshot.getData();
 
-                                    // Update the isCompleted field
                                     db.collection("user_acceptedTask")
                                             .document(documentId)
                                             .update("isCompleted", true)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    // Document updated to isCompleted=true
-
-                                                    // Calculate remaining time in "hh:mm:ss" format
                                                     long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
                                                     int remainingSeconds = (int) (remainingMillis / 1000);
                                                     int remainingMinutes = remainingSeconds / 60;
@@ -165,24 +155,21 @@ public class timerTEST extends AppCompatActivity {
 
                                                     String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
 
-                                                    // Add the data to completed_task collection with isCompleted set to true
                                                     acceptedTaskData.put("isCompleted", true);
-                                                    acceptedTaskData.put("remainingTime", remainingTime); // Store the remaining time
+                                                    acceptedTaskData.put("remainingTime", remainingTime);
 
                                                     db.collection("completed_task")
                                                             .add(acceptedTaskData)
                                                             .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                 @Override
                                                                 public void onSuccess(DocumentReference documentReference) {
-                                                                    // Data added to completed_task, delete the document
                                                                     db.collection("user_acceptedTask")
                                                                             .document(documentId)
                                                                             .delete()
                                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                 @Override
                                                                                 public void onSuccess(Void aVoid) {
-                                                                                    // Document deleted, finish the activity
-                                                                                    Intent intent = new Intent(timerTEST.this,taskFragment.class);
+                                                                                    Intent intent = new Intent(timerTEST.this, taskFragment.class);
                                                                                     startActivity(intent);
                                                                                     finish();
                                                                                 }
@@ -218,7 +205,6 @@ public class timerTEST extends AppCompatActivity {
                                 // Handle failure
                             }
                         });
-
             }
         });
 
@@ -233,7 +219,6 @@ public class timerTEST extends AppCompatActivity {
                     startButton.setVisibility(View.GONE);
                     doneButton.setVisibility(View.VISIBLE);
 
-                    // Update the isStarted field in the user_acceptedTask document
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()
@@ -241,11 +226,9 @@ public class timerTEST extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                     if (!queryDocumentSnapshots.isEmpty()) {
-                                        // Assuming there's only one document per user
                                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                         String documentId = documentSnapshot.getId();
 
-                                        // Update the isStarted field
                                         db.collection("user_acceptedTask")
                                                 .document(documentId)
                                                 .update("isStarted", true)
@@ -286,16 +269,11 @@ public class timerTEST extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (timerRunning) {
-            // If the timer is running, show a message to the user that they can't go back
-            // or handle it in any way you prefer
-            Toast.makeText(this, " Task is in progress. Cannot go back. ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Task is in progress. Cannot go back.", Toast.LENGTH_SHORT).show();
         } else {
-            // If the timer is not running, allow the default back behavior
             super.onBackPressed();
         }
     }
-
-
 
     @Override
     protected void onStop() {
@@ -303,5 +281,4 @@ public class timerTEST extends AppCompatActivity {
         timerRunning = false;
         handler.removeCallbacks(timerRunnable);
     }
-
 }

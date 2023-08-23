@@ -62,6 +62,8 @@ public class Reward extends BaseActivity {
             }
         });
 
+
+
         recyclerView = findViewById(R.id.rewardslist);
         firestore = FirebaseFirestore.getInstance();
 

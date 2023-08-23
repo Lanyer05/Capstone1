@@ -69,6 +69,8 @@ public class Task extends BaseActivity {
         }
     }
 
+
+
     private class TabPagerAdapter extends FragmentStateAdapter {
 
         public TabPagerAdapter(Task activity) {

@@ -38,13 +38,13 @@
         android:id="@+id/timerTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
         android:text="00:00:00"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/doneButton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskDesc"
-        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
@@ -54,7 +54,7 @@
         android:layout_marginStart="140dp"
         android:layout_marginTop="15dp"
         android:text="(xx pts)"
-        android:textColor="@color/black"
+        android:textColor="#6A6A6A"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/textView2"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="420 hrs"
-            android:textColor="@color/black"
+            android:textColor="#6A6A6A"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -123,7 +123,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
-            android:textColor="@color/black"
+            android:textColor="#6A6A6A"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -147,8 +147,6 @@
         android:id="@+id/startButton"
         android:layout_width="239dp"
         android:layout_height="48dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="80dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/cirlce_solid_noborder1"
         android:text="Start Task"
@@ -161,8 +159,6 @@
         android:id="@+id/doneButton"
         android:layout_width="239dp"
         android:layout_height="48dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginEnd="80dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/cirlce_solid_noborder1"
         android:text="Done"
