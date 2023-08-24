@@ -1,20 +1,23 @@
 package com.hcdc.capstone;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +26,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class timerTEST extends BaseActivity {
@@ -32,7 +38,11 @@ public class timerTEST extends BaseActivity {
     private FirebaseAuth auth;
     private Button startButton, doneButton, submitButton;
     private ImageButton cancelButton;
+    private ImageView uploadButton;
     private TextView timerTextView;
+
+    private static final int IMAGE_PICK_REQUEST_CODE = 100;
+    private String currentUserUID;
     private boolean timerRunning = false;
     private long startTime = 0L;
     private long taskDurationMillis; // Task duration in milliseconds
@@ -83,7 +93,7 @@ public class timerTEST extends BaseActivity {
         String taskPoints = getIntent().getStringExtra("taskPoints");
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
-        String currentUserUID = auth.getCurrentUser().getUid();
+         currentUserUID = auth.getCurrentUser().getUid();
 
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
@@ -116,14 +126,17 @@ public class timerTEST extends BaseActivity {
         alertDialog.setView(tasksubmitCustomDialog);
         cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
+        uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
 
         final AlertDialog dialog = alertDialog.create();
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
+        cancelButton.setOnClickListener(v -> dialog.cancel());
+
+        uploadButton.setOnClickListener(v -> {
+            // Open an image picker to select an image
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
         });
 
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -266,6 +279,49 @@ public class timerTEST extends BaseActivity {
         });
     }
 
+    private void storeImageUrlInFirestore(String imageUrl) {
+        // Assuming you have a "images" collection in your Firestore database
+        db.collection("images")
+                .add(new HashMap<String, Object>() {{
+                    put("imageUrl", imageUrl);
+                }})
+                .addOnSuccessListener(documentReference -> {
+                    // Image URL stored successfully in Firestore
+                    // You can add any further logic here if needed
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                });
+    }
+
+    // Add this method for handling the result of the image picker
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Get the selected image URI
+            Uri imageUri = data.getData();
+
+            // Upload the image to Firebase Storage
+            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+            StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
+
+            imageRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // Image uploaded successfully, get the download URL
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String imageUrl = uri.toString();
+                            // Now you can store the imageUrl along with other data in Firestore
+                            // Call a method to store this imageUrl in your Firestore database
+                            storeImageUrlInFirestore(imageUrl);
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        // Handle image upload failure
+                    });
+        }
+    }
     @Override
     public void onBackPressed() {
         if (timerRunning) {
