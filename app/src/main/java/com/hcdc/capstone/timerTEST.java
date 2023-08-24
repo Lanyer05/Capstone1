@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -45,8 +44,9 @@ public class timerTEST extends BaseActivity {
     private String currentUserUID;
     private boolean timerRunning = false;
     private long startTime = 0L;
-    private long taskDurationMillis; // Task duration in milliseconds
+    private long taskDurationMillis;
     private Handler handler = new Handler();
+    private Uri selectedImageUri;
 
     private Runnable timerRunnable = new Runnable() {
         @Override
@@ -93,7 +93,7 @@ public class timerTEST extends BaseActivity {
         String taskPoints = getIntent().getStringExtra("taskPoints");
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
-         currentUserUID = auth.getCurrentUser().getUid();
+        currentUserUID = auth.getCurrentUser().getUid();
 
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
@@ -103,41 +103,41 @@ public class timerTEST extends BaseActivity {
         taskDescriptionTextView.setText(taskDescription);
         taskLocationTextView.setText(taskLocation);
 
-        // Convert time frame data into milliseconds
         long timeFrameMillis = (timeFrameHours * 60 + timeFrameMinutes) * 60 * 1000;
-
-        // Store the task duration in milliseconds
         taskDurationMillis = timeFrameMillis;
 
-        // Set the initial time on the timerTextView
         int initialHours = timeFrameHours;
         int initialMinutes = timeFrameMinutes;
         int initialSeconds = (int) ((timeFrameMillis % (60 * 1000)) / 1000);
         timerTextView.setText(String.format("%02d:%02d:%02d", initialHours, initialMinutes, initialSeconds));
 
-        // Set the task time frame
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
-        // Task Submission Dialog Box
         View tasksubmitCustomDialog = LayoutInflater.from(timerTEST.this).inflate(R.layout.tasksubmit_dialog, null);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(timerTEST.this);
-
         alertDialog.setView(tasksubmitCustomDialog);
         cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
         uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
-
         final AlertDialog dialog = alertDialog.create();
 
-        cancelButton.setOnClickListener(v -> dialog.cancel());
-
-        uploadButton.setOnClickListener(v -> {
-            // Open an image picker to select an image
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
         });
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+            }
+        });
+
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,36 +171,88 @@ public class timerTEST extends BaseActivity {
                                                     acceptedTaskData.put("isCompleted", true);
                                                     acceptedTaskData.put("remainingTime", remainingTime);
 
-                                                    db.collection("completed_task")
-                                                            .add(acceptedTaskData)
-                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                @Override
-                                                                public void onSuccess(DocumentReference documentReference) {
-                                                                    db.collection("user_acceptedTask")
-                                                                            .document(documentId)
-                                                                            .delete()
-                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                @Override
-                                                                                public void onSuccess(Void aVoid) {
-                                                                                    Intent intent = new Intent(timerTEST.this, taskFragment.class);
-                                                                                    startActivity(intent);
-                                                                                    finish();
-                                                                                }
-                                                                            })
-                                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                                @Override
-                                                                                public void onFailure(@NonNull Exception e) {
-                                                                                    // Handle failure
-                                                                                }
-                                                                            });
-                                                                }
-                                                            })
-                                                            .addOnFailureListener(new OnFailureListener() {
-                                                                @Override
-                                                                public void onFailure(@NonNull Exception e) {
-                                                                    // Handle failure
-                                                                }
-                                                            });
+                                                    if (selectedImageUri != null) {
+                                                        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                                                        StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
+
+                                                        imageRef.putFile(selectedImageUri)
+                                                                .addOnSuccessListener(taskSnapshot -> {
+                                                                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                                                        String imageUrl = uri.toString();
+                                                                        storeImageUrlInFirestore(imageUrl); // Store the URL in Firestore
+
+                                                                        // Update the acceptedTaskData with the image URL
+                                                                        acceptedTaskData.put("imageUrl", imageUrl);
+
+                                                                        // Update the Firestore document
+                                                                        db.collection("completed_task")
+                                                                                .add(acceptedTaskData)
+                                                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(DocumentReference documentReference) {
+                                                                                        db.collection("user_acceptedTask")
+                                                                                                .document(documentId)
+                                                                                                .delete()
+                                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                    @Override
+                                                                                                    public void onSuccess(Void aVoid) {
+                                                                                                        Intent intent = new Intent(timerTEST.this, taskFragment.class);
+                                                                                                        startActivity(intent);
+                                                                                                        finish();
+                                                                                                    }
+                                                                                                })
+                                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                                    @Override
+                                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                                        // Handle failure
+                                                                                                    }
+                                                                                                });
+                                                                                    }
+                                                                                })
+                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                    @Override
+                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                        // Handle failure
+                                                                                    }
+                                                                                });
+                                                                    });
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    // Handle image upload failure
+                                                                });
+                                                    } else {
+                                                        // No image selected
+                                                        db.collection("completed_task")
+                                                                .add(acceptedTaskData)
+                                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                    @Override
+                                                                    public void onSuccess(DocumentReference documentReference) {
+                                                                        db.collection("user_acceptedTask")
+                                                                                .document(documentId)
+                                                                                .delete()
+                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Void aVoid) {
+                                                                                        Intent intent = new Intent(timerTEST.this, taskFragment.class);
+                                                                                        startActivity(intent);
+                                                                                        finish();
+                                                                                    }
+                                                                                })
+                                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                                    @Override
+                                                                                    public void onFailure(@NonNull Exception e) {
+                                                                                        // Handle failure
+                                                                                    }
+                                                                                });
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        // Handle failure
+                                                                    }
+                                                                });
+                                                    }
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -220,6 +272,7 @@ public class timerTEST extends BaseActivity {
                         });
             }
         });
+
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -280,48 +333,27 @@ public class timerTEST extends BaseActivity {
     }
 
     private void storeImageUrlInFirestore(String imageUrl) {
-        // Assuming you have a "images" collection in your Firestore database
         db.collection("images")
                 .add(new HashMap<String, Object>() {{
                     put("imageUrl", imageUrl);
                 }})
                 .addOnSuccessListener(documentReference -> {
                     // Image URL stored successfully in Firestore
-                    // You can add any further logic here if needed
                 })
                 .addOnFailureListener(e -> {
                     // Handle failure
                 });
     }
 
-    // Add this method for handling the result of the image picker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // Get the selected image URI
-            Uri imageUri = data.getData();
-
-            // Upload the image to Firebase Storage
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
-
-            imageRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Image uploaded successfully, get the download URL
-                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            // Now you can store the imageUrl along with other data in Firestore
-                            // Call a method to store this imageUrl in your Firestore database
-                            storeImageUrlInFirestore(imageUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle image upload failure
-                    });
+            selectedImageUri = data.getData();
         }
     }
+
     @Override
     public void onBackPressed() {
         if (timerRunning) {
