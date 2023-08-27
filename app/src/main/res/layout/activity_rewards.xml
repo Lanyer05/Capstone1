@@ -62,7 +62,7 @@
             android:hint="0"
             android:paddingTop="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#000000"
+            android:textColor="#6A6A6A"
             android:textSize="34sp" />
     </FrameLayout>
 
@@ -81,7 +81,7 @@
         android:lineSpacingExtra="8sp"
         android:text="REWARDS"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#000000"
+        android:textColor="#FFFFFF"
         app:textAllCaps="false" />
 
     <ScrollView

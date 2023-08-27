@@ -112,6 +112,7 @@ public class TaskDetails extends BaseActivity {
                         userTaskAccepted.put("isAccepted", true);
                         userTaskAccepted.put("isStarted", false);
                         userTaskAccepted.put("isCompleted", false);
+                        userTaskAccepted.put("isConfirmed", false);
                         userTaskAccepted.put("acceptedBy", uID);
                         userTaskAccepted.put("acceptedByEmail", userEmail);
 
