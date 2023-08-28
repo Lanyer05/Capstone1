@@ -22,7 +22,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public TaskAdapter(Context context, ArrayList<Tasks> list) {
         this.context = context;
         this.list = list;
-    }
+        }
 
     @NonNull
     @Override
@@ -30,7 +30,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         View v = LayoutInflater.from(context).inflate(R.layout.tasklayout,parent,false);
         return new TaskViewHolder(v);
-    }
+        }
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
@@ -45,9 +45,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             String timeFrameText = "Time Frame: " + tasks.getHours() + " hours " + tasks.getMinutes() + " minutes";
             holder.taskTimer.setText(timeFrameText);
             holder.taskTimer.setVisibility(View.VISIBLE);
-        } else {
+            } else {
             holder.taskTimer.setVisibility(View.GONE);
-        }
+            }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +79,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         TextView tasktitle, taskdesc, taskpoint, taskloc, taskTimer;
         public TaskViewHolder(@NonNull View taskView)
-        {
+            {
             super(taskView);
 
             tasktitle = taskView.findViewById(R.id.taskTitle);
@@ -87,6 +87,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             taskpoint = taskView.findViewById(R.id.taskPoint);
             taskloc = taskView.findViewById(R.id.taskLocation);
             taskTimer = taskView.findViewById(R.id.taskTimeFrame);
-        }
+            }
     }
 }

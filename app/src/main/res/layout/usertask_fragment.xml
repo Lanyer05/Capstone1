@@ -50,9 +50,9 @@
         android:id="@+id/durationLayout"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="30dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -78,9 +78,9 @@
         android:id="@+id/locationLayout"
         android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginEnd="30dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -100,7 +100,7 @@
             android:layout_marginTop="4dp"
             android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
             android:textColor="@color/black"
-            android:textSize="12sp" />
+            android:textSize="13sp" />
     </LinearLayout>
 
     <TextView
@@ -112,8 +112,8 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-        android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="#6A6A6A"
+        android:textAlignment="viewStart"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
