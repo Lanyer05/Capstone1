@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -40,10 +41,9 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     @Override
     public void onBindViewHolder(@NonNull RewardAdapter.RewardViewHolder holder, int position) {
-
         Rewards rewards = Rlist.get(position);
         holder.rewardname.setText(rewards.getRewardName());
-        holder.rewardpoint.setText(rewards.getPoints()+" points");
+        holder.rewardpoint.setText(rewards.getPoints() + " points");
 
         Log.d("RewardAdapter", "Binding task: " + rewards.getRewardName());
         Log.d("RewardAdapter", "Binding task: " + rewards.getPoints());
@@ -51,38 +51,34 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               View rewardPopup = LayoutInflater.from(Rcontext).inflate(R.layout.reward_dialog,null);
-
                 AlertDialog.Builder rewardBuilder = new AlertDialog.Builder(Rcontext);
+                View rewardPopup = LayoutInflater.from(Rcontext).inflate(R.layout.reward_dialog, null);
 
                 TextView rwrd = rewardPopup.findViewById(R.id.userRemainingPoints);
                 TextView rwrdtitle = rewardPopup.findViewById(R.id.getRewardTitle);
                 TextView rwrdpoint = rewardPopup.findViewById(R.id.getRewardPoint);
 
-                @SuppressLint({"MissingInflatedId", "LocalSuppress"})
-                AppCompatButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
-                @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+                AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
                 AppCompatButton reqrwrd = rewardPopup.findViewById(R.id.requestReward);
 
-
                 rwrd.setText("Remaining Points: + userpointHere");
-                rwrdpoint.setText(rewards.getPoints());
-                rwrdtitle.setText(rewards.getRewardName());
+                rwrdtitle.setText(rewards.getPoints());
+                rwrdpoint.setText("Required points to claim: "+rewards.getRewardName()+"pts");
 
+                rewardBuilder.setView(rewardPopup);
                 AlertDialog alertDialog = rewardBuilder.create();
                 alertDialog.show();
 
                 closerwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        alertDialog.cancel();
+                        alertDialog.dismiss();
                     }
                 });
 
                 reqrwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         // Create a new reward request document in the "rewardrequest" collection
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                         db.collection("rewardrequest")
@@ -90,7 +86,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                 .addOnSuccessListener(documentReference -> {
                                     // Reward request added successfully
                                     Toast.makeText(Rcontext, "Reward requested!", Toast.LENGTH_SHORT).show();
-                                    alertDialog.cancel();
+                                    alertDialog.dismiss();
                                 })
                                 .addOnFailureListener(e -> {
                                     // Handle failure
@@ -98,11 +94,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                 });
                     }
                 });
-
             }
         });
-
-
     }
 
     @Override

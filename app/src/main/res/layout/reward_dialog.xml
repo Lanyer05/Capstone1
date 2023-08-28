@@ -3,14 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@android:color/transparent"
+    >
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="216dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/custom_dialog"
         android:orientation="vertical"
@@ -62,7 +65,7 @@
             tools:ignore="TextSizeCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:layout_width="250dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
@@ -79,10 +82,10 @@
         android:id="@+id/linearLayoutCompat2"
         android:layout_width="262dp"
         android:layout_height="51dp"
-        android:layout_marginTop="188dp"
+        android:layout_marginTop="33dp"
         android:background="@drawable/custom_dialog"
         app:layout_constraintEnd_toEndOf="@+id/linearLayoutCompat"
-        app:layout_constraintHorizontal_bias="0.155"
+        app:layout_constraintHorizontal_bias="0.146"
         app:layout_constraintStart_toStartOf="@+id/linearLayoutCompat"
         app:layout_constraintTop_toTopOf="parent">
 
