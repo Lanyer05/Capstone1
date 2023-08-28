@@ -2,6 +2,8 @@ package com.hcdc.capstone;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 
@@ -65,8 +69,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 rwrdtitle.setText(rewards.getPoints());
                 rwrdpoint.setText("Required points to claim: "+rewards.getRewardName()+"pts");
 
+
                 rewardBuilder.setView(rewardPopup);
                 AlertDialog alertDialog = rewardBuilder.create();
+                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 alertDialog.show();
 
                 closerwrd.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +84,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
                 reqrwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
+                    //to add if else for point modifiers lacks many shit
                     public void onClick(View v) {
                         // Create a new reward request document in the "rewardrequest" collection
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
