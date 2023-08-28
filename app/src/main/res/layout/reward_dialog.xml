@@ -25,7 +25,7 @@
             android:layout_gravity="right|top"
             android:layout_margin="10dp"
             android:id="@+id/rewardclose"
-            android:background="android:color/transparent"
+            android:background="@null"
             android:src="@drawable/closeimg"
             tools:ignore="SpeakableTextPresentCheck" />
 
