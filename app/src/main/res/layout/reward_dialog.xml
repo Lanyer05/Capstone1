@@ -13,7 +13,7 @@
         android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="45dp"
         android:background="@drawable/custom_dialog"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -29,7 +29,7 @@
             android:layout_width="150dp"
             android:layout_height="100dp"
             android:layout_gravity="center"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
             android:background="#344e41"
             android:src="@drawable/gift" />
