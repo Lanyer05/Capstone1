@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class Reward extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private TextView pointsSystemTextView; // Add this TextView
+    private TextView pointsSystemTextView;
 
     RecyclerView recyclerView;
     FirebaseFirestore firestore;

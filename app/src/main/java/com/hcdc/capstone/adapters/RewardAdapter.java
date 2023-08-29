@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.rewardprocess.RewardRequest;
 import com.hcdc.capstone.rewardprocess.Rewards;
@@ -22,6 +23,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardViewHolder>{
@@ -66,13 +68,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 rwrdtitle.setText(rewards.getRewardName());
                 rwrdpoint.setText("Required points to claim: " + rewards.getPoints() + " points");
 
-
                 rewardBuilder.setView(rewardPopup);
                 AlertDialog alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 alertDialog.show();
-
-
 
                 // Fetch user's points from Firestore
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -90,8 +89,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                     // Handle failure
                     Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
                 });
-
-
 
                 closerwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -113,7 +110,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                     Long userPointsLong = (Long) userData.get("userpoints");
                                     int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
 
-                                    // Convert rewards.getPoints() to integer
                                     int requiredPoints = Integer.parseInt(rewards.getPoints());
 
                                     if (userPoints >= requiredPoints) {
@@ -124,11 +120,17 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                                 .get()
                                                 .addOnSuccessListener(querySnapshot -> {
                                                     if (querySnapshot.isEmpty()) {
-                                                        // No pending requests, proceed with reward request
-                                                        db.collection("rewardrequest")
-                                                                .add(new RewardRequest(rewards.getRewardName(), currentUserId, true))
-                                                                .addOnSuccessListener(documentReference -> {
-                                                                    // Display a success dialog after the reward request is added successfully
+                                                        // Batch write: Add reward request and update user's points
+                                                        WriteBatch batch = db.batch();
+                                                        DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
+                                                        DocumentReference userPointsRef = db.collection("users").document(currentUserId);
+
+                                                        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true));
+                                                        batch.update(userPointsRef, "userpoints", userPoints - requiredPoints);
+
+                                                        batch.commit()
+                                                                .addOnSuccessListener(aVoid -> {
+                                                                    // Display a success dialog after the batch write
                                                                     AlertDialog.Builder successDialog = new AlertDialog.Builder(Rcontext);
                                                                     successDialog.setTitle("Reward Request Successful");
                                                                     successDialog.setMessage("Your reward request has been submitted. Please wait for it to be processed.");
@@ -175,10 +177,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                         });
                     }
                 });
-
-
-
-
             }
         });
     }
@@ -193,7 +191,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
         TextView rewardname, rewardpoint;
         public RewardViewHolder(@NonNull View rewardView) {
             super(rewardView);
-
             rewardname = rewardView.findViewById(R.id.rewardTitle);
             rewardpoint = rewardView.findViewById(R.id.rewardPoint);
         }

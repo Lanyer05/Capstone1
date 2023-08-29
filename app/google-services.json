@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "221741818484",
-    "project_id": "capstone-42e7f",
-    "storage_bucket": "capstone-42e7f.appspot.com"
+    "project_number": "238602413554",
+    "project_id": "ecotaskreward-f1a4f",
+    "storage_bucket": "ecotaskreward-f1a4f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221741818484:android:47d300446c7eef508b2721",
+        "mobilesdk_app_id": "1:238602413554:android:a4678fd3c69f03f009776b",
         "android_client_info": {
           "package_name": "com.hcdc.capstone"
         }
       },
       "oauth_client": [
         {
-          "client_id": "221741818484-53j3q5q1fnev6vmg3de37cg3pp1vm27p.apps.googleusercontent.com",
+          "client_id": "238602413554-g22552bipn2piva3e77ve1harshrh1m1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hcdc.capstone",
-            "certificate_hash": "3562b75ea5a1763c15b139979a3edb06432f61e9"
+            "certificate_hash": "0ac7b6502a40128cdec3a1a73f40b7e30ff9c551"
           }
         },
         {
-          "client_id": "221741818484-5shfcrqackf7vtc4kvotvu3us5ngd2jk.apps.googleusercontent.com",
+          "client_id": "238602413554-dn4lqv07158d5knit0aqgs185anvh0sa.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCDSDGlg9kpdPAi6yMJ_khrF_8DNymtAbk"
+          "current_key": "AIzaSyAgnhGxk5DhO7OIZsbstxsf2sHblJZ75_M"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "221741818484-5shfcrqackf7vtc4kvotvu3us5ngd2jk.apps.googleusercontent.com",
+              "client_id": "238602413554-dn4lqv07158d5knit0aqgs185anvh0sa.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

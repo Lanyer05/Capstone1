@@ -66,9 +66,16 @@ public class Homepage extends BaseActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Assuming you have a field named "userpoints" in the document
-                        long userPoints = documentSnapshot.getLong("userpoints");
-                        pointsSystemTextView.setText("" + userPoints);
+                        if (documentSnapshot.contains("userpoints")) {
+                            Long userPoints = documentSnapshot.getLong("userpoints");
+                            if (userPoints != null) {
+                                pointsSystemTextView.setText("" + userPoints);
+                            } else {
+                                // Handle the case when userpoints is null
+                            }
+                        } else {
+                            // Handle the case when userpoints field does not exist
+                        }
                     }
                 })
                 .addOnFailureListener(e -> {
