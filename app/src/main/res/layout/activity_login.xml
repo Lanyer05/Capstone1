@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#DAD7CD"
     android:clipToOutline="true"
-    tools:context=".LoginActivity">
+    tools:context=".accounthandling.LoginActivity">
 
     <ImageView
         android:id="@+id/rewardImage2"

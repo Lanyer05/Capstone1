@@ -20,19 +20,19 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".TaskDetails"
+            android:name=".taskprocess.TaskDetails"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".Task"
+            android:name=".taskprocess.Task"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".Reward"
+            android:name=".taskprocess.Reward"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name="com.hcdc.capstone.Rewards"
+            android:name="com.hcdc.capstone.taskprocess.Rewards"
             android:exported="false"
             tools:ignore="Instantiatable"
             android:theme="@style/AppTheme"/>
@@ -41,16 +41,16 @@
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".RegisterActivity"
+            android:name=".accounthandling.RegisterActivity"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".LoginActivity"
+            android:name=".accounthandling.LoginActivity"
             android:exported="false"
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".timerTEST"
+            android:name=".taskprocess.RequestReward"
             android:label="false"
             android:theme="@style/AppTheme"/>
 

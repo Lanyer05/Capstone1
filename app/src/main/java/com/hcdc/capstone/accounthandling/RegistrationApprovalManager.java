@@ -1,4 +1,4 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.accounthandling;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;

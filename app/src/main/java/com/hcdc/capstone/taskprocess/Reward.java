@@ -1,11 +1,10 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.taskprocess;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +18,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.Homepage;
+import com.hcdc.capstone.R;
+import com.hcdc.capstone.Transaction;
+import com.hcdc.capstone.adapters.RewardAdapter;
 
 import java.util.ArrayList;
 

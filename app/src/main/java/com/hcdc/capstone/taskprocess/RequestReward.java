@@ -1,4 +1,4 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.taskprocess;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,11 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.R;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class timerTEST extends BaseActivity {
+public class RequestReward extends BaseActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -114,8 +116,8 @@ public class timerTEST extends BaseActivity {
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
-        View tasksubmitCustomDialog = LayoutInflater.from(timerTEST.this).inflate(R.layout.tasksubmit_dialog, null);
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(timerTEST.this);
+        View tasksubmitCustomDialog = LayoutInflater.from(RequestReward.this).inflate(R.layout.tasksubmit_dialog, null);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(RequestReward.this);
         alertDialog.setView(tasksubmitCustomDialog);
         cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
@@ -196,7 +198,7 @@ public class timerTEST extends BaseActivity {
                                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(Void aVoid) {
-                                                                                                        Intent intent = new Intent(timerTEST.this, taskFragment.class);
+                                                                                                        Intent intent = new Intent(RequestReward.this, taskFragment.class);
                                                                                                         startActivity(intent);
                                                                                                         finish();
                                                                                                     }
@@ -233,7 +235,7 @@ public class timerTEST extends BaseActivity {
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
-                                                                                        Intent intent = new Intent(timerTEST.this, taskFragment.class);
+                                                                                        Intent intent = new Intent(RequestReward.this, taskFragment.class);
                                                                                         startActivity(intent);
                                                                                         finish();
                                                                                     }

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.hcdc.capstone.accounthandling.LoginActivity;
+
 public class BaseActivity extends AppCompatActivity {
 
     private boolean shouldRedirectToLogin = false;

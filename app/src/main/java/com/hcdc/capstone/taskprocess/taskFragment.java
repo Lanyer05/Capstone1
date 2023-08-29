@@ -1,4 +1,4 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.taskprocess;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hcdc.capstone.R;
+import com.hcdc.capstone.adapters.TaskAdapter;
 
 import java.util.ArrayList;
 import java.util.Map;

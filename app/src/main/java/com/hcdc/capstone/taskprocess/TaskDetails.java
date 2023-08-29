@@ -1,8 +1,6 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.taskprocess;
 
 import static android.content.ContentValues.TAG;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -17,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
+import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.R;
 
 import java.util.HashMap;
 import java.util.Map;

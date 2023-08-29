@@ -1,16 +1,18 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.hcdc.capstone.R;
+import com.hcdc.capstone.taskprocess.TaskDetails;
+import com.hcdc.capstone.taskprocess.Tasks;
 
 import java.util.ArrayList;
 

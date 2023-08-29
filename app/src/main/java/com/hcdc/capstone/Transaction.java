@@ -1,7 +1,5 @@
 package com.hcdc.capstone;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +10,9 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.hcdc.capstone.taskprocess.RequestReward;
+import com.hcdc.capstone.taskprocess.Reward;
+import com.hcdc.capstone.taskprocess.Task;
 
 public class Transaction extends BaseActivity {
 
@@ -26,10 +27,6 @@ public class Transaction extends BaseActivity {
         setContentView(R.layout.activity_transaction);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-
-        //BUtton
-        featureTest1 = findViewById(R.id.timertesting);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -56,7 +53,7 @@ public class Transaction extends BaseActivity {
         featureTest1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), timerTEST.class);
+                Intent i = new Intent(getApplicationContext(), RequestReward.class);
                 startActivity(i);
                 finish();
             }

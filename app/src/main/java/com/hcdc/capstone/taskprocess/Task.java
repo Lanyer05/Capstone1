@@ -1,11 +1,10 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.taskprocess;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -13,6 +12,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.R;
+import com.hcdc.capstone.Transaction;
 
 public class Task extends BaseActivity {
 

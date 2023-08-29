@@ -1,6 +1,5 @@
-package com.hcdc.capstone;
+package com.hcdc.capstone.accounthandling;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +21,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.WriteBatch;
+import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.Homepage;
+import com.hcdc.capstone.R;
 
 public class LoginActivity extends BaseActivity {
 
