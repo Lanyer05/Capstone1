@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.rewardprocess.RequestReward;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -168,7 +167,7 @@ public class userTaskFragment extends Fragment {
                                     // Calculate task duration in milliseconds
                                     long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
 
-                                    Intent intent = new Intent(getContext(), RequestReward.class);
+                                    Intent intent = new Intent(getContext(), TaskProgress.class);
 
                                     intent.putExtra("taskName", taskName);
                                     intent.putExtra("taskPoints", taskPoints);

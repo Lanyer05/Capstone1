@@ -1,4 +1,4 @@
-package com.hcdc.capstone.rewardprocess;
+package com.hcdc.capstone.taskprocess;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,12 +29,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.taskprocess.taskFragment;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestReward extends BaseActivity {
+public class TaskProgress extends BaseActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -117,8 +116,8 @@ public class RequestReward extends BaseActivity {
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
-        View tasksubmitCustomDialog = LayoutInflater.from(RequestReward.this).inflate(R.layout.tasksubmit_dialog, null);
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(RequestReward.this);
+        View tasksubmitCustomDialog = LayoutInflater.from(TaskProgress.this).inflate(R.layout.tasksubmit_dialog, null);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(TaskProgress.this);
         alertDialog.setView(tasksubmitCustomDialog);
         cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
@@ -199,7 +198,7 @@ public class RequestReward extends BaseActivity {
                                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                     @Override
                                                                                                     public void onSuccess(Void aVoid) {
-                                                                                                        Intent intent = new Intent(RequestReward.this, taskFragment.class);
+                                                                                                        Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                                         startActivity(intent);
                                                                                                         finish();
                                                                                                     }
@@ -236,7 +235,7 @@ public class RequestReward extends BaseActivity {
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
-                                                                                        Intent intent = new Intent(RequestReward.this, taskFragment.class);
+                                                                                        Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                         startActivity(intent);
                                                                                         finish();
                                                                                     }

@@ -10,7 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.hcdc.capstone.rewardprocess.RequestReward;
+import com.hcdc.capstone.taskprocess.TaskProgress;
 import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
 
@@ -53,7 +53,7 @@ public class Transaction extends BaseActivity {
         featureTest1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), RequestReward.class);
+                Intent i = new Intent(getApplicationContext(), TaskProgress.class);
                 startActivity(i);
                 finish();
             }
