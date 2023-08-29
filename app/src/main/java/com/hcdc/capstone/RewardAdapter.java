@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardViewHolder>{
 
@@ -49,9 +52,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
         holder.rewardname.setText(rewards.getRewardName());
         holder.rewardpoint.setText(rewards.getPoints() + " points");
 
-        Log.d("RewardAdapter", "Binding task: " + rewards.getRewardName());
-        Log.d("RewardAdapter", "Binding task: " + rewards.getPoints());
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,15 +65,35 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
                 AppCompatButton reqrwrd = rewardPopup.findViewById(R.id.requestReward);
 
-                rwrd.setText("Remaining Points: + userpointHere");
-                rwrdtitle.setText(rewards.getPoints());
-                rwrdpoint.setText("Required points to claim: "+rewards.getRewardName()+"pts");
+                rwrdtitle.setText(rewards.getRewardName());
+                rwrdpoint.setText("Required points to claim: " + rewards.getPoints() + " points");
 
 
                 rewardBuilder.setView(rewardPopup);
                 AlertDialog alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 alertDialog.show();
+
+
+
+                // Fetch user's points from Firestore
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                DocumentReference userRef = db.collection("users").document(currentUserId);
+                userRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Map<String, Object> userData = documentSnapshot.getData();
+                        if (userData != null && userData.containsKey("userpoints")) {
+                            Long userPointsLong = (Long) userData.get("userpoints");
+                            int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
+                            rwrd.setText("Points Available:  " + userPoints);
+                        }
+                    }
+                }).addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
+                });
+
+
 
                 closerwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
