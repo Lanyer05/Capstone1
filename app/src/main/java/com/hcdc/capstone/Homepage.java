@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView; // Import TextView
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -72,6 +74,7 @@ public class Homepage extends BaseActivity {
                 })
                 .addOnFailureListener(e -> {
                     // Handle error
+                    Toast.makeText(getApplicationContext(),"Error Occured !!!", Toast.LENGTH_LONG).show();
                 });
     }
 

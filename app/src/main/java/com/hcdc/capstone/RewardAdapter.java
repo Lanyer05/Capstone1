@@ -104,23 +104,83 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
                 reqrwrd.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    //to add if else for point modifiers lacks many shit
                     public void onClick(View v) {
-                        // Create a new reward request document in the "rewardrequest" collection
+                        // Fetch user's points from Firestore
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        db.collection("rewardrequest")
-                                .add(new RewardRequest(rewards.getRewardName(), currentUserId))
-                                .addOnSuccessListener(documentReference -> {
-                                    // Reward request added successfully
-                                    Toast.makeText(Rcontext, "Reward requested!", Toast.LENGTH_SHORT).show();
-                                    alertDialog.dismiss();
-                                })
-                                .addOnFailureListener(e -> {
-                                    // Handle failure
-                                    Toast.makeText(Rcontext, "Reward request failed.", Toast.LENGTH_SHORT).show();
-                                });
+                        DocumentReference userRef = db.collection("users").document(currentUserId);
+                        userRef.get().addOnSuccessListener(documentSnapshot -> {
+                            if (documentSnapshot.exists()) {
+                                Map<String, Object> userData = documentSnapshot.getData();
+                                if (userData != null && userData.containsKey("userpoints")) {
+                                    Long userPointsLong = (Long) userData.get("userpoints");
+                                    int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
+
+                                    // Convert rewards.getPoints() to integer
+                                    int requiredPoints = Integer.parseInt(rewards.getPoints());
+
+                                    if (userPoints >= requiredPoints) {
+                                        // Check for existing pending reward requests
+                                        db.collection("rewardrequest")
+                                                .whereEqualTo("userId", currentUserId)
+                                                .whereEqualTo("pendingStatus", true)
+                                                .get()
+                                                .addOnSuccessListener(querySnapshot -> {
+                                                    if (querySnapshot.isEmpty()) {
+                                                        // No pending requests, proceed with reward request
+                                                        db.collection("rewardrequest")
+                                                                .add(new RewardRequest(rewards.getRewardName(), currentUserId, true))
+                                                                .addOnSuccessListener(documentReference -> {
+                                                                    // Display a success dialog after the reward request is added successfully
+                                                                    AlertDialog.Builder successDialog = new AlertDialog.Builder(Rcontext);
+                                                                    successDialog.setTitle("Reward Request Successful");
+                                                                    successDialog.setMessage("Your reward request has been submitted. Please wait for it to be processed.");
+                                                                    successDialog.setPositiveButton("OK", (dialog, which) -> {
+                                                                        dialog.dismiss();
+                                                                        alertDialog.dismiss();  // Dismiss the original reward dialog
+                                                                    });
+                                                                    successDialog.create().show();
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                    // Handle failure
+                                                                    Toast.makeText(Rcontext, "Reward request failed.", Toast.LENGTH_SHORT).show();
+                                                                });
+                                                    } else {
+                                                        // User already has a pending request
+                                                        AlertDialog.Builder pendingRequestDialog = new AlertDialog.Builder(Rcontext);
+                                                        pendingRequestDialog.setTitle("Pending Request");
+                                                        pendingRequestDialog.setMessage("You already have a pending reward request. Please wait for it to be accepted.");
+                                                        pendingRequestDialog.setPositiveButton("OK", (dialog, which) -> {
+                                                            dialog.dismiss();
+                                                        });
+                                                        pendingRequestDialog.create().show();
+                                                    }
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    // Handle failure
+                                                    Toast.makeText(Rcontext, "Failed to check existing requests.", Toast.LENGTH_SHORT).show();
+                                                });
+                                    } else {
+                                        // User has insufficient points
+                                        AlertDialog.Builder insufficientPointsDialog = new AlertDialog.Builder(Rcontext);
+                                        insufficientPointsDialog.setTitle("Insufficient Points");
+                                        insufficientPointsDialog.setMessage("You do not have enough points to claim this reward.");
+                                        insufficientPointsDialog.setPositiveButton("OK", (dialog, which) -> {
+                                            dialog.dismiss();
+                                        });
+                                        insufficientPointsDialog.create().show();
+                                    }
+                                }
+                            }
+                        }).addOnFailureListener(e -> {
+                            // Handle failure
+                            Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 });
+
+
+
+
             }
         });
     }
