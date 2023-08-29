@@ -1,4 +1,4 @@
-package com.hcdc.capstone.taskprocess;
+package com.hcdc.capstone.rewardprocess;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -29,6 +29,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
+import com.hcdc.capstone.taskprocess.taskFragment;
 
 import java.util.HashMap;
 import java.util.Map;

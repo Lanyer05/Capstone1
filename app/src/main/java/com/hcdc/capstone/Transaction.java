@@ -10,8 +10,8 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.hcdc.capstone.taskprocess.RequestReward;
-import com.hcdc.capstone.taskprocess.Reward;
+import com.hcdc.capstone.rewardprocess.RequestReward;
+import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
 
 public class Transaction extends BaseActivity {

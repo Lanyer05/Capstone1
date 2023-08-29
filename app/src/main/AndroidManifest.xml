@@ -28,11 +28,11 @@
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".taskprocess.Reward"
+            android:name=".rewardprocess.Reward"
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name="com.hcdc.capstone.taskprocess.Rewards"
+            android:name="com.hcdc.capstone.rewardprocess.Rewards"
             android:exported="false"
             tools:ignore="Instantiatable"
             android:theme="@style/AppTheme"/>
@@ -50,7 +50,7 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name=".taskprocess.RequestReward"
+            android:name=".rewardprocess.RequestReward"
             android:label="false"
             android:theme="@style/AppTheme"/>
 

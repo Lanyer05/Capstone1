@@ -12,8 +12,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.taskprocess.RewardRequest;
-import com.hcdc.capstone.taskprocess.Rewards;
+import com.hcdc.capstone.rewardprocess.RewardRequest;
+import com.hcdc.capstone.rewardprocess.Rewards;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;

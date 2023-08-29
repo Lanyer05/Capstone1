@@ -1,4 +1,4 @@
-package com.hcdc.capstone.taskprocess;
+package com.hcdc.capstone.rewardprocess;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +23,7 @@ import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.Transaction;
 import com.hcdc.capstone.adapters.RewardAdapter;
+import com.hcdc.capstone.taskprocess.Task;
 
 import java.util.ArrayList;
 

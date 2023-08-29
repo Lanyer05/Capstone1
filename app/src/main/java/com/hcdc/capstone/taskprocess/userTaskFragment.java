@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
+import com.hcdc.capstone.rewardprocess.RequestReward;
 
 import java.util.HashMap;
 import java.util.Map;

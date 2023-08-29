@@ -1,4 +1,4 @@
-package com.hcdc.capstone.taskprocess;
+package com.hcdc.capstone.rewardprocess;
 
 public class RewardRequest {
     private String rewardName;
