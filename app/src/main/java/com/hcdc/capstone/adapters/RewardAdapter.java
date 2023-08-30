@@ -23,7 +23,6 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardViewHolder>{
@@ -33,8 +32,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public RewardAdapter (Context Rcontext, ArrayList<Rewards> Rlist)
-    {
+    public RewardAdapter(Context Rcontext, ArrayList<Rewards> Rlist) {
         this.Rcontext = Rcontext;
         this.Rlist = Rlist;
     }
@@ -42,7 +40,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
     @NonNull
     @Override
     public RewardAdapter.RewardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(Rcontext).inflate(R.layout.rewardslayout,parent,false);
+        View v = LayoutInflater.from(Rcontext).inflate(R.layout.rewardslayout, parent, false);
         return new RewardAdapter.RewardViewHolder(v);
     }
 
@@ -123,10 +121,9 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                                         // Batch write: Add reward request and update user's points
                                                         WriteBatch batch = db.batch();
                                                         DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
-                                                        DocumentReference userPointsRef = db.collection("users").document(currentUserId);
-
-                                                        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true));
-                                                        batch.update(userPointsRef, "userpoints", userPoints - requiredPoints);
+                                                        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                                        int rewardPoints = Integer.parseInt(rewards.getPoints()); // Get reward points
+                                                        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true, userEmail, rewardPoints));
 
                                                         batch.commit()
                                                                 .addOnSuccessListener(aVoid -> {
