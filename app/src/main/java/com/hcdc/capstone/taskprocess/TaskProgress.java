@@ -146,9 +146,10 @@ public class TaskProgress extends BaseActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create a batch write object
+                // Initialize a Firestore batch write
                 WriteBatch batch = db.batch();
 
+                // Read data from Firestore
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
                         .get()
@@ -160,16 +161,17 @@ public class TaskProgress extends BaseActivity {
                                     String documentId = documentSnapshot.getId();
                                     Map<String, Object> acceptedTaskData = documentSnapshot.getData();
 
-                                    // Update "isCompleted" field in batch
+                                    // Update "isCompleted" field
                                     batch.update(db.collection("user_acceptedTask").document(documentId), "isCompleted", true);
 
-                                    // Perform other batch operations (e.g., updates, deletes, etc.)
+                                    // Perform other batch operations (if needed)
 
                                     // Commit the batch
                                     batch.commit()
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    // Batch write successful, now proceed with other operations
                                                     long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
                                                     int remainingSeconds = (int) (remainingMillis / 1000);
                                                     int remainingMinutes = remainingSeconds / 60;
@@ -182,7 +184,9 @@ public class TaskProgress extends BaseActivity {
                                                     acceptedTaskData.put("isCompleted", true);
                                                     acceptedTaskData.put("remainingTime", remainingTime);
 
+                                                    // Check if an image is selected
                                                     if (selectedImageUri != null) {
+                                                        // Upload the image to Firebase Storage
                                                         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                                                         StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
 
@@ -194,23 +198,27 @@ public class TaskProgress extends BaseActivity {
                                                                             @Override
                                                                             public void onSuccess(Uri uri) {
                                                                                 String imageUrl = uri.toString();
-                                                                                storeImageUrlInFirestore(imageUrl); // Store the URL in Firestore
+
+                                                                                // Store the image URL in Firestore
+                                                                                storeImageUrlInFirestore(imageUrl);
 
                                                                                 // Update the acceptedTaskData with the image URL
                                                                                 acceptedTaskData.put("imageUrl", imageUrl);
 
-                                                                                // Update the Firestore document
+                                                                                // Add the accepted task to "completed_task" collection
                                                                                 db.collection("completed_task")
                                                                                         .add(acceptedTaskData)
                                                                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                             @Override
                                                                                             public void onSuccess(DocumentReference documentReference) {
+                                                                                                // Delete the document from "user_acceptedTask"
                                                                                                 db.collection("user_acceptedTask")
                                                                                                         .document(documentId)
                                                                                                         .delete()
                                                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void aVoid) {
+                                                                                                                // Document deleted successfully
                                                                                                                 Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                                                 startActivity(intent);
                                                                                                                 finish();
@@ -242,17 +250,20 @@ public class TaskProgress extends BaseActivity {
                                                                 });
                                                     } else {
                                                         // No image selected
+                                                        // Add the accepted task to "completed_task" collection
                                                         db.collection("completed_task")
                                                                 .add(acceptedTaskData)
                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentReference documentReference) {
+                                                                        // Delete the document from "user_acceptedTask"
                                                                         db.collection("user_acceptedTask")
                                                                                 .document(documentId)
                                                                                 .delete()
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
+                                                                                        // Document deleted successfully
                                                                                         Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                         startActivity(intent);
                                                                                         finish();

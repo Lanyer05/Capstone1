@@ -13,11 +13,13 @@ import android.widget.TextView; // Import TextView
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
@@ -108,21 +110,33 @@ public class Reward extends BaseActivity {
         // Get the current user's UID
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        // Fetch the current user's points from Firestore
-        firestore.collection("users")
-                .document(currentUserId)
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Assuming you have a field named "userpoints" in the document
-                        long userPoints = documentSnapshot.getLong("userpoints");
-                        pointsSystemTextView.setText("" + userPoints);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                });
+        // Create a batch to execute multiple Firestore operations
+        WriteBatch batch = firestore.batch();
+
+        // Create a reference to the user's document
+        DocumentReference userRef = firestore.collection("users").document(currentUserId);
+
+        // Get the user's points field and set it to the TextView
+        userRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                // Assuming you have a field named "userpoints" in the document
+                Long userPoints = documentSnapshot.getLong("userpoints");
+                if (userPoints != null) {
+                    pointsSystemTextView.setText(String.valueOf(userPoints));
+                }
+            }
+        }).addOnFailureListener(e -> {
+            // Handle error
+        });
+
+        // Commit the batch to execute all operations
+        batch.commit().addOnSuccessListener(aVoid -> {
+            // Batch operation successful
+        }).addOnFailureListener(e -> {
+            // Handle batch operation failure
+        });
     }
+
 
     private void navigateToActivity(Class<?> targetActivity) {
         Intent intent = new Intent(this, targetActivity);

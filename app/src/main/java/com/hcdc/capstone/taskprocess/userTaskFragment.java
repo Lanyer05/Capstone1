@@ -13,9 +13,11 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
 
 import java.util.HashMap;
@@ -93,6 +95,8 @@ public class userTaskFragment extends Fragment {
 
                             int finalTaskHours = taskHours;
                             int finalTaskMinutes = taskMinutes;
+
+                            // Handle cancel button click to delete the document
                             cancelButton.setOnClickListener(v -> {
                                 // Show the confirmation overlay
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
@@ -105,41 +109,41 @@ public class userTaskFragment extends Fragment {
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
                                 confirmButton.setOnClickListener(viewConfirm -> {
+                                    // Create a WriteBatch
+                                    WriteBatch batch = firestore.batch();
+
                                     // Delete the task from user_acceptedTask collection
-                                    document.getReference().delete()
+                                    batch.delete(document.getReference());
+
+                                    // Add the task back to the tasks collection
+                                    DocumentReference taskRef = firestore.collection("tasks").document();
+                                    Map<String, Object> taskData = new HashMap<>();
+                                    taskData.put("taskName", taskName);
+                                    taskData.put("description", taskDescription);
+                                    taskData.put("location", taskLocation);
+                                    taskData.put("points", taskPoints);
+                                    taskData.put("isAccepted", false);
+                                    taskData.put("isStarted", false);
+                                    taskData.put("isCompleted", false);
+
+                                    // Only add the timeFrame if hours or minutes are greater than 0
+                                    if (finalTaskHours > 0 || finalTaskMinutes > 0) {
+                                        Map<String, Object> timeFrameMapNew = new HashMap<>();
+                                        timeFrameMapNew.put("hours", finalTaskHours);
+                                        timeFrameMapNew.put("minutes", finalTaskMinutes);
+                                        taskData.put("timeFrame", timeFrameMapNew);
+                                    }
+
+                                    batch.set(taskRef, taskData);
+
+                                    // Commit the batch
+                                    batch.commit()
                                             .addOnSuccessListener(aVoid -> {
-                                                // Add the task back to the tasks collection
-                                                Map<String, Object> taskData = new HashMap<>();
-                                                taskData.put("taskName", taskName);
-                                                taskData.put("description", taskDescription);
-                                                taskData.put("location", taskLocation);
-                                                taskData.put("points", taskPoints);
-                                                taskData.put("isAccepted", false);
-                                                taskData.put("isStarted", false);
-                                                taskData.put("isCompleted", false); // Add the isStarted field
-
-                                                // Only add the timeFrame if hours or minutes are greater than 0
-                                                if (finalTaskHours > 0 || finalTaskMinutes > 0) {
-                                                    Map<String, Object> timeFrameMapNew = new HashMap<>();
-                                                    timeFrameMapNew.put("hours", finalTaskHours);
-                                                    timeFrameMapNew.put("minutes", finalTaskMinutes);
-                                                    taskData.put("timeFrame", timeFrameMapNew);
-                                                }
-
-                                                firestore.collection("tasks")
-                                                        .add(taskData)
-                                                        .addOnSuccessListener(documentReference -> {
-                                                            // Successfully added task back to tasks collection
-                                                            // Update UI or take further actions
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            // Failed to add task back to tasks collection
-                                                            // Handle the error
-                                                        });
+                                                // Batch write successful, handle success
+                                                // Update UI or take further actions
                                             })
                                             .addOnFailureListener(e -> {
-                                                // Failed to delete task from user_acceptedTask collection
-                                                // Handle the error
+                                                // Batch write failed, handle the error
                                             });
 
                                     // Dismiss the confirmation overlay
@@ -187,6 +191,7 @@ public class userTaskFragment extends Fragment {
                                 });
                             });
                         } else {
+                            // Handle the case when there are no accepted tasks
                             taskNameTextView.setVisibility(View.GONE);
                             taskPointsTextView.setVisibility(View.GONE);
                             taskLocationTextView.setVisibility(View.GONE);

@@ -11,12 +11,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
 
@@ -32,6 +34,8 @@ public class RegisterActivity extends BaseActivity {
     private TextView regRedirect;
     private String userID;
     private RegistrationApprovalManager approvalManager;
+    private WriteBatch writeBatch; // Added WriteBatch
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +49,11 @@ public class RegisterActivity extends BaseActivity {
         regConfirmpass = findViewById(R.id.confirmReg_password);
         regButton = findViewById(R.id.registerbtn);
         regRedirect = findViewById(R.id.registerRedirect);
-        regButton.setOnClickListener(new View.OnClickListener() {
 
+        // Initialize the WriteBatch
+        writeBatch = fstore.batch();
+
+        regButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String Rname = regName.getText().toString();
@@ -75,7 +82,7 @@ public class RegisterActivity extends BaseActivity {
                     return;
                 }
                 if(!Remail.contains("@gmail.com")){
-                    regEmail.setError("Only accepts with gmail only");
+                    regEmail.setError("Only accepts with Gmail addresses");
                     return;
                 }
 
@@ -83,7 +90,7 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Register Successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             userID = auth.getCurrentUser().getUid();
                             DocumentReference documentReference = fstore.collection("users").document(userID);
                             Map<String, Object> user = new HashMap<>();
@@ -108,7 +115,7 @@ public class RegisterActivity extends BaseActivity {
                             registrationData.put("Barangay", Rbrgy);
                             registrationData.put("email", Remail);
                             registrationData.put("isApproved", false);
-                            registrationData.put("Uid", userID);// Newly registered users are not approved yet
+                            registrationData.put("Uid", userID);
                             DocumentReference registrationRequestRef = fstore.collection("registration_requests").document(userID);
                             registrationRequestRef.set(registrationData).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -119,7 +126,24 @@ public class RegisterActivity extends BaseActivity {
                                 }
                             });
 
-                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            // Commit the batch to execute Firestore writes atomically
+                            writeBatch.commit()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            // Batch write successful
+                                            Log.d(TAG, "Batch write successful");
+                                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // Handle batch write failure
+                                            Log.e(TAG, "Error in batch write: " + e.getMessage());
+                                            Toast.makeText(RegisterActivity.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                         } else {
                             Toast.makeText(RegisterActivity.this, "Sign Up Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -127,12 +151,14 @@ public class RegisterActivity extends BaseActivity {
                 });
             }
         });
+
         regRedirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
             }
         });
+
         // Start listening for registration approvals
         approvalManager = new RegistrationApprovalManager();
         approvalManager.startListeningForApprovals();
