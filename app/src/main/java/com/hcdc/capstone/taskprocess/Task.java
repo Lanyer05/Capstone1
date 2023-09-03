@@ -70,9 +70,13 @@ public class Task extends BaseActivity {
         if (navigateToMyTasks) {
             viewPager.setCurrentItem(1); // Select the My Task tab
         }
+
     }
 
-
+    @Override
+    public void onBackPressed() {
+        // Do nothing (disable the back button)
+    }
 
     private class TabPagerAdapter extends FragmentStateAdapter {
 
