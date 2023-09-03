@@ -10,6 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".rewardprocess.Reward">
 
+
     <ImageView
         android:id="@+id/greenbar"
         android:layout_width="match_parent"
@@ -19,6 +20,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
+
+    <ImageView
+        android:id="@+id/couponBox"
+        android:layout_width="47dp"
+        android:layout_height="46dp"
+        android:background="@drawable/custom_dialog"
+        android:padding="8dp"
+        android:src="@drawable/gift_2"
+        android:layout_marginTop="9dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="16dp" />
 
     <FrameLayout
         android:id="@+id/container"

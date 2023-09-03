@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView; // Import TextView
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,6 +36,8 @@ public class Reward extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
     private TextView pointsSystemTextView;
 
+    private ImageView coupon;
+
     RecyclerView recyclerView;
     FirebaseFirestore firestore;
     RewardAdapter rewardAdapter;
@@ -46,6 +50,7 @@ public class Reward extends BaseActivity {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system1); // Initialize points_system1 TextView
+        coupon = findViewById(R.id.couponBox);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -68,6 +73,15 @@ public class Reward extends BaseActivity {
                         return true;
                 }
                 return false;
+            }
+        });
+
+        coupon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), userCoupons.class);
+                startActivity(i);
+                finish();
             }
         });
 
