@@ -22,6 +22,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     Context Rcontext;
     ArrayList<Rewards> Rlist;
+
+    AlertDialog alertDialog;
 
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -67,7 +70,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 rwrdpoint.setText("Required points to claim: " + rewards.getPoints() + " points");
 
                 rewardBuilder.setView(rewardPopup);
-                AlertDialog alertDialog = rewardBuilder.create();
+                alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 alertDialog.show();
 
@@ -118,29 +121,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                                 .get()
                                                 .addOnSuccessListener(querySnapshot -> {
                                                     if (querySnapshot.isEmpty()) {
-                                                        // Batch write: Add reward request and update user's points
-                                                        WriteBatch batch = db.batch();
-                                                        DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
-                                                        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                                                        int rewardPoints = Integer.parseInt(rewards.getPoints()); // Get reward points
-                                                        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true, userEmail, rewardPoints));
-
-                                                        batch.commit()
-                                                                .addOnSuccessListener(aVoid -> {
-                                                                    // Display a success dialog after the batch write
-                                                                    AlertDialog.Builder successDialog = new AlertDialog.Builder(Rcontext);
-                                                                    successDialog.setTitle("Reward Request Successful");
-                                                                    successDialog.setMessage("Your reward request has been submitted. Please wait for it to be processed.");
-                                                                    successDialog.setPositiveButton("OK", (dialog, which) -> {
-                                                                        dialog.dismiss();
-                                                                        alertDialog.dismiss();  // Dismiss the original reward dialog
-                                                                    });
-                                                                    successDialog.create().show();
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                    // Handle failure
-                                                                    Toast.makeText(Rcontext, "Reward request failed.", Toast.LENGTH_SHORT).show();
-                                                                });
+                                                        // Generate a unique coupon code
+                                                        generateUniqueCouponCode(db, rewards);
                                                     } else {
                                                         // User already has a pending request
                                                         AlertDialog.Builder pendingRequestDialog = new AlertDialog.Builder(Rcontext);
@@ -191,5 +173,69 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
             rewardname = rewardView.findViewById(R.id.rewardTitle);
             rewardpoint = rewardView.findViewById(R.id.rewardPoint);
         }
+    }
+
+    private String generateCouponCode(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder couponCode = new StringBuilder(length);
+        SecureRandom random = new SecureRandom();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            char randomChar = characters.charAt(randomIndex);
+            couponCode.append(randomChar);
+        }
+
+        return couponCode.toString();
+    }
+
+    // Method to generate a unique coupon code
+    private void generateUniqueCouponCode(FirebaseFirestore db, Rewards rewards) {
+        String couponCode = generateCouponCode(11);
+
+        // Check if the coupon code already exists in Firestore
+        db.collection("rewardrequest")
+                .whereEqualTo("couponCode", couponCode)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.isEmpty()) {
+                        // The coupon code is unique, proceed with adding the reward request
+                        addRewardRequestToFirestore(db, rewards, couponCode);
+                    } else {
+                        // The coupon code already exists, generate a new one
+                        generateUniqueCouponCode(db, rewards);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(Rcontext, "Failed to check coupon code uniqueness.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // Method to add reward request to Firestore
+    private void addRewardRequestToFirestore(FirebaseFirestore db, Rewards rewards, String couponCode) {
+        // Batch write: Add reward request and update user's points
+        WriteBatch batch = db.batch();
+        DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        int rewardPoints = Integer.parseInt(rewards.getPoints()); // Get reward points
+        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true, userEmail, rewardPoints, couponCode));
+
+        batch.commit()
+                .addOnSuccessListener(aVoid -> {
+                    // Display a success dialog after the batch write
+                    AlertDialog.Builder successDialog = new AlertDialog.Builder(Rcontext);
+                    successDialog.setTitle("Reward Request Successful");
+                    successDialog.setMessage("Your reward request has been submitted. Please wait for it to be processed.");
+                    successDialog.setPositiveButton("OK", (dialog, which) -> {
+                        dialog.dismiss();
+                        alertDialog.dismiss();  // Dismiss the original reward dialog
+                    });
+                    successDialog.create().show();
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Toast.makeText(Rcontext, "Reward request failed.", Toast.LENGTH_SHORT).show();
+                });
     }
 }

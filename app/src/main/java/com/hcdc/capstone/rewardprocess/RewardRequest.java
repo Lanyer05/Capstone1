@@ -7,16 +7,22 @@ public class RewardRequest {
     private String userEmail;
     private int rewardPoints;
 
+    private  String couponuserCode;
+
+
+
     public RewardRequest() {
         // Default constructor required for Firestore
     }
 
-    public RewardRequest(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints) {
+    public RewardRequest(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String couponuserCode) {
         this.rewardName = rewardName;
         this.userId = userId;
         this.pendingStatus = pendingStatus;
         this.userEmail = userEmail;
-        this.rewardPoints = rewardPoints; // Fix: Assign rewardPoints here
+        this.rewardPoints = rewardPoints;
+        this.couponuserCode = couponuserCode;
+
     }
 
     public String getRewardName() {
