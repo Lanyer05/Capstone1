@@ -1,5 +1,7 @@
 package com.hcdc.capstone.rewardprocess;
 
+import android.util.Log;
+
 public class RewardRequest {
     private String rewardName;
     private String userId;
@@ -7,7 +9,7 @@ public class RewardRequest {
     private String userEmail;
     private int rewardPoints;
 
-    private  String couponuserCode;
+    private  String usercouponCode;
 
 
 
@@ -15,16 +17,24 @@ public class RewardRequest {
         // Default constructor required for Firestore
     }
 
-    public RewardRequest(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String couponuserCode) {
+    public RewardRequest(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String usercouponCode) {
         this.rewardName = rewardName;
         this.userId = userId;
         this.pendingStatus = pendingStatus;
         this.userEmail = userEmail;
         this.rewardPoints = rewardPoints;
-        this.couponuserCode = couponuserCode;
+        this.usercouponCode = usercouponCode;
 
+        Log.d("CouponCode", "Coupon Code Received: " + usercouponCode);
     }
 
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public String getCouponuserCode() {
+        return usercouponCode;
+    }
     public String getRewardName() {
         return rewardName;
     }
