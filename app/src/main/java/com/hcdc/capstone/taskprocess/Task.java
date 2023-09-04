@@ -13,6 +13,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.Transaction;
 import com.hcdc.capstone.rewardprocess.Reward;
@@ -47,18 +48,18 @@ public class Task extends BaseActivity {
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.action_home) {
+                    navigateToActivity(Homepage.class);
                     return true;
 
                 } else if (itemId == R.id.action_task) {
-
                     navigateToActivity(Task.class);
                     return true;
-                } else if (itemId == R.id.action_reward) {
 
+                } else if (itemId == R.id.action_reward) {
                     navigateToActivity(Reward.class);
                     return true;
-                } else if (itemId == R.id.action_transaction) {
 
+                } else if (itemId == R.id.action_transaction) {
                     navigateToActivity(Transaction.class);
                     return true;
                 }
@@ -71,11 +72,6 @@ public class Task extends BaseActivity {
             viewPager.setCurrentItem(1); // Select the My Task tab
         }
 
-    }
-
-    @Override
-    public void onBackPressed() {
-        // Do nothing (disable the back button)
     }
 
     private class TabPagerAdapter extends FragmentStateAdapter {

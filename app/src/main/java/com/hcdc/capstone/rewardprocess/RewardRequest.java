@@ -8,7 +8,6 @@ public class RewardRequest {
     private boolean pendingStatus;
     private String userEmail;
     private int rewardPoints;
-
     private  String usercouponCode;
 
 
@@ -35,6 +34,7 @@ public class RewardRequest {
     public String getCouponuserCode() {
         return usercouponCode;
     }
+
     public String getRewardName() {
         return rewardName;
     }
@@ -45,10 +45,6 @@ public class RewardRequest {
 
     public boolean isPendingStatus() {
         return pendingStatus;
-    }
-
-    public String getEmail() {
-        return userEmail;
     }
 
     public int getRewardPoints() { // Fix: Method name should start with lowercase

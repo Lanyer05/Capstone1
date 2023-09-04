@@ -6,10 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.taskprocess.TaskDetails;
 import com.hcdc.capstone.taskprocess.Tasks;

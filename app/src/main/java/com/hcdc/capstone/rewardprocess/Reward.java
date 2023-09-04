@@ -35,9 +35,7 @@ public class Reward extends BaseActivity {
 
     private BottomNavigationView bottomNavigationView;
     private TextView pointsSystemTextView;
-
     private ImageView coupon;
-
     RecyclerView recyclerView;
     FirebaseFirestore firestore;
     RewardAdapter rewardAdapter;
@@ -47,7 +45,6 @@ public class Reward extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rewards);
-
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system1); // Initialize points_system1 TextView
         coupon = findViewById(R.id.couponBox);
@@ -65,7 +62,6 @@ public class Reward extends BaseActivity {
                         return true;
 
                     case R.id.action_reward:
-                        bottomNavigationView.setSelectedItemId(R.id.action_reward);
                         return true;
 
                     case R.id.action_transaction:
@@ -75,7 +71,6 @@ public class Reward extends BaseActivity {
                 return false;
             }
         });
-
         coupon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,17 +82,14 @@ public class Reward extends BaseActivity {
 
         recyclerView = findViewById(R.id.rewardslist);
         firestore = FirebaseFirestore.getInstance();
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         rewardList = new ArrayList<>();
         rewardAdapter = new RewardAdapter(this, rewardList);
         recyclerView.setAdapter(rewardAdapter);
 
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
-
         firestore.collection("rewards").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -105,16 +97,12 @@ public class Reward extends BaseActivity {
                     Log.e("FirestoreError", "Error fetching tasks: " + error.getMessage());
                     return;
                 }
-
                 rewardList.clear();
-
                 for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
                     Rewards rewards = documentSnapshot.toObject(Rewards.class);
                     rewardList.add(rewards);
                 }
-
                 rewardAdapter.notifyDataSetChanged();
-
                 Log.d("FirestoreSuccess", "Number of rewards fetched: " + rewardList.size());
             }
         });
@@ -140,9 +128,7 @@ public class Reward extends BaseActivity {
                 }
             }
         }).addOnFailureListener(e -> {
-            // Handle error
         });
-
         // Commit the batch to execute all operations
         batch.commit().addOnSuccessListener(aVoid -> {
             // Batch operation successful
