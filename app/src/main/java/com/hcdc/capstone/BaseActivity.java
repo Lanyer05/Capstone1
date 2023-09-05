@@ -34,7 +34,7 @@ public class BaseActivity extends AppCompatActivity {
         boolean isActivityInStack = false;
         Intent intent = new Intent(this, getClass());
 
-        isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE) != null;
+        isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
 
         if (isActivityInStack) {
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

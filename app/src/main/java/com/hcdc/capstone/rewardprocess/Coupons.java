@@ -1,37 +1,27 @@
 package com.hcdc.capstone.rewardprocess;
 
-import android.util.Log;
+public class Coupons {
 
-public class RewardRequest {
     private String rewardName;
     private String userId;
     private boolean pendingStatus;
     private String userEmail;
     private int rewardPoints;
-    private  String usercouponCode;
+    private  String couponuserCode;
 
-
-
-    public RewardRequest() {
-        // Default constructor required for Firestore
+    public Coupons()
+    {
+        //firebase shizz
     }
 
-    public RewardRequest(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String usercouponCode) {
+    public Coupons(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String couponuserCode)
+    {
         this.rewardName = rewardName;
         this.userId = userId;
         this.pendingStatus = pendingStatus;
         this.userEmail = userEmail;
         this.rewardPoints = rewardPoints;
-        this.usercouponCode = usercouponCode;
-
-    }
-
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    public String getCouponuserCode() {
-        return usercouponCode;
+        this.couponuserCode = couponuserCode;
     }
 
     public String getRewardName() {
@@ -46,7 +36,15 @@ public class RewardRequest {
         return pendingStatus;
     }
 
-    public int getRewardPoints() { // Fix: Method name should start with lowercase
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public int getRewardPoints() {
         return rewardPoints;
+    }
+
+    public String getUsercouponCode() {
+        return couponuserCode;
     }
 }

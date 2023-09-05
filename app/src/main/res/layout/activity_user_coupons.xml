@@ -11,9 +11,9 @@
         android:id="@+id/greenbar"
         android:layout_width="match_parent"
         android:layout_height="160dp"
-        android:layout_marginTop="-40dp"
+        android:layout_marginTop="-60dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
@@ -21,7 +21,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
         android:lineSpacingExtra="8sp"
@@ -29,6 +29,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:textAllCaps="false" />
@@ -40,12 +41,10 @@
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/custom_dialog"
         android:elevation="8dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/containerLayout1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,15 +61,15 @@
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="250dp"
-                android:layout_height="130dp"
+                android:layout_width="198dp"
+                android:layout_height="125dp"
                 android:layout_gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
+                app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@mipmap/ic_launcher" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -111,68 +110,59 @@
             android:textSize="16sp" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/containerLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/custom_dialog"
-        android:elevation="8dp"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/containerLayout">
-
-        <TextView
-            android:id="@+id/couponUserCodeTextView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="sans-serif-black"
-            android:text="COUPON CODE"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#777575"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/couponUserCodeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="6dp"
-            android:fontFamily="sans-serif-black"
-            android:hint="Coupon Code"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="#000000"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/cancelButton"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/cirlce_solid_noborder1"
         android:text="Cancel"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/containerLayout" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="My Rewards"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cancelButton" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/couponRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="16dp" />
+    </ScrollView>
 
     <TextView
         android:id="@+id/noRewardRequestsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No reward requests available."
+        android:text="No rewards available."
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#777575"
         android:textSize="16sp"
