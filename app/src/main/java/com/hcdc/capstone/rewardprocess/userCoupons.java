@@ -1,10 +1,14 @@
 package com.hcdc.capstone.rewardprocess;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,8 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
@@ -34,13 +40,18 @@ public class userCoupons extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView rewardNameTextView, rewardPointsTextView, userEmailTextView;
-    private Button cancelButton;
-
     private RecyclerView couponRecyclerView;
     private CouponAdapter couponAdapter;
     private ArrayList<Coupons> couponList;
 
+    private CardView coupProgress;
+    private TextView progCode, progRewardName;
+
+    private String currentUserUID;
+
+
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,73 +61,66 @@ public class userCoupons extends BaseActivity {
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
-        cancelButton = findViewById(R.id.cancelButton);
-        rewardNameTextView = findViewById(R.id.rewardNameTextView);
-        rewardPointsTextView = findViewById(R.id.rewardPointsTextView);
-        userEmailTextView = findViewById(R.id.userEmailTextView);
+
+        progCode = findViewById(R.id.coupCodeProgress);
+        progRewardName = findViewById(R.id.coupRewardNameProgress);
 
         //Coupon List
         couponRecyclerView = findViewById(R.id.couponRecyclerView);
         couponList = new ArrayList<>();
         couponAdapter = new CouponAdapter(this, couponList);
         fetchCoupons();
+        fetchprogressCoupons();
 
         couponRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         couponRecyclerView.setAdapter(couponAdapter);
 
-
-        //Get In Progress
-        String currentUserUID = auth.getCurrentUser().getUid();
-
-        firestore.collection("rewardrequest")
-                .whereEqualTo("userId", currentUserUID)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot documents = task.getResult();
-                        if (documents != null) {
-                            for (QueryDocumentSnapshot document : documents) {
-                                String rewardName = document.getString("rewardName");
-                                Long rewardPoints = document.getLong("rewardPoints"); // Retrieve as Long
-                                String userEmail = document.getString("userEmail");
-
-                                if (rewardPoints != null) {
-                                    String rewardPointsString = String.valueOf(rewardPoints);
-                                    rewardPointsTextView.setText("Reward Points: " + rewardPointsString);
-                                } else {
-                                    rewardPointsTextView.setText("Reward Points: N/A");
-                                }
-                                rewardNameTextView.setText("" + rewardName);
-
-                                userEmailTextView.setText("" + userEmail);
-                            }
-                        } else {
-                            rewardNameTextView.setVisibility(View.GONE);
-                            rewardPointsTextView.setVisibility(View.GONE);
-                            userEmailTextView.setVisibility(View.GONE);
-                            findViewById(R.id.cancelButton).setVisibility(View.GONE);
-
-                            TextView noRewardRequestsTextView = findViewById(R.id.noRewardRequestsTextView);
-                            noRewardRequestsTextView.setVisibility(View.VISIBLE);
-                            noRewardRequestsTextView.setText("No reward requests available.");
-                        }
-                    } else {
-                        Exception exception = task.getException();
-                        if (exception != null) {
-                        }
-                    }
-                });
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        coupProgress = findViewById(R.id.cardViewProgress);
+        coupProgress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelButton();
+                if(progCode.getText().toString().equals("No reward requested..."))
+                {
+                    Toast.makeText(getApplicationContext(),"Reward in progress is empty",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(userCoupons.this);
+                    builder.setTitle("Cancel Reward"); // Set the title of the dialog
+                    builder.setMessage("Do you want to cancel this reward?"); // Set the message
+
+                    // Add a "Yes" button
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle the "Yes" button click here
+                            // You can add your cancel reward logic here
+                            cancelButton();
+                            dialog.dismiss(); // Dismiss the dialog
+                        }
+                    });
+
+                    // Add a "No" button
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle the "No" button click here, if needed
+                            dialog.dismiss(); // Dismiss the dialog
+                        }
+                    });
+
+                    // Create and show the AlertDialog
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+
             }
         });
+
     }
 
     private void cancelButton() {
-        String currentUserUID = auth.getCurrentUser().getUid();
+        currentUserUID = auth.getCurrentUser().getUid();
         WriteBatch batch = firestore.batch();
         firestore.collection("rewardrequest")
                 .whereEqualTo("userId", currentUserUID)
@@ -132,9 +136,6 @@ public class userCoupons extends BaseActivity {
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            rewardNameTextView.setText("");
-                                            rewardPointsTextView.setText("");
-                                            userEmailTextView.setText("");
                                             Toast.makeText(userCoupons.this, " Reward request canceled successfully ", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(userCoupons.this, Reward.class);
                                             startActivity(intent);
@@ -154,6 +155,41 @@ public class userCoupons extends BaseActivity {
                     }
                 });
     }
+
+    private void fetchprogressCoupons() {
+        String currentUserUID = auth.getCurrentUser().getUid();
+        firestore.collection("rewardrequest")
+                .whereEqualTo("userId", currentUserUID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                            // Assuming you only expect one document, you can access the first one
+                            QueryDocumentSnapshot documentSnapshot = (QueryDocumentSnapshot) querySnapshot.getDocuments().get(0);
+                            String rewardName = documentSnapshot.getString("rewardName");
+                            String couponuserCode = documentSnapshot.getString("couponuserCode");
+
+                            // Add debug logs to check values
+                            Log.d("ProgressCouponName", "rewards fetched: " + rewardName);
+                            Log.d("ProgressCouponCode", "coupon fetched: " + couponuserCode);
+
+                            progCode.setText(couponuserCode);
+                            progRewardName.setText(rewardName);
+                        } else {
+                            progCode.setText("No reward requested...");
+                            progRewardName.setText("");
+                        }
+                    } else {
+                        Exception exception = task.getException();
+                        if (exception != null) {
+                            // Handle the error here
+                            Log.e("FirestoreError", "Error fetching reward request: " + exception.getMessage());
+                        }
+                    }
+                });
+    }
+
 
     private void fetchCoupons() {
         // Clear the existing list
@@ -176,7 +212,7 @@ public class userCoupons extends BaseActivity {
 
                                 // Check the type of rewardPoints and convert it to int
                                 Object rewardPointsObj = document.get("rewardPoints");
-                                int rewardPoints = 0; // Default value if not found or conversion fails
+                                int rewardPoints = 0; // Default value if not found or conversion failsw
                                 if (rewardPointsObj != null) {
                                     if (rewardPointsObj instanceof Long) {
                                         rewardPoints = ((Long) rewardPointsObj).intValue();
