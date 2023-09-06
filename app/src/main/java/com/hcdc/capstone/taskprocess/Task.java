@@ -15,7 +15,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.Transaction;
+import com.hcdc.capstone.transactionprocess.Transaction;
 import com.hcdc.capstone.rewardprocess.Reward;
 
 public class Task extends BaseActivity {

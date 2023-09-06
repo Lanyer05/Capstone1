@@ -9,6 +9,7 @@ public class Coupons {
     private int rewardPoints;
     private  String couponuserCode;
 
+
     public Coupons()
     {
         //firebase shizz

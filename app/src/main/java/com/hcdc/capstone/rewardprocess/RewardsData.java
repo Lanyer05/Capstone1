@@ -1,14 +1,14 @@
 package com.hcdc.capstone.rewardprocess;
 
-public class Rewards {
+public class RewardsData {
 
     String points, rewardName;
 
-    public Rewards() {
+    public RewardsData() {
         // Default constructor required by Firestore
     }
 
-    public Rewards(String points, String rewardName) {
+    public RewardsData(String points, String rewardName) {
         this.points = points;
         this.rewardName = rewardName;
     }

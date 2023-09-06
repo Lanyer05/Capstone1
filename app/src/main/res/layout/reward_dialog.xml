@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="rewards title"
+            android:text="rewardsData title"
             android:textSize="25dp"
             android:textStyle="bold" />
 

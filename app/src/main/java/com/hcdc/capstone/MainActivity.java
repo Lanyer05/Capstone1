@@ -16,14 +16,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Delay for 2 seconds (2000 milliseconds) and then start LoginActivity
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Start LoginActivity
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish(); // Close the current MainActivity, so the user cannot go back to it using the back button
-            }
+        new Handler().postDelayed(() -> {
+            // Start LoginActivity
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Close the current MainActivity, so the user cannot go back to it using the back button
         }, 2000);
     }
 }

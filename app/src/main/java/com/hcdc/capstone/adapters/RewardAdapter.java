@@ -15,7 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.rewardprocess.RewardRequest;
-import com.hcdc.capstone.rewardprocess.Rewards;
+import com.hcdc.capstone.rewardprocess.RewardsData;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -30,13 +30,13 @@ import java.util.Map;
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardViewHolder>{
 
     Context Rcontext;
-    ArrayList<Rewards> Rlist;
+    ArrayList<RewardsData> Rlist;
 
     AlertDialog alertDialog;
 
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public RewardAdapter(Context Rcontext, ArrayList<Rewards> Rlist) {
+    public RewardAdapter(Context Rcontext, ArrayList<RewardsData> Rlist) {
         this.Rcontext = Rcontext;
         this.Rlist = Rlist;
     }
@@ -50,9 +50,9 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     @Override
     public void onBindViewHolder(@NonNull RewardAdapter.RewardViewHolder holder, int position) {
-        Rewards rewards = Rlist.get(position);
-        holder.rewardname.setText(rewards.getRewardName());
-        holder.rewardpoint.setText(rewards.getPoints() + " points");
+        RewardsData rewardsData = Rlist.get(position);
+        holder.rewardname.setText(rewardsData.getRewardName());
+        holder.rewardpoint.setText(rewardsData.getPoints() + " points");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +67,8 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
                 AppCompatButton reqrwrd = rewardPopup.findViewById(R.id.requestReward);
 
-                rwrdtitle.setText(rewards.getRewardName());
-                rwrdpoint.setText("Required points to claim: " + rewards.getPoints() + " points");
+                rwrdtitle.setText(rewardsData.getRewardName());
+                rwrdpoint.setText("Required points to claim: " + rewardsData.getPoints() + " points");
 
                 rewardBuilder.setView(rewardPopup);
                 alertDialog = rewardBuilder.create();
@@ -113,7 +113,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                     Long userPointsLong = (Long) userData.get("userpoints");
                                     int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
 
-                                    int requiredPoints = Integer.parseInt(rewards.getPoints());
+                                    int requiredPoints = Integer.parseInt(rewardsData.getPoints());
 
                                     if (userPoints >= requiredPoints) {
                                         // Check for existing pending reward requests
@@ -139,7 +139,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                                                                 .addOnSuccessListener(completedReqSnapshot -> {
                                                                     if (completedReqSnapshot.size() < 3) {
                                                                         // User has fewer than 3 completed requests, generate a unique coupon code
-                                                                        generateUniqueCouponCode(db, rewards);
+                                                                        generateUniqueCouponCode(db, rewardsData);
                                                                     } else {
                                                                         // User has reached the limit of completed requests
                                                                         AlertDialog.Builder limitReachedDialog = new AlertDialog.Builder(Rcontext);
@@ -215,7 +215,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
     }
 
     // Method to generate a unique coupon code
-    private void generateUniqueCouponCode(FirebaseFirestore db, Rewards rewards) {
+    private void generateUniqueCouponCode(FirebaseFirestore db, RewardsData rewardsData) {
         String couponCode = generateCouponCode(11);
 
         // Check if the coupon code already exists in Firestore
@@ -225,10 +225,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         // The coupon code is unique, proceed with adding the reward request
-                        addRewardRequestToFirestore(db, rewards, couponCode);
+                        addRewardRequestToFirestore(db, rewardsData, couponCode);
                     } else {
                         // The coupon code already exists, generate a new one
-                        generateUniqueCouponCode(db, rewards);
+                        generateUniqueCouponCode(db, rewardsData);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -238,13 +238,13 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
     }
 
     // Method to add reward request to Firestore
-    private void addRewardRequestToFirestore(FirebaseFirestore db, Rewards rewards, String couponCode) {
+    private void addRewardRequestToFirestore(FirebaseFirestore db, RewardsData rewardsData, String couponCode) {
         // Batch write: Add reward request and update user's points
         WriteBatch batch = db.batch();
         DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        int rewardPoints = Integer.parseInt(rewards.getPoints()); // Get reward points
-        batch.set(rewardRequestRef, new RewardRequest(rewards.getRewardName(), currentUserId, true, userEmail, rewardPoints, couponCode));
+        int rewardPoints = Integer.parseInt(rewardsData.getPoints()); // Get reward points
+        batch.set(rewardRequestRef, new RewardRequest(rewardsData.getRewardName(), currentUserId, true, userEmail, rewardPoints, couponCode));
 
         batch.commit()
                 .addOnSuccessListener(aVoid -> {

@@ -1,7 +1,5 @@
 package com.hcdc.capstone.rewardprocess;
 
-import android.util.Log;
-
 public class RewardRequest {
     private String rewardName;
     private String userId;

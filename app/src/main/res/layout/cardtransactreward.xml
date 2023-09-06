@@ -7,13 +7,13 @@
     app:cardElevation="10dp"
     app:cardCornerRadius="15dp"
     android:layout_margin="16dp"
-    android:backgroundTint="#d3fac7"
+    android:backgroundTint="#fff0f3"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/couponbg"
+        android:layout_height="match_parent"
+        android:background="@drawable/designhighlevel"
         android:padding="10dp">
 
         <TextView
@@ -21,8 +21,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Claimable"
-            android:textColor="#4f772d"
+            android:text="Claimed"
+            android:textColor="#d62828"
+            android:shadowRadius="2"
+            android:shadowColor="@color/black"
+            android:shadowDx="1"
+            android:shadowDy="2"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.987"
@@ -31,15 +35,15 @@
 
         <TextView
             android:id="@+id/coupCode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_width="188dp"
+            android:layout_height="32dp"
+
             android:text="code5678901"
-            android:textFontWeight="400"
             android:textColor="#354f52"
-            android:textSize="40dp"
+            android:textFontWeight="400"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.212"
+            app:layout_constraintHorizontal_bias="0.083"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -47,13 +51,25 @@
             android:id="@+id/coupRewardName"
             android:layout_width="154dp"
             android:layout_height="25dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="4dp"
             android:text="reward name"
             android:textColor="#2f3e46"
-            android:textSize="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.888"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toStartOf="@+id/coupRewardDate"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/coupCode" />
+
+        <TextView
+            android:id="@+id/coupRewardDate"
+            android:layout_width="154dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="right"
+            android:text="10/10/1010"
+            android:textColor="#2f3e46"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/coupCode" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

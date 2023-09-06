@@ -20,7 +20,7 @@
             android:exported="false"
             android:theme="@style/AppTheme"/>
         <activity
-            android:name=".Transaction"
+            android:name=".transactionprocess.Transaction"
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
@@ -36,7 +36,7 @@
             android:exported="false"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".rewardprocess.Rewards"
+            android:name=".rewardprocess.RewardsData"
             android:exported="false"
             android:theme="@style/AppTheme"
             tools:ignore="Instantiatable" />

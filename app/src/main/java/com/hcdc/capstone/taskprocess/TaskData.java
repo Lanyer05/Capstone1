@@ -1,6 +1,6 @@
 package com.hcdc.capstone.taskprocess;
 
-public class Tasks {
+public class TaskData {
 
     String taskName, description, points, location;
     private boolean isAccepted;
@@ -8,11 +8,11 @@ public class Tasks {
     int hours, minutes;
 
     // Add public no-argument constructor
-    public Tasks() {
+    public TaskData() {
         // Default constructor required by Firestore
     }
 
-    public Tasks(String taskName, String description, String points, String location, boolean isAccepted, int hours, int minutes) {
+    public TaskData(String taskName, String description, String points, String location, boolean isAccepted, int hours, int minutes) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;

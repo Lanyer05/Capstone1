@@ -9,17 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.hcdc.capstone.R;
+import com.hcdc.capstone.taskprocess.TaskData;
 import com.hcdc.capstone.taskprocess.TaskDetails;
-import com.hcdc.capstone.taskprocess.Tasks;
 
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     Context context;
-    ArrayList<Tasks> list;
+    ArrayList<TaskData> list;
 
-    public TaskAdapter(Context context, ArrayList<Tasks> list) {
+    public TaskAdapter(Context context, ArrayList<TaskData> list) {
         this.context = context;
         this.list = list;
         }
@@ -34,15 +34,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
-        Tasks tasks = list.get(position);
-        holder.tasktitle.setText(tasks.getTaskName());
-        holder.taskpoint.setText(tasks.getPoints() + " points");
-        holder.taskloc.setText(tasks.getLocation());
-        holder.taskdesc.setText(tasks.getDescription());
+        TaskData taskData = list.get(position);
+        holder.tasktitle.setText(taskData.getTaskName());
+        holder.taskpoint.setText(taskData.getPoints() + " points");
+        holder.taskloc.setText(taskData.getLocation());
+        holder.taskdesc.setText(taskData.getDescription());
 
         // Check if the task has a timeFrame
-        if (tasks.getHours() > 0 || tasks.getMinutes() > 0) {
-            String timeFrameText = "Time Frame: " + tasks.getHours() + " hours " + tasks.getMinutes() + " minutes";
+        if (taskData.getHours() > 0 || taskData.getMinutes() > 0) {
+            String timeFrameText = "Time Frame: " + taskData.getHours() + " hours " + taskData.getMinutes() + " minutes";
             holder.taskTimer.setText(timeFrameText);
             holder.taskTimer.setVisibility(View.VISIBLE);
             } else {
@@ -54,7 +54,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             public void onClick(View v) {
                 int clickedPosition = holder.getAdapterPosition();
                 if (clickedPosition != RecyclerView.NO_POSITION) {
-                    Tasks selectedTask = list.get(clickedPosition);
+                    TaskData selectedTask = list.get(clickedPosition);
 
                     // Create an intent to open the TaskDetails activity
                     Intent intent = new Intent(context, TaskDetails.class);

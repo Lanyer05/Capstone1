@@ -1,16 +1,16 @@
 package com.hcdc.capstone.accounthandling;
 
-public class Users {
+public class UsersData {
 
     String Barangay, Uid, email, name;
     Boolean isApproved;
     int userpoints;
 
-    public Users(){
+    public UsersData(){
         //123123
     }
 
-    public Users(String barangay, String uid, String email, String name, Boolean isApproved, int userpoints) {
+    public UsersData(String barangay, String uid, String email, String name, Boolean isApproved, int userpoints) {
         Barangay = barangay;
         Uid = uid;
         this.email = email;

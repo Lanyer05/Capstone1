@@ -31,7 +31,7 @@ public class taskFragment extends Fragment {
     RecyclerView rv;
     FirebaseFirestore db;
     TaskAdapter ta;
-    ArrayList<Tasks> tList;
+    ArrayList<TaskData> tList;
 
     TextView emptyTaskView;
 
@@ -79,7 +79,7 @@ public class taskFragment extends Fragment {
                         tList.clear();
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             if (dc.getType() == DocumentChange.Type.ADDED) {
-                                Tasks task = dc.getDocument().toObject(Tasks.class);
+                                TaskData task = dc.getDocument().toObject(TaskData.class);
 
                                 // Check if the task is accepted before adding it to the list
                                 if (!task.isAccepted()) {

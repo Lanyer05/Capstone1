@@ -1,83 +1,71 @@
 package com.hcdc.capstone.rewardprocess;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView; // Import TextView
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.Transaction;
+import com.hcdc.capstone.transactionprocess.Transaction;
 import com.hcdc.capstone.adapters.RewardAdapter;
 import com.hcdc.capstone.taskprocess.Task;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Reward extends BaseActivity {
 
-    private BottomNavigationView bottomNavigationView;
     private TextView pointsSystemTextView;
-    private ImageView coupon;
     RecyclerView recyclerView;
     FirebaseFirestore firestore;
     RewardAdapter rewardAdapter;
-    ArrayList<Rewards> rewardList;
+    ArrayList<RewardsData> rewardList;
 
+    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rewards);
-        bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system1); // Initialize points_system1 TextView
-        coupon = findViewById(R.id.couponBox);
+        ImageView coupon = findViewById(R.id.couponBox);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        navigateToActivity(Homepage.class);
-                        return true;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    navigateToActivity(Homepage.class);
+                    return true;
 
-                    case R.id.action_task:
-                        navigateToActivity(Task.class);
-                        return true;
+                case R.id.action_task:
+                    navigateToActivity(Task.class);
+                    return true;
 
-                    case R.id.action_reward:
-                        return true;
+                case R.id.action_reward:
+                    return true;
 
-                    case R.id.action_transaction:
-                        navigateToActivity(Transaction.class);
-                        return true;
-                }
-                return false;
+                case R.id.action_transaction:
+                    navigateToActivity(Transaction.class);
+                    return true;
             }
+            return false;
         });
-        coupon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), userCoupons.class);
-                startActivity(i);
-                finish();
-            }
+        coupon.setOnClickListener(v -> {
+            Intent i = new Intent(getApplicationContext(), userCoupons.class);
+            startActivity(i);
+            finish();
         });
 
         recyclerView = findViewById(R.id.rewardslist);
@@ -90,27 +78,24 @@ public class Reward extends BaseActivity {
 
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
-        firestore.collection("rewards").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Log.e("FirestoreError", "Error fetching tasks: " + error.getMessage());
-                    return;
-                }
-                rewardList.clear();
-                for (DocumentSnapshot documentSnapshot : value.getDocuments()) {
-                    Rewards rewards = documentSnapshot.toObject(Rewards.class);
-                    rewardList.add(rewards);
-                }
-                rewardAdapter.notifyDataSetChanged();
-                Log.d("FirestoreSuccess", "Number of rewards fetched: " + rewardList.size());
+        firestore.collection("rewards").addSnapshotListener((value, error) -> {
+            if (error != null) {
+                Log.e("FirestoreError", "Error fetching tasks: " + error.getMessage());
+                return;
             }
+            rewardList.clear();
+            for (DocumentSnapshot documentSnapshot : Objects.requireNonNull(value).getDocuments()) {
+                RewardsData rewardsData = documentSnapshot.toObject(RewardsData.class);
+                rewardList.add(rewardsData);
+            }
+            rewardAdapter.notifyDataSetChanged();
+            Log.d("FirestoreSuccess", "Number of rewards fetched: " + rewardList.size());
         });
     }
 
     private void fetchAndDisplayCurrentUserPoints() {
         // Get the current user's UID
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         // Create a batch to execute multiple Firestore operations
         WriteBatch batch = firestore.batch();

@@ -6,13 +6,13 @@
     android:gravity="center">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tasklistsfragment"
+        android:id="@+id/completedtaskfragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
     <TextView
-        android:id="@+id/emptyTask"
+        android:id="@+id/emptyCompletedTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
