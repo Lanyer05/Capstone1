@@ -3,7 +3,6 @@ package com.hcdc.capstone.transactionprocess;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,22 +22,19 @@ import com.hcdc.capstone.taskprocess.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Transaction extends BaseActivity {
 
-    private BottomNavigationView bottomNavigationView;
-    private ViewPager2 viewPager;
-    private MyFragmentStateAdapter fragmentStateAdapter;
-
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "NonConstantResourceId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction);
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-        viewPager = findViewById(R.id.viewPager);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        ViewPager2 viewPager = findViewById(R.id.viewPager);
 
-        fragmentStateAdapter = new MyFragmentStateAdapter(this);
+        MyFragmentStateAdapter fragmentStateAdapter = new MyFragmentStateAdapter(this);
         viewPager.setAdapter(fragmentStateAdapter);
 
         TabLayout tabLayout = findViewById(R.id.tabLayout);
@@ -51,27 +47,24 @@ public class Transaction extends BaseActivity {
             // Set icons here if needed: tab.setIcon(R.drawable.ic_tab_icon);
         }).attach();
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        navigateToActivity(Homepage.class);
-                        return true;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    navigateToActivity(Homepage.class);
+                    return true;
 
-                    case R.id.action_task:
-                        navigateToActivity(Task.class);
-                        return true;
+                case R.id.action_task:
+                    navigateToActivity(Task.class);
+                    return true;
 
-                    case R.id.action_reward:
-                        navigateToActivity(Reward.class);
-                        return true;
+                case R.id.action_reward:
+                    navigateToActivity(Reward.class);
+                    return true;
 
-                    case R.id.action_transaction:
-                        return true;
-                }
-                return false;
+                case R.id.action_transaction:
+                    return true;
             }
+            return false;
         });
     }
 
@@ -89,8 +82,8 @@ public class Transaction extends BaseActivity {
             super(fragmentActivity);
 
             // Add your fragments to the list here
-            fragments.add(new TaskComplete());
-            fragments.add(new RewardComplete());
+            fragments.add(new TaskCompleteFragment());
+            fragments.add(new RewardCompleteFragment());
         }
 
         @NonNull
@@ -103,5 +96,6 @@ public class Transaction extends BaseActivity {
         public int getItemCount() {
             return fragments.size();
         }
+
     }
 }
