@@ -47,9 +47,7 @@ public class Coupons {
         return rewardPoints;
     }
 
-    public String getUsercouponCode() {
-        return couponuserCode;
-    }
+    public String getCouponuserCode() {return couponuserCode;}
 
     public Timestamp getClaimDate() { return claimDate;}
 }

@@ -36,7 +36,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
         Coupons coupons = coupList.get(position);
 
         holder.coupName.setText(coupons.getRewardName());
-        holder.coupCod.setText(coupons.getUsercouponCode());
+        holder.coupCod.setText(coupons.getCouponuserCode());
     }
 
     @Override

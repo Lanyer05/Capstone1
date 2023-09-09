@@ -36,7 +36,7 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
     @Override
     public void onBindViewHolder(@NonNull RewardViewHolder holder, int position) {
         Coupons coupons = finRewardList.get(position);
-        holder.finRewardCode.setText(coupons.getUsercouponCode());
+        holder.finRewardCode.setText(coupons.getCouponuserCode());
         holder.finRewardName.setText(coupons.getRewardName());
 
         // Format the Timestamp to "MM/DD/YYYY HH:MM" and set it to TextView
@@ -62,7 +62,7 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
             super(itemView);
             finRewardCode = itemView.findViewById(R.id.fincoupCode);
             finRewardName = itemView.findViewById(R.id.fincoupRewardName);
-            finClaimDate = itemView.findViewById(R.id.coupRewardDate); // Add TextView for claimDate
+            finClaimDate = itemView.findViewById(R.id.coupRewardDate);
         }
     }
 

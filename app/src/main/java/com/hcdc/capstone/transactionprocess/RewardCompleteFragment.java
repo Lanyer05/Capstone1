@@ -23,8 +23,8 @@ public class RewardCompleteFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private RewardCompleteAdapter adapter;
-
     private FirebaseAuth auth;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
