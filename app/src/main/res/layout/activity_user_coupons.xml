@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#fffae5"
         app:cardCornerRadius="15dp"
         app:cardElevation="10dp"
@@ -30,7 +30,7 @@
 
             <TextView
                 android:id="@+id/coupStatProgress"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:shadowColor="#344e41"
@@ -49,7 +49,7 @@
                 android:id="@+id/coupCodeProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
+                android:layout_marginTop="30dp"
                 android:text="code5678901"
                 android:textColor="#354f52"
                 android:textFontWeight="400"
@@ -64,7 +64,7 @@
                 android:id="@+id/coupRewardNameProgress"
                 android:layout_width="167dp"
                 android:layout_height="28dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="15dp"
                 android:text="reward name"
                 android:textColor="#2f3e46"
                 android:textSize="15sp"
@@ -112,7 +112,6 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -124,15 +123,14 @@
             android:id="@+id/couponRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:padding="16dp" />
+            android:clipToPadding="false" />
     </ScrollView>
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="30dp"
         android:text="Claimable Rewards"
         android:textSize="18sp"
         android:textStyle="bold"

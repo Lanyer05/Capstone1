@@ -1,5 +1,7 @@
 package com.hcdc.capstone.rewardprocess;
 
+import com.google.firebase.Timestamp;
+
 public class Coupons {
 
     private String rewardName;
@@ -8,7 +10,7 @@ public class Coupons {
     private String userEmail;
     private int rewardPoints;
     private  String couponuserCode;
-
+    private Timestamp claimDate;
 
     public Coupons()
     {
@@ -48,4 +50,6 @@ public class Coupons {
     public String getUsercouponCode() {
         return couponuserCode;
     }
+
+    public Timestamp getClaimDate() { return claimDate;}
 }

@@ -52,7 +52,7 @@ public class RewardCompleteFragment extends Fragment {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
         firestore.collection("complete_rewardreq") // Replace with your Firestore collection name for completed rewards
-                .whereEqualTo("isClaimable", false).whereEqualTo("userId", currentUserUID) // Fetch only claimed rewards
+                .whereEqualTo("isDoneClaimed", true).whereEqualTo("userId", currentUserUID) // Fetch only claimed rewards
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

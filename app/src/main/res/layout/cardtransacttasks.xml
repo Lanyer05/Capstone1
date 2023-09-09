@@ -21,35 +21,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Completed"
-            android:textColor="#d62828"
-            android:shadowRadius="2"
+            android:layout_marginEnd="15dp"
             android:shadowColor="@color/black"
             android:shadowDx="1"
             android:shadowDy="2"
+            android:shadowRadius="2"
+            android:text="Completed"
+            android:textColor="#d62828"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.987"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/transtaskName"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/transtaskName"
-            android:layout_width="271dp"
+            android:layout_width="0dp"
             android:layout_height="32dp"
+            android:layout_marginStart="15dp"
             android:text="code5678901"
             android:textColor="#354f52"
             android:textFontWeight="400"
             android:textSize="22sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.083"
+            app:layout_constraintEnd_toStartOf="@+id/transStatus"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/translocation"
-            android:layout_width="154dp"
+            android:layout_width="0dp"
             android:layout_height="25dp"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="2dp"
             android:text="reward name"
             android:textColor="#2f3e46"
@@ -61,15 +62,16 @@
 
         <TextView
             android:id="@+id/transpointsadded"
-            android:layout_width="154dp"
+            android:layout_width="80dp"
             android:layout_height="25dp"
             android:layout_marginTop="2dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="right"
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
             android:text="10/10/1010"
             android:textColor="#2f3e46"
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/translocation"
             app:layout_constraintTop_toBottomOf="@+id/transtaskName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

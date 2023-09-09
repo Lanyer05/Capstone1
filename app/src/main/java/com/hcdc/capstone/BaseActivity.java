@@ -31,11 +31,11 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        boolean isActivityInStack = false;
         Intent intent = new Intent(this, getClass());
-
-        isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
-
+        if (getClass() == Homepage.class) {
+            return;
+        }
+        boolean isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
         if (isActivityInStack) {
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
@@ -43,7 +43,6 @@ public class BaseActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
-
 
     private boolean isLoggedIn() {
         return true;
