@@ -13,6 +13,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
 import com.hcdc.capstone.transactionprocess.Transaction;
+import com.google.firebase.messaging.FirebaseMessaging;;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnFailureListener;
 
 public class Homepage extends BaseActivity {
 
@@ -54,6 +58,9 @@ public class Homepage extends BaseActivity {
 
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
+
+        // Retrieve and store the FCM device token
+        retrieveAndStoreFCMToken();
     }
 
     private void fetchAndDisplayCurrentUserPoints() {
@@ -82,6 +89,50 @@ public class Homepage extends BaseActivity {
                 .addOnFailureListener(e -> {
                     // Handle error
                     Toast.makeText(getApplicationContext(),"Error Occured !!!", Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void retrieveAndStoreFCMToken() {
+        // Retrieve the FCM device token
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String token) {
+                        // Store the FCM token in the user's document in Firestore
+                        updateFCMTokenInFirestore(token);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle error
+                        Toast.makeText(getApplicationContext(), "Error Occurred while retrieving FCM token", Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void updateFCMTokenInFirestore(String token) {
+        // Get the current user's ID
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Reference to the user's document in Firestore
+        DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(currentUserId);
+
+        // Update the FCM token in the user's document
+        userRef.update("fcmToken", token)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Successfully stored FCM token in the user's document
+                        // You can add further actions or handling here if needed
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle error
+                        Toast.makeText(getApplicationContext(), "Error Occurred while storing FCM token", Toast.LENGTH_LONG).show();
+                    }
                 });
     }
 
