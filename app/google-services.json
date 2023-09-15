@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "238602413554",
-    "project_id": "ecotaskreward-f1a4f",
-    "storage_bucket": "ecotaskreward-f1a4f.appspot.com"
+    "project_number": "680499772205",
+    "project_id": "ecotaskreward-bd9f8",
+    "storage_bucket": "ecotaskreward-bd9f8.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:238602413554:android:a4678fd3c69f03f009776b",
+        "mobilesdk_app_id": "1:680499772205:android:bbf7a13391849f863cb1a4",
         "android_client_info": {
           "package_name": "com.hcdc.capstone"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "238602413554-g22552bipn2piva3e77ve1harshrh1m1.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hcdc.capstone",
-            "certificate_hash": "0ac7b6502a40128cdec3a1a73f40b7e30ff9c551"
-          }
-        },
-        {
-          "client_id": "238602413554-dn4lqv07158d5knit0aqgs185anvh0sa.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAgnhGxk5DhO7OIZsbstxsf2sHblJZ75_M"
+          "current_key": "AIzaSyB6agMDWLrDtFVw2mN1hY-S06TsqCqTR6U"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "238602413554-dn4lqv07158d5knit0aqgs185anvh0sa.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

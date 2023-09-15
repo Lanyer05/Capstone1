@@ -30,7 +30,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.MyTaskCompletedHandler;
 import com.hcdc.capstone.R;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -284,6 +287,9 @@ public class TaskProgress extends BaseActivity {
                                                                     }
                                                                 });
                                                     }
+                                                    // Send an FCM notification
+                                                    MyTaskCompletedHandler taskHandler = new MyTaskCompletedHandler();
+                                                    taskHandler.notifyReactApp(documentId);
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
