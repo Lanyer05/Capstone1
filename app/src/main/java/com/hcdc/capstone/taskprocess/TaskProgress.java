@@ -1,11 +1,17 @@
 package com.hcdc.capstone.taskprocess;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -13,11 +19,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-
+import androidx.core.app.NotificationCompat;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,15 +35,41 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.hcdc.capstone.BaseActivity;
-import com.hcdc.capstone.MyTaskCompletedHandler;
 import com.hcdc.capstone.R;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
-
+import com.hcdc.capstone.network.ApiClient;
+import com.hcdc.capstone.network.ApiService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TaskProgress extends BaseActivity {
+
+    private static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
+    private static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
+    private static final String CHANNEL_ID = "TimerServiceChannel";
+    private static final int NOTIFICATION_ID = 1;
+
+    public static HashMap<String, String> remoteMsgHeaders = null;
+
+    public static HashMap<String, String> getRemoteMsgHeaders() {
+        if (remoteMsgHeaders == null) {
+            remoteMsgHeaders = new HashMap<>();
+            remoteMsgHeaders.put(REMOTE_MSG_AUTHORIZATION,
+                    "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5"
+            );
+            remoteMsgHeaders.put(
+                    REMOTE_MSG_CONTENT_TYPE,
+                    "application/json"
+            );
+        }
+
+        return remoteMsgHeaders;
+    }
 
     private FirebaseFirestore db;
     private FirebaseAuth auth;
@@ -79,6 +110,68 @@ public class TaskProgress extends BaseActivity {
             }
         }
     };
+
+    private void showToast(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    private void sendNotification(String taskName, String location) {
+        try {
+            JSONObject data = new JSONObject();
+            data.put("title", taskName);
+            data.put("body", location);
+
+            JSONObject payload = new JSONObject();
+            payload.put("to", "fPNQlFuyiS-IapSjNiDOqD:APA91bFDDSYUQs0wgsLosvKJLVbn_ankKDYRL1KO3qPgc4Cel5bbMrTpqzdKh9ca9d0cz1hkP10v-iBnrYs7Bh6Cv1roF_dz-NOR_OayYdwhxgwBu1InGZRTGNLpeFpRUm7N3Mn_tjpo");
+            payload.put("notification", data);
+
+            sendNotificationToFCM(payload.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendNotificationToFCM(String payload) {
+        String authorizationKey = "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5";
+        String contentType = "application/json";
+
+        ApiClient.getClient().create(ApiService.class).sendMessage(
+                createHeaders(authorizationKey, contentType),
+                payload
+        ).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        if (response.body() != null) {
+                            JSONObject responseJSON = new JSONObject(response.body());
+                            JSONArray results = responseJSON.getJSONArray("results");
+                            if (responseJSON.getInt("failure") == 1) {
+                                JSONObject error = (JSONObject) results.get(0);
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    showToast("ERROR: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                showToast(t.getMessage());
+            }
+        });
+    }
+
+    private HashMap<String, String> createHeaders(String authorization, String contentType) {
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put(REMOTE_MSG_AUTHORIZATION, authorization);
+        headers.put(REMOTE_MSG_CONTENT_TYPE, contentType);
+        return headers;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +237,6 @@ public class TaskProgress extends BaseActivity {
                 startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
             }
         });
-
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -288,8 +380,7 @@ public class TaskProgress extends BaseActivity {
                                                                 });
                                                     }
                                                     // Send an FCM notification
-                                                    MyTaskCompletedHandler taskHandler = new MyTaskCompletedHandler();
-                                                    taskHandler.notifyReactApp(documentId);
+                                                    sendNotification(taskName, taskLocation);
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
@@ -309,7 +400,6 @@ public class TaskProgress extends BaseActivity {
                         });
             }
         });
-
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -403,7 +493,97 @@ public class TaskProgress extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        timerRunning = false;
-        handler.removeCallbacks(timerRunnable);
+        if (timerRunning) {
+            startForegroundService(new Intent(this, TimerService.class));
+        }
+    }
+
+    public static class TimerService extends Service {
+
+        private Handler handler = new Handler();
+        private Runnable timerRunnable;
+        private long startTime;
+        private long taskDurationMillis;
+
+        @Override
+        public void onCreate() {
+            super.onCreate();
+            createNotificationChannel();
+        }
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            if (intent != null) {
+                taskDurationMillis = intent.getLongExtra("taskDurationMillis", 0);
+                startTime = intent.getLongExtra("startTime", 0);
+
+                timerRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        long millis = System.currentTimeMillis() - startTime;
+                        long remainingMillis = taskDurationMillis - millis;
+                        if (remainingMillis <= 0) {
+                            stopForeground(true);
+                            stopSelf();
+                        } else {
+                            int seconds = (int) (remainingMillis / 1000);
+                            int minutes = seconds / 60;
+                            seconds = seconds % 60;
+                            int hours = minutes / 60;
+                            minutes = minutes % 60;
+
+                            String remainingTime = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+
+                            updateNotification(remainingTime);
+
+                            handler.postDelayed(this, 1000);
+                        }
+                    }
+                };
+
+                handler.post(timerRunnable);
+            }
+
+            return START_NOT_STICKY;
+        }
+
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            handler.removeCallbacks(timerRunnable);
+        }
+
+        private void createNotificationChannel() {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel serviceChannel = new NotificationChannel(
+                        CHANNEL_ID,
+                        "Task Timer Service Channel",
+                        NotificationManager.IMPORTANCE_DEFAULT
+                );
+
+                NotificationManager manager = getSystemService(NotificationManager.class);
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+
+        private void updateNotification(String timerValue) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("Task Timer")
+                    .setContentText("Time Remaining: " + timerValue)
+                    .setSmallIcon(R.drawable.ic_timer);
+
+            Intent notificationIntent = new Intent(this, TaskProgress.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            builder.setContentIntent(pendingIntent);
+
+            Notification notification = builder.build();
+            startForeground(NOTIFICATION_ID, notification);
+        }
+
     }
 }
