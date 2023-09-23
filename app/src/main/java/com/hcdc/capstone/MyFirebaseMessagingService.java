@@ -6,6 +6,8 @@ import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -17,12 +19,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Handle the incoming notification here
-        String title = remoteMessage.getNotification().getTitle();
-        String message = remoteMessage.getNotification().getBody();
-
-        // Display the notification
-        sendNotification(title, message);
+        // Handle the incoming notification here, if needed
+        // You can add custom logic to process incoming messages
+        // For this code, we're only sending notifications, not processing incoming messages
+        //sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("title"));
+        Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("body"));
     }
 
     private void sendNotification(String title, String messageBody) {
