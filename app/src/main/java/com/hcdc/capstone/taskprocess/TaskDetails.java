@@ -74,7 +74,7 @@ public class TaskDetails extends BaseActivity {
                                 showAcceptConfirmationOverlay();
                             } else {
                                 Log.d(TAG, "User has already accepted a task.");
-                                Toast.makeText(TaskDetails.this, "You have already accepted a task. Please finish it before accepting a new task.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TaskDetails.this, " You have already accepted a task ", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .addOnFailureListener(e -> {

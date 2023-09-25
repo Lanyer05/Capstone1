@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:name=".MyApplication"
@@ -18,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
+
         <activity
             android:name=".rewardprocess.userCoupons"
             android:exported="false"
@@ -58,6 +60,7 @@
         <activity
             android:name=".taskprocess.TaskProgress"
             android:label="false"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
 
 
@@ -81,9 +84,10 @@
         </service>
 
         <service
-            android:name=".taskprocess.TimerService"
+            android:name=".taskprocess.TaskProgress$TimerService"
             android:enabled="true"
             android:exported="false" />
+
 
         <meta-data
             android:name="com.google.android.gms.version"
