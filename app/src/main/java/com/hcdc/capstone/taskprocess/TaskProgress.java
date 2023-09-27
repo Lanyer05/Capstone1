@@ -252,6 +252,7 @@ public class TaskProgress extends BaseActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopTimer();
                 WriteBatch batch = db.batch();
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
@@ -383,6 +384,7 @@ public class TaskProgress extends BaseActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopTimer();
                 if (!timerRunning) {
                     timerRunning = true;
                     startTime = System.currentTimeMillis();
@@ -430,6 +432,7 @@ public class TaskProgress extends BaseActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                stopTimer();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
             }
@@ -503,6 +506,7 @@ public class TaskProgress extends BaseActivity {
             long elapsedTime = currentTime - startTime;
             long remainingTime = taskDurationMillis - elapsedTime;
 
+            // Save the current timer state in shared preferences
             SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putLong(PREF_START_TIME, currentTime);
@@ -512,7 +516,6 @@ public class TaskProgress extends BaseActivity {
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -521,6 +524,7 @@ public class TaskProgress extends BaseActivity {
             startTime = sharedPreferences.getLong(PREF_START_TIME, 0);
             taskDurationMillis = sharedPreferences.getLong(PREF_REMAINING_TIME, 0);
             if (taskDurationMillis > 0) {
+                // Restart the timer when the app is relaunched
                 startTimer();
             }
         }
@@ -531,15 +535,13 @@ public class TaskProgress extends BaseActivity {
         if (!timerRunning) {
             timerRunning = true;
             startTime = System.currentTimeMillis();
-            handler.postDelayed(timerRunnable, 1000);
+            handler.postDelayed(timerRunnable, 0);
 
             startButton.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
 
         }
     }
-
-
 
     private boolean isMyServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -560,6 +562,13 @@ public class TaskProgress extends BaseActivity {
         }
     }
 
+    private void stopTimer() {
+        if (timerRunning) {
+            handler.removeCallbacks(timerRunnable);
+            timerRunning = false;
+        }
+    }
+
     public static class TimerService extends Service {
         private final Handler handler = new Handler();
         private Runnable timerRunnable;
@@ -574,7 +583,7 @@ public class TaskProgress extends BaseActivity {
 
         private final BroadcastReceiver stopServiceReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context context, Intent intent) {
+            public void onReceive(Context context, @NonNull Intent intent) {
                 if ("StopTimerService".equals(intent.getAction())) {
                     stopForeground(true);
                     stopSelf();
@@ -597,11 +606,11 @@ public class TaskProgress extends BaseActivity {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Task Timer Service Channel",
-                    NotificationManager.IMPORTANCE_HIGH);
+                    NotificationManager.IMPORTANCE_DEFAULT);
             NotificationChannel silentChannel = new NotificationChannel(
-            SILENT_CHANNEL_ID,
-            "Silent Timer Service Channel",
-            NotificationManager.IMPORTANCE_HIGH);
+                    SILENT_CHANNEL_ID,
+                    "Silent Timer Service Channel",
+                    NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
             manager.createNotificationChannel(silentChannel);
@@ -626,13 +635,11 @@ public class TaskProgress extends BaseActivity {
                             currentTimerValue = String.format("%02d:%02d:%02d", hours, minutes, seconds);
                             updateNotification(currentTimerValue);
                             handler.postDelayed(this, 1000);
-                        } else {
-                            // Stop the service when there's no remaining time
-                            stopSelf();
                         }
                     }
                 };
                 if (taskDurationMillis > 0) {
+                    // Create and start the foreground service notification
                     NotificationCompat.Builder builder = createNotification(currentTimerValue);
                     Notification notification = builder.build();
                     startForeground(NOTIFICATION_ID, notification);
@@ -667,7 +674,7 @@ public class TaskProgress extends BaseActivity {
         private NotificationCompat.Builder createNotification(String timerValue) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, SILENT_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_timer)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setOngoing(true);
             builder.setDefaults(0);
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
