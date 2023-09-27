@@ -23,8 +23,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // You can add custom logic to process incoming messages
         // For this code, we're only sending notifications, not processing incoming messages
         //sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
-        Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("title"));
-        Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("body"));
+        //Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("title"));
+        //Log.d("lanyer", "onMessageReceived: " + remoteMessage.getData().get("body"));
     }
 
     private void sendNotification(String title, String messageBody) {
