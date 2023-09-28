@@ -36,6 +36,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
@@ -45,8 +46,8 @@ public class LoginActivity extends BaseActivity {
         loginPassword = findViewById(R.id.login_password);
         signupRedirect = findViewById(R.id.singupRedirect);
         loginBttn = findViewById(R.id.loginbtn);
-
         loginPassword.setTransformationMethod(new PasswordTransformationMethod());
+
         loginBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
