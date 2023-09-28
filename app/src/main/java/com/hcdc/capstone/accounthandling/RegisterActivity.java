@@ -34,7 +34,7 @@ public class RegisterActivity extends BaseActivity {
     private TextView regRedirect;
     private String userID;
     private RegistrationApprovalManager approvalManager;
-    private WriteBatch writeBatch; // Added WriteBatch
+    private WriteBatch writeBatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

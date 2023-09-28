@@ -15,16 +15,14 @@ public class MyApplication extends Application {
         super.onCreate();
 
         // Create the notification channel when the app starts
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Task Timer Service Channel",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Task Timer Service Channel",
+                NotificationManager.IMPORTANCE_HIGH
+        );
 
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        manager.createNotificationChannel(channel);
     }
 }
 
