@@ -9,7 +9,7 @@ import com.google.firebase.firestore.WriteBatch;
 
 public class RegistrationApprovalManager {
 
-    private FirebaseFirestore firestore;
+    private final FirebaseFirestore firestore;
 
     public RegistrationApprovalManager() {
         firestore = FirebaseFirestore.getInstance();

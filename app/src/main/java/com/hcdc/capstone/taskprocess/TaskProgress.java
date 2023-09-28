@@ -82,21 +82,6 @@ public class TaskProgress extends BaseActivity {
     private Uri selectedImageUri;
     public static HashMap<String, String> remoteMsgHeaders = null;
 
-
-    public static HashMap<String, String> getRemoteMsgHeaders() {
-        if (remoteMsgHeaders == null) {
-            remoteMsgHeaders = new HashMap<>();
-            remoteMsgHeaders.put(REMOTE_MSG_AUTHORIZATION,
-                    "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5"
-            );
-            remoteMsgHeaders.put(
-                    REMOTE_MSG_CONTENT_TYPE,
-                    "application/json"
-            );
-        }
-        return remoteMsgHeaders;
-    }
-
     private final Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -123,6 +108,20 @@ public class TaskProgress extends BaseActivity {
     };
     private void showToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public static HashMap<String, String> getRemoteMsgHeaders() {
+        if (remoteMsgHeaders == null) {
+            remoteMsgHeaders = new HashMap<>();
+            remoteMsgHeaders.put(REMOTE_MSG_AUTHORIZATION,
+                    "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5"
+            );
+            remoteMsgHeaders.put(
+                    REMOTE_MSG_CONTENT_TYPE,
+                    "application/json"
+            );
+        }
+        return remoteMsgHeaders;
     }
 
     private void sendNotification(String taskName, String location) {
@@ -207,7 +206,6 @@ public class TaskProgress extends BaseActivity {
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
         currentUserUID = auth.getCurrentUser().getUid();
-
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
 
@@ -215,13 +213,10 @@ public class TaskProgress extends BaseActivity {
         taskPointsTextView.setText(taskPoints);
         taskDescriptionTextView.setText(taskDescription);
         taskLocationTextView.setText(taskLocation);
-
         long timeFrameMillis = (timeFrameHours * 60L + timeFrameMinutes) * 60 * 1000;
         taskDurationMillis = timeFrameMillis;
-
         int initialSeconds = (int) ((timeFrameMillis % (60 * 1000)) / 1000);
         timerTextView.setText(String.format("%02d:%02d:%02d", timeFrameHours, timeFrameMinutes, initialSeconds));
-
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
@@ -232,22 +227,6 @@ public class TaskProgress extends BaseActivity {
         Button submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
         uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
         final AlertDialog dialog = alertDialog.create();
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
-            }
-        });
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +254,6 @@ public class TaskProgress extends BaseActivity {
                                                     remainingSeconds = remainingSeconds % 60;
                                                     int remainingHours = remainingMinutes / 60;
                                                     remainingMinutes = remainingMinutes % 60;
-
                                                     String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
 
                                                     acceptedTaskData.put("isCompleted", true);
@@ -392,7 +370,6 @@ public class TaskProgress extends BaseActivity {
                     startTimer();
                     startButton.setVisibility(View.GONE);
                     doneButton.setVisibility(View.VISIBLE);
-
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()
@@ -402,7 +379,6 @@ public class TaskProgress extends BaseActivity {
                                     if (!queryDocumentSnapshots.isEmpty()) {
                                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                         String documentId = documentSnapshot.getId();
-
                                         db.collection("user_acceptedTask")
                                                 .document(documentId)
                                                 .update("isStarted", true)
@@ -437,8 +413,45 @@ public class TaskProgress extends BaseActivity {
                 dialog.show();
             }
         });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+            }
+        });
     }
 
+    private void storeImageUrlInFirestore(String imageUrl) {
+        db.collection("images")
+                .add(new HashMap<String, Object>() {{
+                    put("imageUrl", imageUrl);
+                }})
+                .addOnSuccessListener(documentReference -> {
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                selectedImageUri = data.getData();
+                uploadButton.setImageResource(R.drawable.ic_check);
+            }
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -452,35 +465,11 @@ public class TaskProgress extends BaseActivity {
         super.onRestoreInstanceState(savedInstanceState);
         startTime = timerViewModel.getStartTime();
         timerRunning = timerViewModel.isTimerRunning();
-
         if (timerRunning) {
             handler.post(timerRunnable);
             startButton.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (data != null) {
-                selectedImageUri = data.getData();
-                uploadButton.setImageResource(R.drawable.ic_check);
-            }
-        }
-    }
-
-    private void storeImageUrlInFirestore(String imageUrl) {
-        db.collection("images")
-                .add(new HashMap<String, Object>() {{
-                    put("imageUrl", imageUrl);
-                }})
-                .addOnSuccessListener(documentReference -> {
-                })
-                .addOnFailureListener(e -> {
-                });
     }
 
     @Override
@@ -501,7 +490,6 @@ public class TaskProgress extends BaseActivity {
             serviceIntent.putExtra("taskDurationMillis", taskDurationMillis);
             serviceIntent.putExtra("startTime", startTime);
             startForegroundService(serviceIntent);
-
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - startTime;
             long remainingTime = taskDurationMillis - elapsedTime;
@@ -524,22 +512,8 @@ public class TaskProgress extends BaseActivity {
             startTime = sharedPreferences.getLong(PREF_START_TIME, 0);
             taskDurationMillis = sharedPreferences.getLong(PREF_REMAINING_TIME, 0);
             if (taskDurationMillis > 0) {
-                // Restart the timer when the app is relaunched
                 startTimer();
             }
-        }
-    }
-
-
-    private void startTimer() {
-        if (!timerRunning) {
-            timerRunning = true;
-            startTime = System.currentTimeMillis();
-            handler.postDelayed(timerRunnable, 0);
-
-            startButton.setVisibility(View.GONE);
-            doneButton.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -559,6 +533,17 @@ public class TaskProgress extends BaseActivity {
         if (isMyServiceRunning()) {
             Intent broadcastIntent = new Intent("StopTimerService");
             sendBroadcast(broadcastIntent);
+        }
+    }
+
+    private void startTimer() {
+        if (!timerRunning) {
+            timerRunning = true;
+            startTime = System.currentTimeMillis();
+            handler.postDelayed(timerRunnable, 0);
+            startButton.setVisibility(View.GONE);
+            doneButton.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -639,7 +624,6 @@ public class TaskProgress extends BaseActivity {
                     }
                 };
                 if (taskDurationMillis > 0) {
-                    // Create and start the foreground service notification
                     NotificationCompat.Builder builder = createNotification(currentTimerValue);
                     Notification notification = builder.build();
                     startForeground(NOTIFICATION_ID, notification);

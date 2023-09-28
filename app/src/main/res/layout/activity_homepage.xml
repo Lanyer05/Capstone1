@@ -18,15 +18,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
 
-
     <ImageView
         android:id="@+id/rewardImage3"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="30dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginEnd="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,17 +68,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="27dp"
             android:elevation="100dp"
             android:fontFamily="sans-serif-black"
             android:hint="0"
-            android:paddingTop="10dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="#6A6A6A"
             android:textSize="34sp" />
 
     </FrameLayout>
-
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
