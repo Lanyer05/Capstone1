@@ -7,11 +7,13 @@ import com.hcdc.capstone.network.ApiClient;
 import com.hcdc.capstone.network.ApiService;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -81,11 +83,11 @@ public class TaskProgress extends BaseActivity {
     private FirebaseFirestore db;
     private Button startButton;
     private Button doneButton;
-    private ImageView uploadButton;
     private TextView timerTextView;
-    private static final int IMAGE_PICK_REQUEST_CODE = 100;
 
     private static final int CAMERA_CAPTURE_REQUEST_CODE = 200;
+
+    private ProgressDialog progressDialog;
     private String currentUserUID;
     private boolean timerRunning = false;
     private long startTime = 0L;
@@ -110,6 +112,7 @@ public class TaskProgress extends BaseActivity {
     }
 
     private final Runnable timerRunnable = new Runnable() {
+        @SuppressLint({"SetTextI18n", "DefaultLocale"})
         @Override
         public void run() {
             if (timerRunning) {
@@ -204,6 +207,10 @@ public class TaskProgress extends BaseActivity {
         timerViewModel = new ViewModelProvider((ViewModelStoreOwner) this).get(TimerViewModel.class);
         boolean doneButtonNotClicked = !timerViewModel.isDoneButtonClicked();
 
+        progressDialog = new ProgressDialog(TaskProgress.this);
+        progressDialog.setMessage("Uploading...");
+        progressDialog.setCancelable(false);
+
         startButton = findViewById(R.id.startButton);
         doneButton = findViewById(R.id.doneButton);
         timerTextView = findViewById(R.id.timerTextView);
@@ -243,7 +250,7 @@ public class TaskProgress extends BaseActivity {
         alertDialog.setView(tasksubmitCustomDialog);
         ImageButton cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         Button submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
-        uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
+        ImageView uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
         final AlertDialog dialog = alertDialog.create();
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -268,6 +275,7 @@ public class TaskProgress extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // Initialize a Firestore batch write
+                progressDialog.show();
                 WriteBatch batch = db.batch();
 
                 // Read data from Firestore
@@ -315,6 +323,7 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                        progressDialog.dismiss();
                                                                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                                             @Override
                                                                             public void onSuccess(Uri uri) {
@@ -366,6 +375,7 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                     @Override
                                                                     public void onFailure(@NonNull Exception e) {
+                                                                        progressDialog.dismiss();
                                                                         // Handle image upload failure
                                                                     }
                                                                 });
