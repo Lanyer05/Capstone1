@@ -6,21 +6,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.hcdc.capstone.accounthandling.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Delay for 2 seconds (2000 milliseconds) and then start LoginActivity
+        mAuth = FirebaseAuth.getInstance();
         new Handler().postDelayed(() -> {
-            // Start LoginActivity
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // Close the current MainActivity, so the user cannot go back to it using the back button
+            checkUserAuthenticationStatus();
         }, 2000);
+    }
+
+    private void checkUserAuthenticationStatus() {
+        if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(MainActivity.this, Homepage.class));
+        } else {
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
+        finish();
     }
 }
