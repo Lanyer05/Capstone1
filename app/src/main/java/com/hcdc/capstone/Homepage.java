@@ -1,38 +1,55 @@
 package com.hcdc.capstone;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.TextView; // Import TextView
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
+import com.hcdc.capstone.taskprocess.TaskProgress;
 import com.hcdc.capstone.transactionprocess.Transaction;
-import com.google.firebase.messaging.FirebaseMessaging;;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 
+import java.util.Map;
+
 public class Homepage extends BaseActivity {
 
+    private static final String TIMER_PREFS = "TimerPrefs";
+    private static final String PREF_TIMER_RUNNING = "timerRunning";
+
     private BottomNavigationView bottomNavigationView;
-    private TextView pointsSystemTextView; // Add this TextView
+    private TextView pointsSystemTextView;
+    private ImageView profileImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
 
+        // Check if the timer is running
+        boolean isTimerRunning = checkTimerRunning();
+
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-        pointsSystemTextView = findViewById(R.id.points_system); // Initialize points_system TextView
+        pointsSystemTextView = findViewById(R.id.points_system);
+        profileImageView = findViewById(R.id.profile);
 
         bottomNavigationView.setSelectedItemId(R.id.action_home);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -56,81 +73,142 @@ public class Homepage extends BaseActivity {
             }
         });
 
-        // Fetch and display the current user's points
-        fetchAndDisplayCurrentUserPoints();
+        profileImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigateToActivity(Profile_Activity.class);
+            }
+        });
 
-        // Retrieve and store the FCM device token
+        if (isTimerRunning) {
+            // If the timer is running, navigate to TaskProgress
+            navigateToTaskProgress();
+        } else {
+            // If the timer is not running, fetch user points and display them
+            fetchAndDisplayCurrentUserPoints();
+        }
+
         retrieveAndStoreFCMToken();
     }
 
-    private void fetchAndDisplayCurrentUserPoints() {
-        // Get the current user's ID
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    private boolean checkTimerRunning() {
+        SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(PREF_TIMER_RUNNING, false);
+    }
 
-        // Fetch the current user's points from Firestore
-        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        firestore.collection("users")
-                .document(currentUserId)
+    private void navigateToTaskProgress() {
+        // Check if the user has accepted a task
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String currentUserUID = auth.getCurrentUser().getUid();
+
+        db.collection("user_acceptedTask")
+                .whereEqualTo("acceptedBy", currentUserUID)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        if (documentSnapshot.contains("userpoints")) {
-                            Long userPoints = documentSnapshot.getLong("userpoints");
-                            if (userPoints != null) {
-                                pointsSystemTextView.setText("" + userPoints);
-                            } else {
-                                // Handle the case when userpoints is null
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Retrieve the accepted task details
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            String taskName = documentSnapshot.getString("taskName");
+                            String taskPoints = documentSnapshot.getString("points");
+                            String taskDescription = documentSnapshot.getString("description");
+                            String taskLocation = documentSnapshot.getString("location");
+                            int finalTaskHours = 0;
+                            int finalTaskMinutes = 0;
+
+                            if (documentSnapshot.contains("timeFrame")) {
+                                Map<String, Object> timeFrameMap = (Map<String, Object>) documentSnapshot.get("timeFrame");
+
+                                if (timeFrameMap != null && timeFrameMap.containsKey("hours") && timeFrameMap.containsKey("minutes")) {
+                                    finalTaskHours = ((Long) timeFrameMap.get("hours")).intValue();
+                                    finalTaskMinutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                }
                             }
+
+
+                            // Redirect to the TaskProgress activity
+                            Intent intent = new Intent(Homepage.this, TaskProgress.class);
+
+                            // Include task details in the intent
+                            intent.putExtra("taskName", taskName);
+                            intent.putExtra("taskPoints", taskPoints);
+                            intent.putExtra("taskDescription", taskDescription);
+                            intent.putExtra("taskLocation", taskLocation);
+                            intent.putExtra("timeFrameHours", finalTaskHours);
+                            intent.putExtra("timeFrameMinutes", finalTaskMinutes);
+
+                            startActivity(intent);
                         } else {
-                            // Handle the case when userpoints field does not exist
+                            // Handle the case where the user hasn't accepted a task
+                            // You may want to display a message to the user or take some other action
+                            Toast.makeText(Homepage.this, "You haven't accepted a task yet.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .addOnFailureListener(e -> {
-                    // Handle error
-                    Toast.makeText(getApplicationContext(),"Error Occured !!!", Toast.LENGTH_LONG).show();
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure to retrieve task details
+                        Toast.makeText(Homepage.this, "Failed to retrieve task details.", Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 
+    private void fetchAndDisplayCurrentUserPoints() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userRef = firestore.collection("users").document(currentUserId);
+
+        userRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Toast.makeText(getApplicationContext(), "Error Occurred: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    if (documentSnapshot.contains("userpoints")) {
+                        Long userPoints = documentSnapshot.getLong("userpoints");
+                        if (userPoints != null) {
+                            pointsSystemTextView.setText("" + userPoints);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     private void retrieveAndStoreFCMToken() {
-        // Retrieve the FCM device token
         FirebaseMessaging.getInstance().getToken()
                 .addOnSuccessListener(new OnSuccessListener<String>() {
                     @Override
                     public void onSuccess(String token) {
-                        // Store the FCM token in the user's document in Firestore
                         updateFCMTokenInFirestore(token);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Handle error
                         Toast.makeText(getApplicationContext(), "Error Occurred while retrieving FCM token", Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
     private void updateFCMTokenInFirestore(String token) {
-        // Get the current user's ID
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        // Reference to the user's document in Firestore
         DocumentReference userRef = FirebaseFirestore.getInstance().collection("users").document(currentUserId);
-
-        // Update the FCM token in the user's document
         userRef.update("fcmToken", token)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        // Successfully stored FCM token in the user's document
-                        // You can add further actions or handling here if needed
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Handle error
                         Toast.makeText(getApplicationContext(), "Error Occurred while storing FCM token", Toast.LENGTH_LONG).show();
                     }
                 });

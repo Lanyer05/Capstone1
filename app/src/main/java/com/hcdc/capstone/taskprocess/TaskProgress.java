@@ -6,29 +6,23 @@ import com.hcdc.capstone.TimerViewModel;
 import com.hcdc.capstone.network.ApiClient;
 import com.hcdc.capstone.network.ApiService;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -37,11 +31,9 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -56,15 +48,11 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,11 +71,9 @@ public class TaskProgress extends BaseActivity {
     private FirebaseFirestore db;
     private Button startButton;
     private Button doneButton;
+    private ImageView uploadButton;
     private TextView timerTextView;
-
-    private static final int CAMERA_CAPTURE_REQUEST_CODE = 200;
-
-    private ProgressDialog progressDialog;
+    private static final int IMAGE_PICK_REQUEST_CODE = 100;
     private String currentUserUID;
     private boolean timerRunning = false;
     private long startTime = 0L;
@@ -96,23 +82,7 @@ public class TaskProgress extends BaseActivity {
     private Uri selectedImageUri;
     public static HashMap<String, String> remoteMsgHeaders = null;
 
-
-    public static HashMap<String, String> getRemoteMsgHeaders() {
-        if (remoteMsgHeaders == null) {
-            remoteMsgHeaders = new HashMap<>();
-            remoteMsgHeaders.put(REMOTE_MSG_AUTHORIZATION,
-                    "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5"
-            );
-            remoteMsgHeaders.put(
-                    REMOTE_MSG_CONTENT_TYPE,
-                    "application/json"
-            );
-        }
-        return remoteMsgHeaders;
-    }
-
     private final Runnable timerRunnable = new Runnable() {
-        @SuppressLint({"SetTextI18n", "DefaultLocale"})
         @Override
         public void run() {
             if (timerRunning) {
@@ -136,9 +106,22 @@ public class TaskProgress extends BaseActivity {
             }
         }
     };
-
     private void showToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public static HashMap<String, String> getRemoteMsgHeaders() {
+        if (remoteMsgHeaders == null) {
+            remoteMsgHeaders = new HashMap<>();
+            remoteMsgHeaders.put(REMOTE_MSG_AUTHORIZATION,
+                    "key=AAAAnnDyey0:APA91bEFvAHQXeK_dpb0GbX8K27RVhe7mJX45_pPnaumLhhoiazeVAythGSSRxNYSS2JAalYA3dfDyqfprJk_TrN6gYyslGR6bsPJ_BeRZVAv4_pvDKqAN1mHq1Wh-5AhJwcurC6nRE5"
+            );
+            remoteMsgHeaders.put(
+                    REMOTE_MSG_CONTENT_TYPE,
+                    "application/json"
+            );
+        }
+        return remoteMsgHeaders;
     }
 
     private void sendNotification(String taskName, String location) {
@@ -207,10 +190,6 @@ public class TaskProgress extends BaseActivity {
         timerViewModel = new ViewModelProvider((ViewModelStoreOwner) this).get(TimerViewModel.class);
         boolean doneButtonNotClicked = !timerViewModel.isDoneButtonClicked();
 
-        progressDialog = new ProgressDialog(TaskProgress.this);
-        progressDialog.setMessage("Uploading...");
-        progressDialog.setCancelable(false);
-
         startButton = findViewById(R.id.startButton);
         doneButton = findViewById(R.id.doneButton);
         timerTextView = findViewById(R.id.timerTextView);
@@ -227,7 +206,6 @@ public class TaskProgress extends BaseActivity {
         String taskDescription = getIntent().getStringExtra("taskDescription");
         String taskLocation = getIntent().getStringExtra("taskLocation");
         currentUserUID = auth.getCurrentUser().getUid();
-
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
 
@@ -235,13 +213,10 @@ public class TaskProgress extends BaseActivity {
         taskPointsTextView.setText(taskPoints);
         taskDescriptionTextView.setText(taskDescription);
         taskLocationTextView.setText(taskLocation);
-
         long timeFrameMillis = (timeFrameHours * 60L + timeFrameMinutes) * 60 * 1000;
         taskDurationMillis = timeFrameMillis;
-
         int initialSeconds = (int) ((timeFrameMillis % (60 * 1000)) / 1000);
         timerTextView.setText(String.format("%02d:%02d:%02d", timeFrameHours, timeFrameMinutes, initialSeconds));
-
         String taskTimeFrame = timeFrameHours + " hours " + timeFrameMinutes + " minutes";
         taskTimeFrameTextView.setText(taskTimeFrame);
 
@@ -250,35 +225,14 @@ public class TaskProgress extends BaseActivity {
         alertDialog.setView(tasksubmitCustomDialog);
         ImageButton cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         Button submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
-        ImageView uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
+        uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
         final AlertDialog dialog = alertDialog.create();
-
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        uploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, CAMERA_CAPTURE_REQUEST_CODE);
-                }
-            }
-        });
-
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Initialize a Firestore batch write
-                progressDialog.show();
+                stopTimer();
                 WriteBatch batch = db.batch();
-
-                // Read data from Firestore
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
                         .get()
@@ -289,33 +243,23 @@ public class TaskProgress extends BaseActivity {
                                     DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                     String documentId = documentSnapshot.getId();
                                     Map<String, Object> acceptedTaskData = documentSnapshot.getData();
-
-                                    // Update "isCompleted" field
                                     batch.update(db.collection("user_acceptedTask").document(documentId), "isCompleted", true);
-
-                                    // Perform other batch operations (if needed)
-
-                                    // Commit the batch
                                     batch.commit()
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    // Batch write successful, now proceed with other operations
                                                     long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
                                                     int remainingSeconds = (int) (remainingMillis / 1000);
                                                     int remainingMinutes = remainingSeconds / 60;
                                                     remainingSeconds = remainingSeconds % 60;
                                                     int remainingHours = remainingMinutes / 60;
                                                     remainingMinutes = remainingMinutes % 60;
-
                                                     String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
 
                                                     acceptedTaskData.put("isCompleted", true);
                                                     acceptedTaskData.put("remainingTime", remainingTime);
 
-                                                    // Check if an image is selected
                                                     if (selectedImageUri != null) {
-                                                        // Upload the image to Firebase Storage
                                                         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                                                         StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
 
@@ -323,32 +267,23 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                                        progressDialog.dismiss();
                                                                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                                             @Override
                                                                             public void onSuccess(Uri uri) {
                                                                                 String imageUrl = uri.toString();
-
-                                                                                // Store the image URL in Firestore
                                                                                 storeImageUrlInFirestore(imageUrl);
-
-                                                                                // Update the acceptedTaskData with the image URL
                                                                                 acceptedTaskData.put("imageUrl", imageUrl);
-
-                                                                                // Add the accepted task to "completed_task" collection
                                                                                 db.collection("completed_task")
                                                                                         .add(acceptedTaskData)
                                                                                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                                             @Override
                                                                                             public void onSuccess(DocumentReference documentReference) {
-                                                                                                // Delete the document from "user_acceptedTask"
                                                                                                 db.collection("user_acceptedTask")
                                                                                                         .document(documentId)
                                                                                                         .delete()
                                                                                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                                             @Override
                                                                                                             public void onSuccess(Void aVoid) {
-                                                                                                                // Document deleted successfully
                                                                                                                 Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                                                 startActivity(intent);
                                                                                                                 finish();
@@ -357,7 +292,6 @@ public class TaskProgress extends BaseActivity {
                                                                                                         .addOnFailureListener(new OnFailureListener() {
                                                                                                             @Override
                                                                                                             public void onFailure(@NonNull Exception e) {
-                                                                                                                // Handle failure
                                                                                                             }
                                                                                                         });
                                                                                             }
@@ -365,7 +299,6 @@ public class TaskProgress extends BaseActivity {
                                                                                         .addOnFailureListener(new OnFailureListener() {
                                                                                             @Override
                                                                                             public void onFailure(@NonNull Exception e) {
-                                                                                                // Handle failure
                                                                                             }
                                                                                         });
                                                                             }
@@ -375,26 +308,20 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                     @Override
                                                                     public void onFailure(@NonNull Exception e) {
-                                                                        progressDialog.dismiss();
-                                                                        // Handle image upload failure
                                                                     }
                                                                 });
                                                     } else {
-                                                        // No image selected
-                                                        // Add the accepted task to "completed_task" collection
                                                         db.collection("completed_task")
                                                                 .add(acceptedTaskData)
                                                                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                                     @Override
                                                                     public void onSuccess(DocumentReference documentReference) {
-                                                                        // Delete the document from "user_acceptedTask"
                                                                         db.collection("user_acceptedTask")
                                                                                 .document(documentId)
                                                                                 .delete()
                                                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                                     @Override
                                                                                     public void onSuccess(Void aVoid) {
-                                                                                        // Document deleted successfully
                                                                                         Intent intent = new Intent(TaskProgress.this, taskFragment.class);
                                                                                         startActivity(intent);
                                                                                         finish();
@@ -403,7 +330,6 @@ public class TaskProgress extends BaseActivity {
                                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                                     @Override
                                                                                     public void onFailure(@NonNull Exception e) {
-                                                                                        // Handle failure
                                                                                     }
                                                                                 });
                                                                     }
@@ -411,16 +337,15 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnFailureListener(new OnFailureListener() {
                                                                     @Override
                                                                     public void onFailure(@NonNull Exception e) {
-                                                                        // Handle failure
                                                                     }
                                                                 });
                                                     }
+                                                    sendNotification(taskName, taskLocation);
                                                 }
                                             })
                                             .addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    // Handle batch write failure
                                                 }
                                             });
                                 }
@@ -429,11 +354,11 @@ public class TaskProgress extends BaseActivity {
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                // Handle failure
                             }
                         });
             }
         });
+
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -445,7 +370,6 @@ public class TaskProgress extends BaseActivity {
                     startTimer();
                     startButton.setVisibility(View.GONE);
                     doneButton.setVisibility(View.VISIBLE);
-
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()
@@ -455,7 +379,6 @@ public class TaskProgress extends BaseActivity {
                                     if (!queryDocumentSnapshots.isEmpty()) {
                                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                                         String documentId = documentSnapshot.getId();
-
                                         db.collection("user_acceptedTask")
                                                 .document(documentId)
                                                 .update("isStarted", true)
@@ -490,8 +413,45 @@ public class TaskProgress extends BaseActivity {
                 dialog.show();
             }
         });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        uploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+            }
+        });
     }
 
+    private void storeImageUrlInFirestore(String imageUrl) {
+        db.collection("images")
+                .add(new HashMap<String, Object>() {{
+                    put("imageUrl", imageUrl);
+                }})
+                .addOnSuccessListener(documentReference -> {
+                })
+                .addOnFailureListener(e -> {
+                });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                selectedImageUri = data.getData();
+                uploadButton.setImageResource(R.drawable.ic_check);
+            }
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -505,47 +465,12 @@ public class TaskProgress extends BaseActivity {
         super.onRestoreInstanceState(savedInstanceState);
         startTime = timerViewModel.getStartTime();
         timerRunning = timerViewModel.isTimerRunning();
-
         if (timerRunning) {
             handler.post(timerRunnable);
             startButton.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
         }
     }
-
-    private void storeImageUrlInFirestore(String imageUrl) {
-        db.collection("images")
-                .add(new HashMap<String, Object>() {{
-                    put("imageUrl", imageUrl);
-                }})
-                .addOnSuccessListener(documentReference -> {
-                    // Image URL stored successfully in Firestore
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure
-                });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == CAMERA_CAPTURE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // Get the captured image Uri
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            selectedImageUri = getImageUri(imageBitmap);
-        }
-    }
-
-    private Uri getImageUri(Bitmap imageBitmap) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "Title", null);
-        return Uri.parse(path);
-    }
-
-
 
     @Override
     public void onBackPressed() {
@@ -565,7 +490,6 @@ public class TaskProgress extends BaseActivity {
             serviceIntent.putExtra("taskDurationMillis", taskDurationMillis);
             serviceIntent.putExtra("startTime", startTime);
             startForegroundService(serviceIntent);
-
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - startTime;
             long remainingTime = taskDurationMillis - elapsedTime;
@@ -588,22 +512,8 @@ public class TaskProgress extends BaseActivity {
             startTime = sharedPreferences.getLong(PREF_START_TIME, 0);
             taskDurationMillis = sharedPreferences.getLong(PREF_REMAINING_TIME, 0);
             if (taskDurationMillis > 0) {
-                // Restart the timer when the app is relaunched
                 startTimer();
             }
-        }
-    }
-
-
-    private void startTimer() {
-        if (!timerRunning) {
-            timerRunning = true;
-            startTime = System.currentTimeMillis();
-            handler.postDelayed(timerRunnable, 0);
-
-            startButton.setVisibility(View.GONE);
-            doneButton.setVisibility(View.VISIBLE);
-
         }
     }
 
@@ -623,6 +533,17 @@ public class TaskProgress extends BaseActivity {
         if (isMyServiceRunning()) {
             Intent broadcastIntent = new Intent("StopTimerService");
             sendBroadcast(broadcastIntent);
+        }
+    }
+
+    private void startTimer() {
+        if (!timerRunning) {
+            timerRunning = true;
+            startTime = System.currentTimeMillis();
+            handler.postDelayed(timerRunnable, 0);
+            startButton.setVisibility(View.GONE);
+            doneButton.setVisibility(View.VISIBLE);
+
         }
     }
 
@@ -663,16 +584,6 @@ public class TaskProgress extends BaseActivity {
             createNotificationChannels();
             builder = createNotification(currentTimerValue);
             notificationManager = NotificationManagerCompat.from(this);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
 
@@ -713,7 +624,6 @@ public class TaskProgress extends BaseActivity {
                     }
                 };
                 if (taskDurationMillis > 0) {
-                    // Create and start the foreground service notification
                     NotificationCompat.Builder builder = createNotification(currentTimerValue);
                     Notification notification = builder.build();
                     startForeground(NOTIFICATION_ID, notification);
@@ -741,16 +651,6 @@ public class TaskProgress extends BaseActivity {
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
             notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
 
@@ -765,7 +665,7 @@ public class TaskProgress extends BaseActivity {
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
             Intent notificationIntent = new Intent(this, TaskProgress.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
             builder.setContentIntent(pendingIntent);
             return builder;
         }
