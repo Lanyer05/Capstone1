@@ -1,31 +1,37 @@
 package com.hcdc.capstone;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
+import com.hcdc.capstone.taskprocess.TaskProgress;
 import com.hcdc.capstone.transactionprocess.Transaction;
-import com.google.firebase.messaging.FirebaseMessaging;;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.OnFailureListener;
 
+import java.util.Map;
+
 public class Homepage extends BaseActivity {
+
+    private static final String TIMER_PREFS = "TimerPrefs";
+    private static final String PREF_TIMER_RUNNING = "timerRunning";
 
     private BottomNavigationView bottomNavigationView;
     private TextView pointsSystemTextView;
@@ -35,6 +41,9 @@ public class Homepage extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+
+        // Check if the timer is running
+        boolean isTimerRunning = checkTimerRunning();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system);
@@ -70,10 +79,82 @@ public class Homepage extends BaseActivity {
                 navigateToActivity(Profile_Activity.class);
             }
         });
-        fetchAndDisplayCurrentUserPoints();
+
+        if (isTimerRunning) {
+            // If the timer is running, navigate to TaskProgress
+            navigateToTaskProgress();
+        } else {
+            // If the timer is not running, fetch user points and display them
+            fetchAndDisplayCurrentUserPoints();
+        }
+
         retrieveAndStoreFCMToken();
     }
 
+    private boolean checkTimerRunning() {
+        SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
+        return sharedPreferences.getBoolean(PREF_TIMER_RUNNING, false);
+    }
+
+    private void navigateToTaskProgress() {
+        // Check if the user has accepted a task
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String currentUserUID = auth.getCurrentUser().getUid();
+
+        db.collection("user_acceptedTask")
+                .whereEqualTo("acceptedBy", currentUserUID)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            // Retrieve the accepted task details
+                            DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                            String taskName = documentSnapshot.getString("taskName");
+                            String taskPoints = documentSnapshot.getString("points");
+                            String taskDescription = documentSnapshot.getString("description");
+                            String taskLocation = documentSnapshot.getString("location");
+                            int finalTaskHours = 0;
+                            int finalTaskMinutes = 0;
+
+                            if (documentSnapshot.contains("timeFrame")) {
+                                Map<String, Object> timeFrameMap = (Map<String, Object>) documentSnapshot.get("timeFrame");
+
+                                if (timeFrameMap != null && timeFrameMap.containsKey("hours") && timeFrameMap.containsKey("minutes")) {
+                                    finalTaskHours = ((Long) timeFrameMap.get("hours")).intValue();
+                                    finalTaskMinutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                }
+                            }
+
+
+                            // Redirect to the TaskProgress activity
+                            Intent intent = new Intent(Homepage.this, TaskProgress.class);
+
+                            // Include task details in the intent
+                            intent.putExtra("taskName", taskName);
+                            intent.putExtra("taskPoints", taskPoints);
+                            intent.putExtra("taskDescription", taskDescription);
+                            intent.putExtra("taskLocation", taskLocation);
+                            intent.putExtra("timeFrameHours", finalTaskHours);
+                            intent.putExtra("timeFrameMinutes", finalTaskMinutes);
+
+                            startActivity(intent);
+                        } else {
+                            // Handle the case where the user hasn't accepted a task
+                            // You may want to display a message to the user or take some other action
+                            Toast.makeText(Homepage.this, "You haven't accepted a task yet.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure to retrieve task details
+                        Toast.makeText(Homepage.this, "Failed to retrieve task details.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 
     private void fetchAndDisplayCurrentUserPoints() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -99,7 +180,6 @@ public class Homepage extends BaseActivity {
             }
         });
     }
-
 
     private void retrieveAndStoreFCMToken() {
         FirebaseMessaging.getInstance().getToken()

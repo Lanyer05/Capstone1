@@ -544,15 +544,29 @@ public class TaskProgress extends BaseActivity {
             startButton.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
 
+            // Save the timer state
+            saveTimerState(true);
         }
     }
+
 
     private void stopTimer() {
         if (timerRunning) {
             handler.removeCallbacks(timerRunnable);
             timerRunning = false;
+
+            // Save the timer state
+            saveTimerState(false);
         }
     }
+
+    private void saveTimerState(boolean isRunning) {
+        SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(PREF_TIMER_RUNNING, isRunning);
+        editor.apply();
+    }
+
 
     public static class TimerService extends Service {
         private final Handler handler = new Handler();
