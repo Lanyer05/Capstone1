@@ -1,5 +1,7 @@
 package com.hcdc.capstone.taskprocess;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.Query;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.TimerViewModel;
@@ -11,18 +13,22 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -51,7 +57,11 @@ import com.google.firebase.storage.UploadTask;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -73,7 +83,8 @@ public class TaskProgress extends BaseActivity {
     private Button doneButton;
     private ImageView uploadButton;
     private TextView timerTextView;
-    private static final int IMAGE_PICK_REQUEST_CODE = 100;
+    private ProgressDialog progressDialog;
+    private static final int CAMERA_CAPTURE_REQUEST_CODE = 200;
     private String currentUserUID;
     private boolean timerRunning = false;
     private long startTime = 0L;
@@ -125,19 +136,54 @@ public class TaskProgress extends BaseActivity {
     }
 
     private void sendNotification(String taskName, String location) {
-        try {
-            JSONObject data = new JSONObject();
-            data.put("title", taskName);
-            data.put("body", location);
+        getDeviceTokens(new DeviceTokenCallback() {
+            @Override
+            public void onDeviceTokensReceived(List<String> deviceTokens) {
+                try {
+                    JSONObject data = new JSONObject();
+                    data.put("title", taskName);
+                    data.put("body", location);
 
-            JSONObject payload = new JSONObject();
-            payload.put("to", "fPNQlFuyiS-IapSjNiDOqD:APA91bFDDSYUQs0wgsLosvKJLVbn_ankKDYRL1KO3qPgc4Cel5bbMrTpqzdKh9ca9d0cz1hkP10v-iBnrYs7Bh6Cv1roF_dz-NOR_OayYdwhxgwBu1InGZRTGNLpeFpRUm7N3Mn_tjpo");
-            payload.put("notification", data);
+                    for (String deviceToken : deviceTokens) {
+                        JSONObject payload = new JSONObject();
+                        payload.put("to", deviceToken);
+                        payload.put("notification", data);
+                        sendNotificationToFCM(payload.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            sendNotificationToFCM(payload.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onError(String errorMessage) {
+                showToast(errorMessage);
+            }
+        });
+    }
+
+    private void getDeviceTokens(final DeviceTokenCallback callback) {
+        List<String> deviceTokens = new ArrayList<>();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference usersRef = firestore.collection("users");
+        Query query = usersRef.whereGreaterThanOrEqualTo("fcmToken_admin", "");
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot documentSnapshot : task.getResult()) {
+                    String deviceToken = documentSnapshot.getString("fcmToken_admin");
+                    if (deviceToken != null) {
+                        deviceTokens.add(deviceToken);
+                    }
+                }
+                callback.onDeviceTokensReceived(deviceTokens);
+            } else {
+                callback.onError("Failed to retrieve device tokens: " + task.getException());
+            }
+        });
+    }
+    private interface DeviceTokenCallback {
+        void onDeviceTokensReceived(List<String> deviceTokens);
+        void onError(String errorMessage);
     }
 
     private void sendNotificationToFCM(String payload) {
@@ -209,6 +255,10 @@ public class TaskProgress extends BaseActivity {
         int timeFrameHours = getIntent().getIntExtra("timeFrameHours", 0);
         int timeFrameMinutes = getIntent().getIntExtra("timeFrameMinutes", 0);
 
+        progressDialog = new ProgressDialog(TaskProgress.this);
+        progressDialog.setMessage("Uploading...");
+        progressDialog.setCancelable(false);
+
         taskNameTextView.setText(taskName);
         taskPointsTextView.setText(taskPoints);
         taskDescriptionTextView.setText(taskDescription);
@@ -231,6 +281,7 @@ public class TaskProgress extends BaseActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog.show();
                 stopTimer();
                 WriteBatch batch = db.batch();
                 db.collection("user_acceptedTask")
@@ -267,6 +318,7 @@ public class TaskProgress extends BaseActivity {
                                                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                                                     @Override
                                                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                        progressDialog.dismiss();
                                                                         imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                                             @Override
                                                                             public void onSuccess(Uri uri) {
@@ -424,9 +476,10 @@ public class TaskProgress extends BaseActivity {
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, CAMERA_CAPTURE_REQUEST_CODE);
+                }
             }
         });
     }
@@ -445,13 +498,22 @@ public class TaskProgress extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IMAGE_PICK_REQUEST_CODE && resultCode == RESULT_OK) {
-            if (data != null) {
-                selectedImageUri = data.getData();
-                uploadButton.setImageResource(R.drawable.ic_check);
-            }
+
+        if (requestCode == CAMERA_CAPTURE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Get the captured image Uri
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            selectedImageUri = getImageUri(imageBitmap);
         }
     }
+
+    private Uri getImageUri(Bitmap imageBitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "Title", null);
+        return Uri.parse(path);
+    }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

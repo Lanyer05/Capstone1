@@ -1,6 +1,7 @@
 package com.hcdc.capstone.accounthandling;
 import androidx.annotation.NonNull;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
+import com.hcdc.capstone.taskprocess.TaskProgress;
 
 public class LoginActivity extends BaseActivity {
 
@@ -32,6 +34,7 @@ public class LoginActivity extends BaseActivity {
     private EditText loginEmail, loginPassword;
     private TextView signupRedirect;
     private FirebaseFirestore fstore;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,15 @@ public class LoginActivity extends BaseActivity {
         loginBttn = findViewById(R.id.loginbtn);
         loginPassword.setTransformationMethod(new PasswordTransformationMethod());
 
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage(" Logging in... ");
+        progressDialog.setCancelable(false);
+
+
         loginBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
                 String email = loginEmail.getText().toString();
                 String pass = loginPassword.getText().toString();
 
@@ -71,6 +80,7 @@ public class LoginActivity extends BaseActivity {
                                                         Boolean isApproved = document.getBoolean("isApproved");
                                                         if (isApproved != null && isApproved.booleanValue()) {
                                                             // User is approved, allow login
+                                                            progressDialog.dismiss();
                                                             Toast.makeText(LoginActivity.this, "  Login Successful  ", Toast.LENGTH_SHORT).show();
                                                             startActivity(new Intent(LoginActivity.this, Homepage.class));
                                                             finish();
