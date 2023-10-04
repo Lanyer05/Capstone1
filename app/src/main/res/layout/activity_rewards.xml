@@ -26,9 +26,9 @@
         android:layout_width="47dp"
         android:layout_height="46dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
-        android:background="@drawable/custom_dialog"
+        android:background="@drawable/cirlce_solid"
         android:padding="8dp"
         android:src="@drawable/gift_2" />
 
@@ -61,7 +61,7 @@
             android:paddingTop="10dp"
             android:text="POINTS"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="#000000" />
+            android:textColor="#6A6A6A" />
 
         <TextView
             android:id="@+id/points_system1"
@@ -86,7 +86,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="0dp"
         android:fontFamily="sans-serif-black"
         android:gravity="center"
@@ -101,14 +101,18 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_navigation_view"
         android:layout_below="@id/claimable_r"
-        android:layout_marginTop="155dp"
-        android:layout_marginBottom="1dp">
+        android:layout_marginTop="165dp"
+        android:layout_marginBottom="15dp">
 
         <LinearLayout
             android:id="@+id/rewardsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="#FFFFFF"
             android:orientation="vertical">
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rewardslist"
@@ -116,10 +120,10 @@
                 android:layout_height="match_parent"
                 android:layout_above="@id/bottom_navigation_view"
                 android:layout_below="@id/rewardsLayout"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
                 android:scrollbars="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
         </LinearLayout>

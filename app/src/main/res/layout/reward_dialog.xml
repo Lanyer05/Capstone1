@@ -7,7 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:clipToPadding="false"
-    >
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
@@ -41,7 +42,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="rewardsData title"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
         <TextView
@@ -49,11 +50,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="left"
-            android:layout_marginLeft="30dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="Required points to claim: "
-            android:textSize="13dp"
+            android:textSize="13sp"
             tools:ignore="TextSizeCheck" />
 
         <androidx.appcompat.widget.AppCompatButton
@@ -82,7 +83,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="11dp"
             android:src="@drawable/point_s" />
 

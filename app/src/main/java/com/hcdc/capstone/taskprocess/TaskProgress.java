@@ -522,7 +522,7 @@ public class TaskProgress extends BaseActivity {
         }
     }
 
-    private Uri getImageUri(Bitmap imageBitmap) {
+    private Uri getImageUri(@NonNull Bitmap imageBitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "Title", null);
