@@ -3,6 +3,7 @@ package com.hcdc.capstone.taskprocess;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.Query;
 import com.hcdc.capstone.BaseActivity;
+import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.TimerViewModel;
 import com.hcdc.capstone.network.ApiClient;
@@ -83,6 +84,7 @@ public class TaskProgress extends BaseActivity {
     private Button startButton;
     private Button doneButton;
     private ImageView uploadButton;
+    private  ImageButton cancelButton;
     private TextView timerTextView;
     private ProgressDialog progressDialog;
     private static final int CAMERA_CAPTURE_REQUEST_CODE = 200;
@@ -274,7 +276,7 @@ public class TaskProgress extends BaseActivity {
         View tasksubmitCustomDialog = LayoutInflater.from(TaskProgress.this).inflate(R.layout.tasksubmit_dialog, null);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(TaskProgress.this);
         alertDialog.setView(tasksubmitCustomDialog);
-        ImageButton cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
+        cancelButton = tasksubmitCustomDialog.findViewById(R.id.closeSubmission);
         Button submitButton = tasksubmitCustomDialog.findViewById(R.id.taskSubmission);
         uploadButton = tasksubmitCustomDialog.findViewById(R.id.upload_submission);
         final AlertDialog dialog = alertDialog.create();
@@ -284,139 +286,141 @@ public class TaskProgress extends BaseActivity {
             public void onClick(View v) {
                 progressDialog.show();
 
-
                 if (selectedImageUri == null) {
                     showToast("Please capture an image before submitting.");
                     progressDialog.dismiss();
                     return; // Return early to prevent further execution
                 }
 
-                WriteBatch batch = db.batch();
-                db.collection("user_acceptedTask")
-                        .whereEqualTo("acceptedBy", currentUserUID)
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                if (!queryDocumentSnapshots.isEmpty()) {
-                                    DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                                    String documentId = documentSnapshot.getId();
-                                    Map<String, Object> acceptedTaskData = documentSnapshot.getData();
-                                    batch.update(db.collection("user_acceptedTask").document(documentId), "isCompleted", true);
-                                    batch.commit()
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    stopTimer();
-                                                    long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
-                                                    int remainingSeconds = (int) (remainingMillis / 1000);
-                                                    int remainingMinutes = remainingSeconds / 60;
-                                                    remainingSeconds = remainingSeconds % 60;
-                                                    int remainingHours = remainingMinutes / 60;
-                                                    remainingMinutes = remainingMinutes % 60;
-                                                    String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
+                else {
+                    stopTimer();
+                    WriteBatch batch = db.batch();
+                    db.collection("user_acceptedTask")
+                            .whereEqualTo("acceptedBy", currentUserUID)
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    if (!queryDocumentSnapshots.isEmpty()) {
+                                        DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                                        String documentId = documentSnapshot.getId();
+                                        Map<String, Object> acceptedTaskData = documentSnapshot.getData();
+                                        batch.update(db.collection("user_acceptedTask").document(documentId), "isCompleted", true);
+                                        batch.commit()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
+                                                        int remainingSeconds = (int) (remainingMillis / 1000);
+                                                        int remainingMinutes = remainingSeconds / 60;
+                                                        remainingSeconds = remainingSeconds % 60;
+                                                        int remainingHours = remainingMinutes / 60;
+                                                        remainingMinutes = remainingMinutes % 60;
+                                                        String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
 
-                                                    acceptedTaskData.put("isCompleted", true);
-                                                    acceptedTaskData.put("remainingTime", remainingTime);
+                                                        acceptedTaskData.put("isCompleted", true);
+                                                        acceptedTaskData.put("remainingTime", remainingTime);
 
-                                                    if (selectedImageUri != null) {
-                                                        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                                                        StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
+                                                        if (selectedImageUri != null) {
+                                                            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                                                            StorageReference imageRef = storageRef.child("images/" + currentUserUID + "_" + System.currentTimeMillis());
 
-                                                        imageRef.putFile(selectedImageUri)
-                                                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                                                    @Override
-                                                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                                                        progressDialog.dismiss();
-                                                                        imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                                            @Override
-                                                                            public void onSuccess(Uri uri) {
-                                                                                String imageUrl = uri.toString();
-                                                                                storeImageUrlInFirestore(imageUrl);
-                                                                                acceptedTaskData.put("imageUrl", imageUrl);
-                                                                                db.collection("completed_task")
-                                                                                        .add(acceptedTaskData)
-                                                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                                            @Override
-                                                                                            public void onSuccess(DocumentReference documentReference) {
-                                                                                                db.collection("user_acceptedTask")
-                                                                                                        .document(documentId)
-                                                                                                        .delete()
-                                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                                            @Override
-                                                                                                            public void onSuccess(Void aVoid) {
-                                                                                                                Intent intent = new Intent(TaskProgress.this, taskFragment.class);
-                                                                                                                startActivity(intent);
-                                                                                                                finish();
-                                                                                                            }
-                                                                                                        })
-                                                                                                        .addOnFailureListener(new OnFailureListener() {
-                                                                                                            @Override
-                                                                                                            public void onFailure(@NonNull Exception e) {
-                                                                                                            }
-                                                                                                        });
-                                                                                            }
-                                                                                        })
-                                                                                        .addOnFailureListener(new OnFailureListener() {
-                                                                                            @Override
-                                                                                            public void onFailure(@NonNull Exception e) {
-                                                                                            }
-                                                                                        });
-                                                                            }
-                                                                        });
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                    }
-                                                                });
-                                                    } else {
-                                                        db.collection("completed_task")
-                                                                .add(acceptedTaskData)
-                                                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                                    @Override
-                                                                    public void onSuccess(DocumentReference documentReference) {
-                                                                        db.collection("user_acceptedTask")
-                                                                                .document(documentId)
-                                                                                .delete()
-                                                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                                                    @Override
-                                                                                    public void onSuccess(Void aVoid) {
-                                                                                        Intent intent = new Intent(TaskProgress.this, taskFragment.class);
-                                                                                        startActivity(intent);
-                                                                                        finish();
-                                                                                    }
-                                                                                })
-                                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                                    @Override
-                                                                                    public void onFailure(@NonNull Exception e) {
-                                                                                    }
-                                                                                });
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(new OnFailureListener() {
-                                                                    @Override
-                                                                    public void onFailure(@NonNull Exception e) {
-                                                                    }
-                                                                });
+                                                            imageRef.putFile(selectedImageUri)
+                                                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                                                        @Override
+                                                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                                                            progressDialog.dismiss();
+                                                                            imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                                @Override
+                                                                                public void onSuccess(Uri uri) {
+                                                                                    String imageUrl = uri.toString();
+                                                                                    storeImageUrlInFirestore(imageUrl);
+                                                                                    acceptedTaskData.put("imageUrl", imageUrl);
+                                                                                    db.collection("completed_task")
+                                                                                            .add(acceptedTaskData)
+                                                                                            .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(DocumentReference documentReference) {
+                                                                                                    db.collection("user_acceptedTask")
+                                                                                                            .document(documentId)
+                                                                                                            .delete()
+                                                                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                                                @Override
+                                                                                                                public void onSuccess(Void aVoid) {
+                                                                                                                    Intent intent = new Intent(TaskProgress.this, Homepage.class);
+                                                                                                                    startActivity(intent);
+                                                                                                                    Toast.makeText(getApplicationContext(), " Task completed and is now in review. ", Toast.LENGTH_SHORT).show();
+                                                                                                                    finish();
+                                                                                                                }
+                                                                                                            })
+                                                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                                                @Override
+                                                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                                                }
+                                                                                                            });
+                                                                                                }
+                                                                                            })
+                                                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                                                @Override
+                                                                                                public void onFailure(@NonNull Exception e) {
+                                                                                                }
+                                                                                            });
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                        }
+                                                                    });
+                                                        } else {
+                                                            db.collection("completed_task")
+                                                                    .add(acceptedTaskData)
+                                                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                                        @Override
+                                                                        public void onSuccess(DocumentReference documentReference) {
+                                                                            db.collection("user_acceptedTask")
+                                                                                    .document(documentId)
+                                                                                    .delete()
+                                                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onSuccess(Void aVoid) {
+                                                                                            Intent intent = new Intent(TaskProgress.this, taskFragment.class);
+                                                                                            startActivity(intent);
+                                                                                            finish();
+                                                                                        }
+                                                                                    })
+                                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                                        @Override
+                                                                                        public void onFailure(@NonNull Exception e) {
+                                                                                        }
+                                                                                    });
+                                                                        }
+                                                                    })
+                                                                    .addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                        }
+                                                                    });
+                                                        }
+                                                        sendNotification(taskName, taskLocation);
                                                     }
-                                                    sendNotification(taskName, taskLocation);
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                }
-                                            });
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                    }
+                                                });
+                                    }
                                 }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                            }
-                        });
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                }
+                            });
+                }
             }
         });
 
