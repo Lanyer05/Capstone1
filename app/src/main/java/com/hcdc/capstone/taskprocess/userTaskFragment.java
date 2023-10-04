@@ -141,6 +141,7 @@ public class userTaskFragment extends Fragment {
                                             .addOnSuccessListener(aVoid -> {
                                                 // Batch write successful, handle success
                                                 // Update UI or take further actions
+                                                getActivity().finish();
                                             })
                                             .addOnFailureListener(e -> {
                                                 // Batch write failed, handle the error
@@ -184,6 +185,8 @@ public class userTaskFragment extends Fragment {
                                     startActivity(intent);
 
                                     alertDialog.dismiss();
+
+                                    getActivity().finish();
                                 });
 
                                 cancelButtonOverlay.setOnClickListener(viewCancel -> {

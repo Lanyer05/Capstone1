@@ -61,10 +61,9 @@ public class RewardCompleteFragment extends Fragment {
                             Coupons coupon = document.toObject(Coupons.class);
                             claimedRewards.add(coupon);
                         }
-                        adapter.setFinRewardList(claimedRewards); // Update the adapter with the fetched data
-                    } else {
-                        // Handle errors
+                        adapter.setFinRewardList(claimedRewards);
                     }
+
                 });
     }
 }

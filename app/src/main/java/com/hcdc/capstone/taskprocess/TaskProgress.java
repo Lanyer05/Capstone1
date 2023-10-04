@@ -317,6 +317,7 @@ public class TaskProgress extends BaseActivity {
                                                         int remainingHours = remainingMinutes / 60;
                                                         remainingMinutes = remainingMinutes % 60;
                                                         String remainingTime = String.format("%02d:%02d:%02d", remainingHours, remainingMinutes, remainingSeconds);
+                                                        clearTimerSharedPreferences();
 
                                                         acceptedTaskData.put("isCompleted", true);
                                                         acceptedTaskData.put("remainingTime", remainingTime);
@@ -513,7 +514,6 @@ public class TaskProgress extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == CAMERA_CAPTURE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            // Get the captured image Uri
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             selectedImageUri = getImageUri(imageBitmap);
@@ -642,6 +642,13 @@ public class TaskProgress extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(PREF_TIMER_RUNNING, isRunning);
+        editor.apply();
+    }
+
+    private void clearTimerSharedPreferences() {
+        SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
         editor.apply();
     }
 
