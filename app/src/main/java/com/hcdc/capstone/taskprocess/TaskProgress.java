@@ -8,6 +8,7 @@ import com.hcdc.capstone.TimerViewModel;
 import com.hcdc.capstone.network.ApiClient;
 import com.hcdc.capstone.network.ApiService;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -282,7 +283,14 @@ public class TaskProgress extends BaseActivity {
             @Override
             public void onClick(View v) {
                 progressDialog.show();
-                stopTimer();
+
+
+                if (selectedImageUri == null) {
+                    showToast("Please capture an image before submitting.");
+                    progressDialog.dismiss();
+                    return; // Return early to prevent further execution
+                }
+
                 WriteBatch batch = db.batch();
                 db.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", currentUserUID)
@@ -299,6 +307,7 @@ public class TaskProgress extends BaseActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
+                                                    stopTimer();
                                                     long remainingMillis = taskDurationMillis - (System.currentTimeMillis() - startTime);
                                                     int remainingSeconds = (int) (remainingMillis / 1000);
                                                     int remainingMinutes = remainingSeconds / 60;
@@ -460,7 +469,6 @@ public class TaskProgress extends BaseActivity {
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopTimer();
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
             }
@@ -470,6 +478,7 @@ public class TaskProgress extends BaseActivity {
             @Override
             public void onClick(View v) {
                 dialog.cancel();
+                startTimer();
             }
         });
 
@@ -504,6 +513,8 @@ public class TaskProgress extends BaseActivity {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             selectedImageUri = getImageUri(imageBitmap);
+
+            uploadButton.setImageResource(R.drawable.ic_check);
         }
     }
 
@@ -622,6 +633,7 @@ public class TaskProgress extends BaseActivity {
         }
     }
 
+
     private void saveTimerState(boolean isRunning) {
         SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -652,6 +664,7 @@ public class TaskProgress extends BaseActivity {
             }
         };
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onCreate() {
             super.onCreate();
@@ -723,6 +736,7 @@ public class TaskProgress extends BaseActivity {
             handler.removeCallbacks(timerRunnable);
         }
 
+        @SuppressLint("MissingPermission")
         private void updateNotification(String timerValue) {
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
@@ -741,7 +755,7 @@ public class TaskProgress extends BaseActivity {
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
             Intent notificationIntent = new Intent(this, TaskProgress.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
             builder.setContentIntent(pendingIntent);
             return builder;
         }
