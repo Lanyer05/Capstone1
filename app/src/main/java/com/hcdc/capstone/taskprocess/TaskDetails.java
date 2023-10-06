@@ -4,6 +4,7 @@ import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,6 +122,10 @@ public class TaskDetails extends BaseActivity {
                             userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
                         }
 
+                        long currentTimeMillis = System.currentTimeMillis();
+                        String formattedDate = formatDateTime(currentTimeMillis);
+                        userTaskAccepted.put("acceptedDateTime", formattedDate);
+
                         batch.delete(documentSnapshot.getReference());
                         batch.set(firestore.collection("user_acceptedTask").document(), userTaskAccepted);
 
@@ -135,6 +141,12 @@ public class TaskDetails extends BaseActivity {
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error getting tasks for update", e);
                 });
+    }
+
+    private String formatDateTime(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a MM/dd/yy");
+        Date date = new Date(timestamp);
+        return sdf.format(date);
     }
 
     private void showAcceptConfirmationOverlay() {

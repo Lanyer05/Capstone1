@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -62,8 +63,10 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -290,11 +293,15 @@ public class TaskProgress extends BaseActivity {
                     showToast("Please capture an image before submitting.");
                     progressDialog.dismiss();
                     return; // Return early to prevent further execution
-                }
-
-                else {
+                } else {
                     stopTimer();
+
+                    // Get the current date and time in 12-hour format
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a MM/dd/yy", Locale.US);
+                    String currentDateTime = dateFormat.format(new Date());
+
                     WriteBatch batch = db.batch();
+
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()
@@ -321,6 +328,7 @@ public class TaskProgress extends BaseActivity {
 
                                                         acceptedTaskData.put("isCompleted", true);
                                                         acceptedTaskData.put("remainingTime", remainingTime);
+                                                        acceptedTaskData.put("completedDateTime", currentDateTime);
 
                                                         if (selectedImageUri != null) {
                                                             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -350,13 +358,14 @@ public class TaskProgress extends BaseActivity {
                                                                                                                 public void onSuccess(Void aVoid) {
                                                                                                                     Intent intent = new Intent(TaskProgress.this, Homepage.class);
                                                                                                                     startActivity(intent);
-                                                                                                                    Toast.makeText(getApplicationContext(), " Task completed and is now in review. ", Toast.LENGTH_SHORT).show();
+                                                                                                                    Toast.makeText(getApplicationContext(), "Task completed and is now in review.", Toast.LENGTH_SHORT).show();
                                                                                                                     finish();
                                                                                                                 }
                                                                                                             })
                                                                                                             .addOnFailureListener(new OnFailureListener() {
                                                                                                                 @Override
                                                                                                                 public void onFailure(@NonNull Exception e) {
+                                                                                                                    // Handle failure
                                                                                                                 }
                                                                                                             });
                                                                                                 }
@@ -364,6 +373,7 @@ public class TaskProgress extends BaseActivity {
                                                                                             .addOnFailureListener(new OnFailureListener() {
                                                                                                 @Override
                                                                                                 public void onFailure(@NonNull Exception e) {
+                                                                                                    // Handle failure
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -373,6 +383,7 @@ public class TaskProgress extends BaseActivity {
                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
+                                                                            // Handle failure
                                                                         }
                                                                     });
                                                         } else {
@@ -395,6 +406,7 @@ public class TaskProgress extends BaseActivity {
                                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                                         @Override
                                                                                         public void onFailure(@NonNull Exception e) {
+                                                                                            // Handle failure
                                                                                         }
                                                                                     });
                                                                         }
@@ -402,6 +414,7 @@ public class TaskProgress extends BaseActivity {
                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
+                                                                            // Handle failure
                                                                         }
                                                                     });
                                                         }
@@ -411,6 +424,7 @@ public class TaskProgress extends BaseActivity {
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
+                                                        // Handle failure
                                                     }
                                                 });
                                     }
@@ -419,11 +433,13 @@ public class TaskProgress extends BaseActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    // Handle failure
                                 }
                             });
                 }
             }
         });
+
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
