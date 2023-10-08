@@ -94,11 +94,16 @@ public class taskFragment extends Fragment {
                                     tList.add(task);
                                 }
                             }
-
                         }
 
                         ta.notifyDataSetChanged();
+
+                        // Check if tList is empty and update the TextView
+                        if (tList.isEmpty()) {
+                            emptyTaskView.setText("No tasks available");
+                        }
                     }
                 });
     }
+
 }
