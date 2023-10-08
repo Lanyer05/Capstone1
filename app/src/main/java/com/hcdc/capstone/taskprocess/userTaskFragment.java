@@ -24,10 +24,10 @@ import com.hcdc.capstone.R;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class userTaskFragment extends Fragment {
 
-    private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView;
     private Button cancelButton, startButton;
@@ -43,7 +43,7 @@ public class userTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.usertask_fragment, container, false);
 
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
         taskNameTextView = view.findViewById(R.id.taskTitle);
@@ -60,7 +60,7 @@ public class userTaskFragment extends Fragment {
         imgLoc = view.findViewById(R.id.loc);
         imgTime = view.findViewById(R.id.ctTimer);
 
-        String currentUserUID = auth.getCurrentUser().getUid();
+        String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         firestore.collection("user_acceptedTask")
                 .whereEqualTo("acceptedBy", currentUserUID)
