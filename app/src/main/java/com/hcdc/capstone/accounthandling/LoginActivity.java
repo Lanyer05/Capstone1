@@ -86,16 +86,19 @@ public class LoginActivity extends BaseActivity {
                                                             finish();
                                                         } else {
                                                             // User is not approved yet
+                                                            progressDialog.dismiss();
                                                             Toast.makeText(LoginActivity.this, "  Your registration is pending approval by the admin  ", Toast.LENGTH_SHORT).show();
                                                         }
                                                     } else {
                                                         // Document does not exist or is null, handle accordingly
                                                         // For example, if the document doesn't exist, the user may not be registered properly.
+                                                        progressDialog.dismiss();
                                                         Toast.makeText(LoginActivity.this, "  User not found or registration data missing. Please register first.  ", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
                                                 else {
                                                     // Task failed with an exception, handle accordingly
+                                                    progressDialog.dismiss();
                                                     Toast.makeText(LoginActivity.this, "  Error fetching user data:  " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                                 }
                                             }
@@ -104,16 +107,20 @@ public class LoginActivity extends BaseActivity {
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(LoginActivity.this, "  Please enter correct password  ", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
+                        progressDialog.dismiss();
                         loginPassword.setError("  Password cannot be empty  ");
                     }
                 }
                 else if (email.isEmpty()) {
+                    progressDialog.dismiss();
                     loginEmail.setError("  Email Cannot be empty  ");
                 } else {
+                    progressDialog.dismiss();
                     loginEmail.setError("  Please enter valid email  ");
                 }
 

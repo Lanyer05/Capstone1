@@ -2,6 +2,8 @@ package com.hcdc.capstone.taskprocess;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +24,10 @@ import com.hcdc.capstone.R;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class userTaskFragment extends Fragment {
 
-    private FirebaseAuth auth;
     private FirebaseFirestore firestore;
     private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView;
     private Button cancelButton, startButton;
@@ -41,7 +43,7 @@ public class userTaskFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.usertask_fragment, container, false);
 
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
         taskNameTextView = view.findViewById(R.id.taskTitle);
@@ -58,7 +60,7 @@ public class userTaskFragment extends Fragment {
         imgLoc = view.findViewById(R.id.loc);
         imgTime = view.findViewById(R.id.ctTimer);
 
-        String currentUserUID = auth.getCurrentUser().getUid();
+        String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         firestore.collection("user_acceptedTask")
                 .whereEqualTo("acceptedBy", currentUserUID)
@@ -103,6 +105,7 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                 alertDialogBuilder.setView(overlayView);
                                 AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 alertDialog.show();
 
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);
@@ -163,6 +166,7 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                 alertDialogBuilder.setView(overlayView);
                                 AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 alertDialog.show();
 
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);

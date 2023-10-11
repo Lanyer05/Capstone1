@@ -2,6 +2,7 @@ package com.hcdc.capstone.taskprocess;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -65,6 +67,7 @@ public class taskFragment extends Fragment {
 
 
     private void fetchDataFromFirestore() {
+        emptyTaskView.setVisibility(View.INVISIBLE);
         db.collection("tasks")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
@@ -94,11 +97,19 @@ public class taskFragment extends Fragment {
                                     tList.add(task);
                                 }
                             }
-
                         }
 
                         ta.notifyDataSetChanged();
+
+                        // Check if tList is empty and update the TextView
+                        if (tList.isEmpty()) {
+                            emptyTaskView.setText("No tasks available");
+                            emptyTaskView.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
+
+        // Check if the "tasks" collection is empty and update the TextView
     }
+
 }
