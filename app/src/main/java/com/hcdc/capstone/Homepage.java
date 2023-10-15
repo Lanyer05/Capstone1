@@ -8,24 +8,31 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.hcdc.capstone.adapters.AnnouncementsAdapter;
 import com.hcdc.capstone.rewardprocess.Reward;
 import com.hcdc.capstone.taskprocess.Task;
 import com.hcdc.capstone.taskprocess.TaskProgress;
 import com.hcdc.capstone.transactionprocess.Transaction;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.OnFailureListener;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class Homepage extends BaseActivity {
@@ -37,6 +44,12 @@ public class Homepage extends BaseActivity {
     private TextView pointsSystemTextView;
     private ImageView profileImageView;
 
+    private RecyclerView recyclerView;
+    private AnnouncementsAdapter adapter;
+    private FirebaseFirestore db;
+
+    private ArrayList<AnnouncementModel> arrayList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +57,13 @@ public class Homepage extends BaseActivity {
 
         // Check if the timer is running
         boolean isTimerRunning = checkTimerRunning();
+
+        recyclerView = findViewById(R.id.recycler_announce);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        arrayList = new ArrayList<>();
+        adapter = new AnnouncementsAdapter(this,arrayList);
+        recyclerView.setAdapter(adapter);
+        db = FirebaseFirestore.getInstance();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system);
@@ -89,6 +109,8 @@ public class Homepage extends BaseActivity {
         }
 
         retrieveAndStoreFCMToken();
+        fetchAnnouncements();
+
     }
 
     private boolean checkTimerRunning() {
@@ -218,5 +240,27 @@ public class Homepage extends BaseActivity {
         Intent intent = new Intent(this, targetActivity);
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
+    }
+
+    private void fetchAnnouncements() {
+        db.collection("announcements").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        // Clear the list and add the fetched data
+                        arrayList.clear();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            AnnouncementModel announcement = document.toObject(AnnouncementModel.class);
+                            arrayList.add(announcement);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure to fetch data
+                    }
+                });
     }
 }
