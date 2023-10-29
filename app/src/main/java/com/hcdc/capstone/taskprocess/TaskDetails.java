@@ -4,6 +4,8 @@ import static android.content.ContentValues.TAG;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.Log;
@@ -157,6 +159,7 @@ public class TaskDetails extends BaseActivity {
 
         builder.setView(overlayView);
         AlertDialog dialog = builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
         confirmButton.setOnClickListener(new View.OnClickListener() {

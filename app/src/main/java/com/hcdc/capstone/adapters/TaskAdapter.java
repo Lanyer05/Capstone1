@@ -15,7 +15,6 @@ import com.hcdc.capstone.taskprocess.TaskDetails;
 import java.util.ArrayList;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
-
     Context context;
     ArrayList<TaskData> list;
 

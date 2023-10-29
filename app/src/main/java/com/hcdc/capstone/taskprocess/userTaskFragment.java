@@ -166,6 +166,7 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                 alertDialogBuilder.setView(overlayView);
                                 AlertDialog alertDialog = alertDialogBuilder.create();
+                                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 alertDialog.show();
 
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);
