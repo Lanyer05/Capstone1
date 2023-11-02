@@ -8,6 +8,17 @@ import com.hcdc.capstone.R;
 import com.hcdc.capstone.TimerViewModel;
 import com.hcdc.capstone.network.ApiClient;
 import com.hcdc.capstone.network.ApiService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -31,7 +42,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -45,21 +55,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -71,9 +68,9 @@ import java.util.Map;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class TaskProgress extends BaseActivity {
     private TimerViewModel timerViewModel;
@@ -115,9 +112,7 @@ public class TaskProgress extends BaseActivity {
                     seconds = seconds % 60;
                     int hours = minutes / 60;
                     minutes = minutes % 60;
-
                     timerTextView.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-
                     handler.postDelayed(this, 1000);
                 }
             }
@@ -149,7 +144,6 @@ public class TaskProgress extends BaseActivity {
                     JSONObject data = new JSONObject();
                     data.put("title", taskName);
                     data.put("body", location);
-
                     for (String deviceToken : deviceTokens) {
                         JSONObject payload = new JSONObject();
                         payload.put("to", deviceToken);
@@ -160,7 +154,6 @@ public class TaskProgress extends BaseActivity {
                     e.printStackTrace();
                 }
             }
-
             @Override
             public void onError(String errorMessage) {
                 showToast(errorMessage);
@@ -288,20 +281,15 @@ public class TaskProgress extends BaseActivity {
             @Override
             public void onClick(View v) {
                 progressDialog.show();
-
                 if (selectedImageUri == null) {
                     showToast("Please capture an image before submitting.");
                     progressDialog.dismiss();
-                    return; // Return early to prevent further execution
+                    return;
                 } else {
                     stopTimer();
-
-                    // Get the current date and time in 12-hour format
                     SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss a MM/dd/yy", Locale.US);
                     String currentDateTime = dateFormat.format(new Date());
-
                     WriteBatch batch = db.batch();
-
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()
@@ -365,7 +353,6 @@ public class TaskProgress extends BaseActivity {
                                                                                                             .addOnFailureListener(new OnFailureListener() {
                                                                                                                 @Override
                                                                                                                 public void onFailure(@NonNull Exception e) {
-                                                                                                                    // Handle failure
                                                                                                                 }
                                                                                                             });
                                                                                                 }
@@ -373,7 +360,6 @@ public class TaskProgress extends BaseActivity {
                                                                                             .addOnFailureListener(new OnFailureListener() {
                                                                                                 @Override
                                                                                                 public void onFailure(@NonNull Exception e) {
-                                                                                                    // Handle failure
                                                                                                 }
                                                                                             });
                                                                                 }
@@ -383,7 +369,6 @@ public class TaskProgress extends BaseActivity {
                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
-                                                                            // Handle failure
                                                                         }
                                                                     });
                                                         } else {
@@ -406,7 +391,6 @@ public class TaskProgress extends BaseActivity {
                                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                                         @Override
                                                                                         public void onFailure(@NonNull Exception e) {
-                                                                                            // Handle failure
                                                                                         }
                                                                                     });
                                                                         }
@@ -414,7 +398,6 @@ public class TaskProgress extends BaseActivity {
                                                                     .addOnFailureListener(new OnFailureListener() {
                                                                         @Override
                                                                         public void onFailure(@NonNull Exception e) {
-                                                                            // Handle failure
                                                                         }
                                                                     });
                                                         }
@@ -424,7 +407,6 @@ public class TaskProgress extends BaseActivity {
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        // Handle failure
                                                     }
                                                 });
                                     }
@@ -433,7 +415,6 @@ public class TaskProgress extends BaseActivity {
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    // Handle failure
                                 }
                             });
                 }
@@ -517,23 +498,18 @@ public class TaskProgress extends BaseActivity {
     private void storeImageUrlInFirestore(String imageUrl) {
         db.collection("images")
                 .add(new HashMap<String, Object>() {{
-                    put("imageUrl", imageUrl);
-                }})
-                .addOnSuccessListener(documentReference -> {
-                })
-                .addOnFailureListener(e -> {
-                });
+                    put("imageUrl", imageUrl); }})
+                .addOnSuccessListener(documentReference -> { })
+                .addOnFailureListener(e -> { });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == CAMERA_CAPTURE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             selectedImageUri = getImageUri(imageBitmap);
-
             uploadButton.setImageResource(R.drawable.ic_check);
         }
     }
@@ -544,7 +520,6 @@ public class TaskProgress extends BaseActivity {
         String path = MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "Title", null);
         return Uri.parse(path);
     }
-
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -637,22 +612,18 @@ public class TaskProgress extends BaseActivity {
             startButton.setVisibility(View.GONE);
             doneButton.setVisibility(View.VISIBLE);
 
-            // Save the timer state
             saveTimerState(true);
         }
     }
-
 
     private void stopTimer() {
         if (timerRunning) {
             handler.removeCallbacks(timerRunnable);
             timerRunning = false;
 
-            // Save the timer state
             saveTimerState(false);
         }
     }
-
 
     private void saveTimerState(boolean isRunning) {
         SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);

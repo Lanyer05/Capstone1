@@ -78,7 +78,7 @@ public class Reward extends BaseActivity {
 
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
-        firestore.collection("rewards").addSnapshotListener((value, error) -> {
+        firestore.collection("categories").addSnapshotListener((value, error) -> {
             if (error != null) {
                 Log.e("FirestoreError", "Error fetching tasks: " + error.getMessage());
                 return;
@@ -114,14 +114,10 @@ public class Reward extends BaseActivity {
             }
         }).addOnFailureListener(e -> {
         });
-        // Commit the batch to execute all operations
         batch.commit().addOnSuccessListener(aVoid -> {
-            // Batch operation successful
         }).addOnFailureListener(e -> {
-            // Handle batch operation failure
         });
     }
-
 
     private void navigateToActivity(Class<?> targetActivity) {
         Intent intent = new Intent(this, targetActivity);
