@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="Task Title"
+        android:fontFamily="sans-serif-black"
         android:textColor="@color/black"
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@+id/taskPoint"
@@ -42,6 +43,8 @@
         android:text="(xx pts)"
         android:textColor="@color/black"
         android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lora_italic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
@@ -70,8 +73,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="420 hrs"
+            android:fontFamily="@font/lora_italic"
             android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:textStyle="bold"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -97,10 +102,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
+            android:fontFamily="@font/lora_italic"
             android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
             android:textColor="@color/black"
-            android:textSize="13sp" />
+            android:textStyle="bold"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <TextView
@@ -111,9 +117,11 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
+        android:fontFamily="@font/lora_italic"
+        android:textStyle="bold"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-        android:textColor="#6A6A6A"
         android:textAlignment="viewStart"
+        android:textColor="#6A6A6A"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
