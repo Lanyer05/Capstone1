@@ -51,7 +51,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
     @Override
     public void onBindViewHolder(@NonNull RewardAdapter.RewardViewHolder holder, int position) {
         RewardsData rewardsData = Rlist.get(position);
-        holder.rewardname.setText(rewardsData.getRewardName());
+        holder.category.setText(rewardsData.getCategory());
         holder.rewardpoint.setText(rewardsData.getPoints() + " points");
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +67,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
                 AppCompatButton reqrwrd = rewardPopup.findViewById(R.id.requestReward);
 
-                rwrdtitle.setText(rewardsData.getRewardName());
+                rwrdtitle.setText(rewardsData.getCategory());
                 rwrdpoint.setText("Required points to claim: " + rewardsData.getPoints() + " points");
 
                 rewardBuilder.setView(rewardPopup);
@@ -77,19 +77,15 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
                 // Fetch user's points from Firestore
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                DocumentReference userRef = db.collection("users").document(currentUserId);
-                userRef.get().addOnSuccessListener(documentSnapshot -> {
+                DocumentReference categoryRef = db.collection("categories").document(rewardsData.getCategory()); // Assuming 'category' is the category ID
+                categoryRef.get().addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        Map<String, Object> userData = documentSnapshot.getData();
-                        if (userData != null && userData.containsKey("userpoints")) {
-                            Long userPointsLong = (Long) userData.get("userpoints");
-                            int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
-                            rwrd.setText("Points Available:  " + userPoints);
-                        }
+                        String categoryName = documentSnapshot.getString("category"); // Replace with your actual field name
+                        holder.category.setText(categoryName);
                     }
                 }).addOnFailureListener(e -> {
                     // Handle failure
-                    Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Rcontext, "Failed to fetch category name.", Toast.LENGTH_SHORT).show();
                 });
 
                 closerwrd.setOnClickListener(new View.OnClickListener() {
@@ -191,10 +187,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     public static class RewardViewHolder extends RecyclerView.ViewHolder{
 
-        TextView rewardname, rewardpoint;
+        TextView category, rewardpoint;
         public RewardViewHolder(@NonNull View rewardView) {
             super(rewardView);
-            rewardname = rewardView.findViewById(R.id.rewardTitle);
+            category = rewardView.findViewById(R.id.rewardTitle);
             rewardpoint = rewardView.findViewById(R.id.rewardPoint);
         }
     }
@@ -244,7 +240,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
         DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
         String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         int rewardPoints = Integer.parseInt(rewardsData.getPoints()); // Get reward points
-        batch.set(rewardRequestRef, new RewardRequest(rewardsData.getRewardName(), currentUserId, true, userEmail, rewardPoints, couponCode));
+        batch.set(rewardRequestRef, new RewardRequest(rewardsData.getCategory(), currentUserId, true, userEmail, rewardPoints, couponCode));
 
         batch.commit()
                 .addOnSuccessListener(aVoid -> {
@@ -264,67 +260,3 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 });
     }
 }
-
-
-
-/*old code
-*
-* reqrwrd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Fetch user's points from Firestore
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        DocumentReference userRef = db.collection("users").document(currentUserId);
-                        userRef.get().addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                Map<String, Object> userData = documentSnapshot.getData();
-                                if (userData != null && userData.containsKey("userpoints")) {
-                                    Long userPointsLong = (Long) userData.get("userpoints");
-                                    int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
-
-                                    int requiredPoints = Integer.parseInt(rewards.getPoints());
-
-                                    if (userPoints >= requiredPoints) {
-                                        // Check for existing pending reward requests
-                                        db.collection("rewardrequest")
-                                                .whereEqualTo("userId", currentUserId)
-                                                .whereEqualTo("pendingStatus", true)
-                                                .get()
-                                                .addOnSuccessListener(querySnapshot -> {
-                                                    if (!querySnapshot.isEmpty()) {
-                                                        // Generate a unique coupon code
-                                                        generateUniqueCouponCode(db, rewards);
-                                                    } else {
-                                                        // User already has a pending request
-                                                        AlertDialog.Builder pendingRequestDialog = new AlertDialog.Builder(Rcontext);
-                                                        pendingRequestDialog.setTitle("Pending Request");
-                                                        pendingRequestDialog.setMessage("You already have a pending reward request. Please wait for it to be accepted.");
-                                                        pendingRequestDialog.setPositiveButton("OK", (dialog, which) -> {
-                                                            dialog.dismiss();
-                                                        });
-                                                        pendingRequestDialog.create().show();
-                                                    }
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    // Handle failure
-                                                    Toast.makeText(Rcontext, "Failed to check existing requests.", Toast.LENGTH_SHORT).show();
-                                                });
-                                    } else {
-                                        // User has insufficient points
-                                        AlertDialog.Builder insufficientPointsDialog = new AlertDialog.Builder(Rcontext);
-                                        insufficientPointsDialog.setTitle("Insufficient Points");
-                                        insufficientPointsDialog.setMessage("You do not have enough points to claim this reward.");
-                                        insufficientPointsDialog.setPositiveButton("OK", (dialog, which) -> {
-                                            dialog.dismiss();
-                                        });
-                                        insufficientPointsDialog.create().show();
-                                    }
-                                }
-                            }
-                        }).addOnFailureListener(e -> {
-                            // Handle failure
-                            Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
-                        });
-                    }
-                });
-* */
