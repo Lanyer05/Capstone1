@@ -19,7 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
-
+        <activity
+            android:name=".reward_category_items"
+            android:exported="false" />
         <activity
             android:name=".Profile_Activity"
             android:exported="false"
@@ -66,7 +68,6 @@
             android:label="false"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -74,6 +75,7 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -85,7 +87,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".taskprocess.TaskProgress$TimerService"
             android:enabled="true"
@@ -94,6 +95,6 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
     </application>
+
 </manifest>
