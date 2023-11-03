@@ -10,6 +10,7 @@
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp">
 
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
         android:layout_width="343dp"
@@ -19,7 +20,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.355"
+        app:layout_constraintHorizontal_bias="0.372"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayoutCompat2"
         app:layout_constraintVertical_bias="0.0">
@@ -52,6 +53,7 @@
             android:padding="15dp">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rewarditemrecycler"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -59,7 +61,6 @@
 
         </ScrollView>
     </androidx.appcompat.widget.LinearLayoutCompat>
-
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat2"

@@ -25,12 +25,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardViewHolder>{
 
     Context Rcontext;
     ArrayList<RewardsData> Rlist;
+
+    RecyclerView recyclerView;
+
+    RewardCategoryItems rewardCategoryItems;
 
     AlertDialog alertDialog;
 
@@ -60,16 +63,22 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 AlertDialog.Builder rewardBuilder = new AlertDialog.Builder(Rcontext);
                 View rewardPopup = LayoutInflater.from(Rcontext).inflate(R.layout.reward_dialog, null);
 
-                TextView rwrd = rewardPopup.findViewById(R.id.userRemainingPoints);
+                // Find the RecyclerView inside the rewardPopup
+                RecyclerView recyclerView = rewardPopup.findViewById(R.id.rewarditemrecycler);
 
-                AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
+                // ...
 
-                rewardBuilder.setView(rewardPopup);
+                // Set the adapter for the recyclerView
+                recyclerView.setAdapter(rewardCategoryItems);
+
+                // ...
+
                 alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 alertDialog.show();
 
+                AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
                 // Fetch user's points from Firestore
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 DocumentReference categoryRef = db.collection("categories").document(rewardsData.getCategory()); // Assuming 'category' is the category ID

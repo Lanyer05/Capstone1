@@ -50,4 +50,8 @@ public class RewardRequest {
     public int getRewardPoints() { // Fix: Method name should start with lowercase
         return rewardPoints;
     }
+
+    public String getCategory() {
+        return category;
+    }
 }
