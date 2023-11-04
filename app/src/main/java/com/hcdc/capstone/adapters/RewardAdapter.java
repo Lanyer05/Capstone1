@@ -14,6 +14,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
+import com.hcdc.capstone.rewardprocess.RewardItems;
 import com.hcdc.capstone.rewardprocess.RewardRequest;
 import com.hcdc.capstone.rewardprocess.RewardsData;
 
@@ -30,6 +31,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     Context Rcontext;
     ArrayList<RewardsData> Rlist;
+    ArrayList<RewardItems> RIlist;
 
     RecyclerView recyclerView;
 
@@ -39,7 +41,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public RewardAdapter(Context Rcontext, ArrayList<RewardsData> Rlist) {
+    public RewardAdapter(Context Rcontext, ArrayList<RewardsData> Rlist,  ArrayList<RewardItems> RIlist;) {
         this.Rcontext = Rcontext;
         this.Rlist = Rlist;
     }
@@ -60,25 +62,26 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 AlertDialog.Builder rewardBuilder = new AlertDialog.Builder(Rcontext);
                 View rewardPopup = LayoutInflater.from(Rcontext).inflate(R.layout.reward_dialog, null);
 
-                // Find the RecyclerView inside the rewardPopup
-                RecyclerView recyclerView = rewardPopup.findViewById(R.id.rewarditemrecycler);
 
-                // ...
-
-                // Set the adapter for the recyclerView
-                recyclerView.setAdapter(rewardCategoryItems);
-
-                // ...
-
+                rewardBuilder.setView(rewardPopup);
                 alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 alertDialog.show();
 
+                // Find the RecyclerView inside the rewardPopup
+                rewardCategoryItems = new RewardCategoryItems(Rcontext, RIlist);
+                RecyclerView recyclerView = rewardPopup.findViewById(R.id.rewarditemrecycler);
+                recyclerView.setAdapter(rewardCategoryItems);
+
+                Log.d("RIlistSize", "Size of RIlist: " + RIlist.size());
+
+
                 AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
+
                 // Fetch user's points from Firestore
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 DocumentReference categoryRef = db.collection("categories").document(rewardsData.getCategory()); // Assuming 'category' is the category ID

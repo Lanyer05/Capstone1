@@ -18,18 +18,18 @@ import java.util.ArrayList;
 
 public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItems.RewardCategoryViewHolder> {
 
-    Context Rcontext;
+    Context RIcontext;
     ArrayList<RewardItems> Rcategoitems;
 
     public RewardCategoryItems(Context Rcontext, ArrayList<RewardItems> Rcategoitems) {
-        this.Rcontext = Rcontext;
+        this.RIcontext = Rcontext;
         this.Rcategoitems = Rcategoitems;
     }
 
     @NonNull
     @Override
     public RewardCategoryItems.RewardCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(Rcontext).inflate(R.layout.card_reward_items, parent, false);
+        View v = LayoutInflater.from(RIcontext).inflate(R.layout.card_reward_items, parent, false);
         return new RewardCategoryItems.RewardCategoryViewHolder(v);
     }
 
@@ -45,6 +45,8 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
     public int getItemCount() {
         return Rcategoitems.size();
     }
+
+
 
     public static class RewardCategoryViewHolder extends RecyclerView.ViewHolder{
 
