@@ -41,9 +41,10 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
 
     String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    public RewardAdapter(Context Rcontext, ArrayList<RewardsData> Rlist,  ArrayList<RewardItems> RIlist;) {
+    public RewardAdapter(Context Rcontext, ArrayList<RewardsData> Rlist,  ArrayList<RewardItems> RIlist) {
         this.Rcontext = Rcontext;
         this.Rlist = Rlist;
+        this.RIlist = RIlist;
     }
 
     @NonNull

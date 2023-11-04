@@ -33,6 +33,7 @@ public class Reward extends BaseActivity {
     FirebaseFirestore firestore;
     RewardAdapter rewardAdapter;
     ArrayList<RewardsData> rewardList;
+    ArrayList<RewardItems> rewarditemList;
 
     @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
     @Override
@@ -73,7 +74,8 @@ public class Reward extends BaseActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         rewardList = new ArrayList<>();
-        rewardAdapter = new RewardAdapter(this, rewardList);
+        rewarditemList = new ArrayList<>();
+        rewardAdapter = new RewardAdapter(this, rewardList,rewarditemList);
         recyclerView.setAdapter(rewardAdapter);
 
         // Fetch and display the current user's points
