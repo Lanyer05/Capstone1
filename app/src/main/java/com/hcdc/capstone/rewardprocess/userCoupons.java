@@ -46,9 +46,6 @@ public class userCoupons extends BaseActivity {
         firestore = FirebaseFirestore.getInstance();
 
 
-        progCode = findViewById(R.id.coupCodeProgress);
-        progRewardName = findViewById(R.id.coupRewardNameProgress);
-
         //Coupon List
         RecyclerView couponRecyclerView = findViewById(R.id.couponRecyclerView);
         couponList = new ArrayList<>();
@@ -59,65 +56,6 @@ public class userCoupons extends BaseActivity {
         couponRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         couponRecyclerView.setAdapter(couponAdapter);
 
-        CardView coupProgress = findViewById(R.id.cardViewProgress);
-        coupProgress.setOnClickListener(v -> {
-            if(progCode.getText().toString().equals("No reward requested..."))
-            {
-                Toast.makeText(getApplicationContext(),"Reward in progress is empty",Toast.LENGTH_LONG).show();
-            }
-            else
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(userCoupons.this);
-                builder.setTitle("Cancel Reward"); // Set the title of the dialog
-                builder.setMessage("Do you want to cancel this reward?"); // Set the message
-
-                // Add a "Yes" button
-                builder.setPositiveButton("Yes", (dialog, which) -> {
-                    // Handle the "Yes" button click here
-                    // You can add your cancel reward logic here
-                    cancelButton();
-                    dialog.dismiss(); // Dismiss the dialog
-                });
-
-                // Add a "No" button
-                builder.setNegativeButton("No", (dialog, which) -> {
-                    // Handle the "No" button click here, if needed
-                    dialog.dismiss(); // Dismiss the dialog
-                });
-
-                // Create and show the AlertDialog
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-
-        });
-
-    }
-
-    private void cancelButton() {
-        String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        WriteBatch batch = firestore.batch();
-        firestore.collection("rewardrequest")
-                .whereEqualTo("userId", currentUserUID)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot documents = task.getResult();
-                        if (documents != null && !documents.isEmpty()) {
-                            for (QueryDocumentSnapshot document : documents) {
-                                batch.delete(document.getReference());
-                            }
-                            batch.commit()
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(userCoupons.this, " Reward request canceled successfully ", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(userCoupons.this, Reward.class);
-                                        startActivity(intent);
-                                    })
-                                    .addOnFailureListener(e -> {
-                                    });
-                        }
-                    }
-                });
     }
 
     @SuppressLint("SetTextI18n")

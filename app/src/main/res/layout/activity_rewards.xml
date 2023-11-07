@@ -15,7 +15,7 @@
         android:id="@+id/greenbar"
         android:layout_width="match_parent"
         android:layout_height="230dp"
-        android:layout_marginTop="-32dp"
+        android:layout_marginTop="-52dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +30,7 @@
         android:layout_marginEnd="16dp"
         android:background="@drawable/cirlce_solid"
         android:padding="8dp"
-        android:src="@drawable/gift_2" />
+        android:src="@drawable/gift" />
 
     <FrameLayout
         android:id="@+id/container"
@@ -48,8 +48,8 @@
         <View
             android:id="@+id/points1"
             android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:background="@drawable/custom_pointsbox"/>
+            android:layout_height="80dp"
+            android:background="@drawable/custom_pointsbox" />
 
         <TextView
             android:id="@+id/textView"
@@ -98,11 +98,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="487dp"
         android:layout_above="@id/bottom_navigation_view"
         android:layout_below="@id/claimable_r"
-        android:layout_marginTop="165dp"
-        android:layout_marginBottom="15dp">
+        android:layout_marginTop="134dp"
+        android:layout_marginBottom="4dp">
 
         <LinearLayout
             android:id="@+id/rewardsLayout"

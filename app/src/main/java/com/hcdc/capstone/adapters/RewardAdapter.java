@@ -61,18 +61,13 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 View rewardPopup = LayoutInflater.from(Rcontext).inflate(R.layout.reward_dialog, null);
 
                 TextView rwrd = rewardPopup.findViewById(R.id.userRemainingPoints);
-                TextView rwrdtitle = rewardPopup.findViewById(R.id.getRewardTitle);
-                TextView rwrdpoint = rewardPopup.findViewById(R.id.getRewardPoint);
 
                 AppCompatImageButton closerwrd = rewardPopup.findViewById(R.id.rewardclose);
-                AppCompatButton reqrwrd = rewardPopup.findViewById(R.id.requestReward);
-
-                rwrdtitle.setText(rewardsData.getCategory());
-                rwrdpoint.setText("Required points to claim: " + rewardsData.getPoints() + " points");
 
                 rewardBuilder.setView(rewardPopup);
                 alertDialog = rewardBuilder.create();
                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 alertDialog.show();
 
                 // Fetch user's points from Firestore
@@ -91,87 +86,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                     @Override
                     public void onClick(View v) {
                         alertDialog.dismiss();
-                    }
-                });
-
-                reqrwrd.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Fetch user's points from Firestore
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        DocumentReference userRef = db.collection("users").document(currentUserId);
-
-                        userRef.get().addOnSuccessListener(documentSnapshot -> {
-                            if (documentSnapshot.exists()) {
-                                Map<String, Object> userData = documentSnapshot.getData();
-                                if (userData != null && userData.containsKey("userpoints")) {
-                                    Long userPointsLong = (Long) userData.get("userpoints");
-                                    int userPoints = userPointsLong != null ? userPointsLong.intValue() : 0;
-
-                                    int requiredPoints = Integer.parseInt(rewardsData.getPoints());
-
-                                    if (userPoints >= requiredPoints) {
-                                        // Check for existing pending reward requests
-                                        db.collection("rewardrequest")
-                                                .whereEqualTo("userId", currentUserId)
-                                                .whereEqualTo("pendingStatus", true)
-                                                .get()
-                                                .addOnSuccessListener(querySnapshot -> {
-                                                    if (!querySnapshot.isEmpty()) {
-                                                        // User already has a pending request
-                                                        AlertDialog.Builder pendingRequestDialog = new AlertDialog.Builder(Rcontext);
-                                                        pendingRequestDialog.setTitle("Pending Request");
-                                                        pendingRequestDialog.setMessage("You already have a pending reward request. Please wait for it to be accepted.");
-                                                        pendingRequestDialog.setPositiveButton("OK", (dialog, which) -> {
-                                                            dialog.dismiss();
-                                                        });
-                                                        pendingRequestDialog.create().show();
-                                                    } else {
-                                                        // Check the number of completed reward requests
-                                                        db.collection("complete_rewardreq")
-                                                                .whereEqualTo("userId", currentUserId)
-                                                                .get()
-                                                                .addOnSuccessListener(completedReqSnapshot -> {
-                                                                    if (completedReqSnapshot.size() < 3) {
-                                                                        // User has fewer than 3 completed requests, generate a unique coupon code
-                                                                        generateUniqueCouponCode(db, rewardsData);
-                                                                    } else {
-                                                                        // User has reached the limit of completed requests
-                                                                        AlertDialog.Builder limitReachedDialog = new AlertDialog.Builder(Rcontext);
-                                                                        limitReachedDialog.setTitle("Request Limit Reached");
-                                                                        limitReachedDialog.setMessage("You have reached the maximum limit of completed reward requests.");
-                                                                        limitReachedDialog.setPositiveButton("OK", (dialog, which) -> {
-                                                                            dialog.dismiss();
-                                                                        });
-                                                                        limitReachedDialog.create().show();
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                    // Handle failure
-                                                                    Toast.makeText(Rcontext, "Failed to check completed reward requests.", Toast.LENGTH_SHORT).show();
-                                                                });
-                                                    }
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    // Handle failure
-                                                    Toast.makeText(Rcontext, "Failed to check existing requests.", Toast.LENGTH_SHORT).show();
-                                                });
-                                    } else {
-                                        // User has insufficient points
-                                        AlertDialog.Builder insufficientPointsDialog = new AlertDialog.Builder(Rcontext);
-                                        insufficientPointsDialog.setTitle("Insufficient Points");
-                                        insufficientPointsDialog.setMessage("You do not have enough points to claim this reward.");
-                                        insufficientPointsDialog.setPositiveButton("OK", (dialog, which) -> {
-                                            dialog.dismiss();
-                                        });
-                                        insufficientPointsDialog.create().show();
-                                    }
-                                }
-                            }
-                        }).addOnFailureListener(e -> {
-                            // Handle failure
-                            Toast.makeText(Rcontext, "Failed to fetch user points.", Toast.LENGTH_SHORT).show();
-                        });
                     }
                 });
 
@@ -220,7 +134,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (queryDocumentSnapshots.isEmpty()) {
                         // The coupon code is unique, proceed with adding the reward request
-                        addRewardRequestToFirestore(db, rewardsData, couponCode);
+                      //  addRewardRequestToFirestore(db, rewardsData, couponCode);
                     } else {
                         // The coupon code already exists, generate a new one
                         generateUniqueCouponCode(db, rewardsData);
@@ -233,7 +147,7 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
     }
 
     // Method to add reward request to Firestore
-    private void addRewardRequestToFirestore(FirebaseFirestore db, RewardsData rewardsData, String couponCode) {
+    /*private void addRewardRequestToFirestore(FirebaseFirestore db, RewardsData rewardsData, String couponCode) {
         // Batch write: Add reward request and update user's points
         WriteBatch batch = db.batch();
         DocumentReference rewardRequestRef = db.collection("rewardrequest").document();
@@ -257,5 +171,5 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                     // Handle failure
                     Toast.makeText(Rcontext, "Reward request failed.", Toast.LENGTH_SHORT).show();
                 });
-    }
+    }*/
 }
