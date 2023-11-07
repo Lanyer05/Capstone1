@@ -109,6 +109,38 @@
             android:textSize="15sp" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/taskMaxuserLayout"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.004"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/durationLayout">
+
+        <ImageView
+            android:id="@+id/max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_person" />
+
+        <TextView
+            android:id="@+id/taskMaxUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Max Users"
+            android:fontFamily="@font/lora_italic"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="15sp"
+             />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/taskDesc"
         android:layout_width="0dp"
@@ -118,15 +150,15 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/lora_italic"
-        android:textStyle="bold"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
         android:textAlignment="viewStart"
         android:textColor="#6A6A6A"
         android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/durationLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/taskMaxuserLayout" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button"
