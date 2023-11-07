@@ -74,12 +74,16 @@ public class TaskDetails extends BaseActivity {
             public void onClick(View v) {
                 uID = auth.getCurrentUser().getUid();
 
-                // Check if the user has already accepted a task
+                // Check if the user has already accepted the task
                 firestore.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", uID)
+                        .whereEqualTo("taskName", tskTitle.getText().toString()) // Add this condition to check for the task
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
-                            if (queryDocumentSnapshots.isEmpty()) {
+                            if (!queryDocumentSnapshots.isEmpty()) {
+                                // User has already accepted the task
+                                Toast.makeText(TaskDetails.this, "You have already accepted this task.", Toast.LENGTH_SHORT).show();
+                            } else {
                                 // Before showing the confirmation overlay, check if the task has reached its max user limit
                                 firestore.collection("tasks")
                                         .whereEqualTo("taskName", tskTitle.getText().toString())
@@ -88,24 +92,23 @@ public class TaskDetails extends BaseActivity {
                                             if (!queryDocumentSnapshots1.isEmpty()) {
                                                 DocumentSnapshot documentSnapshot = queryDocumentSnapshots1.getDocuments().get(0);
                                                 List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
-                                                String maxUsersString = documentSnapshot.getString("maxUsers");
+                                                Long maxUsers = documentSnapshot.getLong("maxUsers"); // Retrieve maxUsers as a Long
 
-                                                if (acceptedByUsers != null && maxUsersString != null) {
+                                                if (acceptedByUsers != null && maxUsers != null) {
                                                     int currentAcceptedUsers = acceptedByUsers.size();
-                                                    int maxUsers = Integer.parseInt(maxUsersString);
 
-                                                    if (currentAcceptedUsers >= maxUsers) {
-                                                        Toast.makeText(TaskDetails.this, " Task is full. Cannot be accepted. ", Toast.LENGTH_SHORT).show();
+                                                    if (currentAcceptedUsers >= maxUsers.intValue()) {
+                                                        Toast.makeText(TaskDetails.this, "Task is full. Cannot be accepted.", Toast.LENGTH_SHORT).show();
                                                     } else {
                                                         showAcceptConfirmationOverlay();
                                                     }
                                                 }
                                             }
                                         });
-                                     }
-                                  });
-                                }
-                             });
+                            }
+                        });
+            }
+        });
 
         cancelTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +129,7 @@ public class TaskDetails extends BaseActivity {
                         List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
                         if (acceptedByUsers != null) {
                             int currentAcceptedUsers = acceptedByUsers.size();
-                            int maxUsers = Integer.parseInt(tMaxUser);
+                            Long maxUsers = documentSnapshot.getLong("maxUsers");
                             String ratioText = currentAcceptedUsers + "/" + maxUsers;
                             tskMaxUser.setText("Max User: " + ratioText);
                         } else {
@@ -146,15 +149,14 @@ public class TaskDetails extends BaseActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                        String maxUsersString = documentSnapshot.getString("maxUsers");
+                        Long maxUsers = documentSnapshot.getLong("maxUsers"); // Retrieve maxUsers as a Long
                         String camera = documentSnapshot.getString("camera");
-                        try {
-                            int maxUsers = Integer.parseInt(maxUsersString);
+                        if (maxUsers != null) {
                             List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
                             if (acceptedByUsers != null) {
                                 int currentAcceptedUsers = acceptedByUsers.size();
 
-                                if (currentAcceptedUsers < maxUsers) {
+                                if (currentAcceptedUsers < maxUsers.intValue()) {
                                     firestore.collection("tasks")
                                             .document(documentSnapshot.getId())
                                             .update("isAccepted", true);
@@ -175,7 +177,7 @@ public class TaskDetails extends BaseActivity {
                                     userTaskAccepted.put("isConfirmed", false);
                                     userTaskAccepted.put("acceptedBy", uID);
                                     userTaskAccepted.put("acceptedByEmail", userEmail);
-                                    userTaskAccepted.put("maxUsers", String.valueOf(maxUsers));
+                                    userTaskAccepted.put("maxUsers", maxUsers); // Store maxUsers as a Long
                                     userTaskAccepted.put("camera", camera);
 
                                     if (documentSnapshot.contains("timeFrame")) {
@@ -199,8 +201,8 @@ public class TaskDetails extends BaseActivity {
                                 Log.e(TAG, "The 'acceptedByUsers' field is not properly initialized");
                                 Toast.makeText(TaskDetails.this, "Task cannot be accepted at the moment", Toast.LENGTH_SHORT).show();
                             }
-                        } catch (NumberFormatException e) {
-                            Log.e(TAG, "maxUsers is not a valid integer", e);
+                        } else {
+                            Log.e(TAG, "maxUsers is not a valid integer");
                             Toast.makeText(TaskDetails.this, "Task cannot be accepted due to maxUsers format issue", Toast.LENGTH_SHORT).show();
                         }
                     }

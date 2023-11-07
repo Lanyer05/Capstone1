@@ -79,7 +79,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskData taskData = list.get(position);
 
-        if (taskData.getAcceptedByUsers().size() < Integer.parseInt(taskData.getmaxUsers())) {
+        if (taskData.getAcceptedByUsers().size() < taskData.getMaxUsers()) {
             holder.tasktitle.setText(taskData.getTaskName());
             holder.taskpoint.setText(taskData.getPoints() + " points");
             holder.taskloc.setText(taskData.getLocation());
@@ -92,7 +92,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             } else {
                 holder.taskTimer.setVisibility(View.GONE);
             }
-            holder.taskMaxUser.setText("Max User: " + taskData.getAcceptedByUsers().size() + "/" + taskData.getmaxUsers());
+            holder.taskMaxUser.setText("Max User: " + taskData.getAcceptedByUsers().size() + "/" + taskData.getMaxUsers());
             holder.taskMaxUser.setVisibility(View.VISIBLE);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +108,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                         intent.putExtra("taskpoint", selectedTask.getPoints());
                         intent.putExtra("tasklocation", selectedTask.getLocation());
                         intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
-                        intent.putExtra("taskMaxUser", selectedTask.getmaxUsers());
+                        intent.putExtra("taskMaxUser", selectedTask.getMaxUsers());
                         context.startActivity(intent);
                     }
                 }

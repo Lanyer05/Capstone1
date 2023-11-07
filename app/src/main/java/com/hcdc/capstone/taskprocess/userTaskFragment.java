@@ -1,5 +1,6 @@
 package com.hcdc.capstone.taskprocess;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,9 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -21,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +32,7 @@ import java.util.Objects;
 public class userTaskFragment extends Fragment {
 
     private FirebaseFirestore firestore;
-    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskMaxUserTextView, taskEmptyTextView;
+    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView, taskMaxUserTextView;
     private Button cancelButton, startButton;
 
     private ImageView imgLoc, imgTime, imgMax;
@@ -75,9 +79,8 @@ public class userTaskFragment extends Fragment {
                             String taskPoints = document.getString("points");
                             String taskLocation = document.getString("location");
                             String taskDescription = document.getString("description");
-                            String taskMaxUser = document.getString("maxUsers");
+                            Long taskMaxUser = document.getLong("maxUsers");
                             Map<String, Object> timeFrameMap = (Map<String, Object>) document.get("timeFrame");
-
                             int taskHours = 0;
                             int taskMinutes = 0;
                             String taskTimeFrame = "";
@@ -101,7 +104,9 @@ public class userTaskFragment extends Fragment {
                             int finalTaskHours = taskHours;
                             int finalTaskMinutes = taskMinutes;
 
+                            // Handle cancel button click to delete the document
                             cancelButton.setOnClickListener(v -> {
+                                // Show the confirmation overlay
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                 alertDialogBuilder.setView(overlayView);
@@ -113,51 +118,55 @@ public class userTaskFragment extends Fragment {
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
                                 confirmButton.setOnClickListener(viewConfirm -> {
+                                    // Create a WriteBatch
                                     WriteBatch batch = firestore.batch();
 
-                                    // Remove the user's UID from the acceptedByUsers field in the tasks collection
-                                    firestore.collection("tasks")
-                                            .whereEqualTo("taskName", taskName)
-                                            .get()
-                                            .addOnSuccessListener(queryDocumentSnapshots -> {
-                                                if (!queryDocumentSnapshots.isEmpty()) {
-                                                    DocumentSnapshot taskDocument = queryDocumentSnapshots.getDocuments().get(0);
-                                                    List<String> acceptedByUsers = (List<String>) taskDocument.get("acceptedByUsers");
-
-                                                    if (acceptedByUsers != null) {
-                                                        acceptedByUsers.remove(currentUserUID);
-                                                        firestore.collection("tasks")
-                                                                .document(taskDocument.getId())
-                                                                .update("acceptedByUsers", acceptedByUsers)
-                                                                .addOnSuccessListener(aVoid -> {
-                                                                    if (getActivity() != null) {
-                                                                        getActivity().finish();
-                                                                    }
-                                                                })
-                                                                .addOnFailureListener(e -> {
-                                                                });
-                                                    }
-                                                }
-                                            })
-                                            .addOnFailureListener(e -> {
-                                            });
+                                    // Delete the task from user_acceptedTask collection
                                     batch.delete(document.getReference());
+
+                                    // Add the task back to the tasks collection
+                                    DocumentReference taskRef = firestore.collection("tasks").document();
+                                    Map<String, Object> taskData = new HashMap<>();
+                                    taskData.put("taskName", taskName);
+                                    taskData.put("description", taskDescription);
+                                    taskData.put("location", taskLocation);
+                                    taskData.put("points", taskPoints);
+                                    taskData.put("isAccepted", false);
+                                    taskData.put("isStarted", false);
+                                    taskData.put("isCompleted", false);
+
+                                    // Only add the timeFrame if hours or minutes are greater than 0
+                                    if (finalTaskHours > 0 || finalTaskMinutes > 0) {
+                                        Map<String, Object> timeFrameMapNew = new HashMap<>();
+                                        timeFrameMapNew.put("hours", finalTaskHours);
+                                        timeFrameMapNew.put("minutes", finalTaskMinutes);
+                                        taskData.put("timeFrame", timeFrameMapNew);
+                                    }
+
+                                    batch.set(taskRef, taskData);
+
+                                    // Commit the batch
                                     batch.commit()
                                             .addOnSuccessListener(aVoid -> {
-                                                if (getActivity() != null) {
-                                                    getActivity().finish();
-                                                }
+                                                // Batch write successful, handle success
+                                                // Update UI or take further actions
+                                                getActivity().finish();
                                             })
                                             .addOnFailureListener(e -> {
+                                                // Batch write failed, handle the error
                                             });
+
+                                    // Dismiss the confirmation overlay
                                     alertDialog.dismiss();
                                 });
 
                                 cancelButtonOverlay.setOnClickListener(viewCancel -> {
+                                    // Dismiss the confirmation overlay
                                     alertDialog.dismiss();
                                 });
                             });
 
+                            // Implement the startButton click listener here
                             startButton.setOnClickListener(v -> {
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.start_confirmation_overlay, null);
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -170,7 +179,9 @@ public class userTaskFragment extends Fragment {
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
                                 confirmButton.setOnClickListener(viewConfirm -> {
+                                    // Calculate task duration in milliseconds
                                     long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+
                                     Intent intent = new Intent(getContext(), TaskProgress.class);
 
                                     intent.putExtra("taskName", taskName);
@@ -182,7 +193,9 @@ public class userTaskFragment extends Fragment {
                                     intent.putExtra("timeFrameMinutes", finalTaskMinutes);
 
                                     startActivity(intent);
+
                                     alertDialog.dismiss();
+
                                     getActivity().finish();
                                 });
 
@@ -198,15 +211,14 @@ public class userTaskFragment extends Fragment {
                             taskTimeFrameTextView.setVisibility(View.GONE);
                             taskDescriptionTextView.setVisibility(View.GONE);
                             taskMaxUserTextView.setVisibility(View.GONE);
-
                             taskEmptyTextView.setVisibility(View.VISIBLE);
 
                             cancelButton.setVisibility(View.GONE);
                             startButton.setVisibility(View.GONE);
 
-                            imgMax.setVisibility(View.GONE);
                             imgTime.setVisibility(View.GONE);
                             imgLoc.setVisibility(View.GONE);
+                            imgMax.setVisibility(View.GONE);
                         }
                     }
                 });
@@ -214,7 +226,8 @@ public class userTaskFragment extends Fragment {
         return view;
     }
 
-    private void displayAcceptedUserRatio(String taskName, String taskMaxUser) {
+    @SuppressLint("SetTextI18n")
+    private void displayAcceptedUserRatio(String taskName, Long taskMaxUser) {
         firestore.collection("tasks")
                 .whereEqualTo("taskName", taskName)
                 .get()
@@ -224,7 +237,7 @@ public class userTaskFragment extends Fragment {
                         List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
                         if (acceptedByUsers != null) {
                             int currentAcceptedUsers = acceptedByUsers.size();
-                            int maxUsers = Integer.parseInt(taskMaxUser);
+                            Long maxUsers = documentSnapshot.getLong("maxUsers");
                             String ratioText = currentAcceptedUsers + "/" + maxUsers;
                             taskMaxUserTextView.setText("Max User: " + ratioText);
                         } else {

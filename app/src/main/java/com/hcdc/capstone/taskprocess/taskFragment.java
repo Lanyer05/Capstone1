@@ -19,7 +19,6 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.TaskAdapter;
@@ -77,27 +76,32 @@ public class taskFragment extends Fragment {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
+
                         tList.clear();
-                        for (QueryDocumentSnapshot document : value) {
-                            TaskData task = document.toObject(TaskData.class);
+                        for (DocumentChange dc : value.getDocumentChanges()) {
+                            if (dc.getType() == DocumentChange.Type.ADDED) {
+                                TaskData task = dc.getDocument().toObject(TaskData.class);
 
-                            // Check if the task is accepted before adding it to the list
-                            if (!task.isAccepted()) {
-                                // Retrieve the timeFrame map
-                                Map<String, Object> timeFrameMap = (Map<String, Object>) document.get("timeFrame");
-                                if (timeFrameMap != null) {
-                                    // Retrieve hours and minutes from the timeFrame map
-                                    int hours = ((Long) timeFrameMap.get("hours")).intValue();
-                                    int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
-                                    task.hours = hours;
-                                    task.minutes = minutes;
+                                // Check if the task is accepted before adding it to the list
+                                if (!task.isAccepted()) {
+                                    // Retrieve the timeFrame map
+                                    Map<String, Object> timeFrameMap = (Map<String, Object>) dc.getDocument().get("timeFrame");
+                                    if (timeFrameMap != null) {
+                                        // Retrieve hours and minutes from the timeFrame map
+                                        int hours = ((Long) timeFrameMap.get("hours")).intValue();
+                                        int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                        task.hours = hours;
+                                        task.minutes = minutes;
+                                    }
+
+                                    tList.add(task);
                                 }
-
-                                tList.add(task);
                             }
                         }
+
                         ta.notifyDataSetChanged();
-                        // Check if tList is empty and update the TextView and its height
+
+                        // Check if tList is empty and update the TextView
                         if (tList.isEmpty()) {
                             emptyTaskView.setText("No tasks available");
                             emptyTaskView.setVisibility(View.VISIBLE);
@@ -108,6 +112,8 @@ public class taskFragment extends Fragment {
                         }
                     }
                 });
+
+        // Check if the "tasks" collection is empty and update the TextView
     }
 
 }
