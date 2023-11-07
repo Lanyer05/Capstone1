@@ -68,5 +68,7 @@ public class TaskData {
         return camera;
     }
 
-    public ArrayList<String> getAcceptedByUsers() {return acceptedByUsers;}
+    public ArrayList<String> getAcceptedByUsers() {
+        return acceptedByUsers;
+    }
 }

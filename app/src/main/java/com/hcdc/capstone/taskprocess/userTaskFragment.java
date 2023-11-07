@@ -106,7 +106,6 @@ public class userTaskFragment extends Fragment {
 
                             // Handle cancel button click to delete the document
                             cancelButton.setOnClickListener(v -> {
-                                // Show the confirmation overlay
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
                                 alertDialogBuilder.setView(overlayView);
@@ -118,50 +117,47 @@ public class userTaskFragment extends Fragment {
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
                                 confirmButton.setOnClickListener(viewConfirm -> {
-                                    // Create a WriteBatch
                                     WriteBatch batch = firestore.batch();
 
-                                    // Delete the task from user_acceptedTask collection
-                                    batch.delete(document.getReference());
+                                    // Remove the user's UID from the acceptedByUsers field in the tasks collection
+                                    firestore.collection("tasks")
+                                            .whereEqualTo("taskName", taskName)
+                                            .get()
+                                            .addOnSuccessListener(queryDocumentSnapshots -> {
+                                                if (!queryDocumentSnapshots.isEmpty()) {
+                                                    DocumentSnapshot taskDocument = queryDocumentSnapshots.getDocuments().get(0);
+                                                    List<String> acceptedByUsers = (List<String>) taskDocument.get("acceptedByUsers");
 
-                                    // Add the task back to the tasks collection
-                                    DocumentReference taskRef = firestore.collection("tasks").document();
-                                    Map<String, Object> taskData = new HashMap<>();
-                                    taskData.put("taskName", taskName);
-                                    taskData.put("description", taskDescription);
-                                    taskData.put("location", taskLocation);
-                                    taskData.put("points", taskPoints);
-                                    taskData.put("isAccepted", false);
-                                    taskData.put("isStarted", false);
-                                    taskData.put("isCompleted", false);
-
-                                    // Only add the timeFrame if hours or minutes are greater than 0
-                                    if (finalTaskHours > 0 || finalTaskMinutes > 0) {
-                                        Map<String, Object> timeFrameMapNew = new HashMap<>();
-                                        timeFrameMapNew.put("hours", finalTaskHours);
-                                        timeFrameMapNew.put("minutes", finalTaskMinutes);
-                                        taskData.put("timeFrame", timeFrameMapNew);
-                                    }
-
-                                    batch.set(taskRef, taskData);
-
-                                    // Commit the batch
-                                    batch.commit()
-                                            .addOnSuccessListener(aVoid -> {
-                                                // Batch write successful, handle success
-                                                // Update UI or take further actions
-                                                getActivity().finish();
+                                                    if (acceptedByUsers != null) {
+                                                        acceptedByUsers.remove(currentUserUID);
+                                                        firestore.collection("tasks")
+                                                                .document(taskDocument.getId())
+                                                                .update("acceptedByUsers", acceptedByUsers)
+                                                                .addOnSuccessListener(aVoid -> {
+                                                                    if (getActivity() != null) {
+                                                                        getActivity().finish();
+                                                                    }
+                                                                })
+                                                                .addOnFailureListener(e -> {
+                                                                });
+                                                    }
+                                                }
                                             })
                                             .addOnFailureListener(e -> {
-                                                // Batch write failed, handle the error
                                             });
-
-                                    // Dismiss the confirmation overlay
+                                    batch.delete(document.getReference());
+                                    batch.commit()
+                                            .addOnSuccessListener(aVoid -> {
+                                                if (getActivity() != null) {
+                                                    getActivity().finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                            });
                                     alertDialog.dismiss();
                                 });
 
                                 cancelButtonOverlay.setOnClickListener(viewCancel -> {
-                                    // Dismiss the confirmation overlay
                                     alertDialog.dismiss();
                                 });
                             });

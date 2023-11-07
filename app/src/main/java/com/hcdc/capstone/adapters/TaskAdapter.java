@@ -32,28 +32,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     // Add Firestore listener to watch for changes
+    @SuppressLint("NotifyDataSetChanged")
     private void initFirestoreListener() {
-        db.collection("your_firestore_collection")
+        db.collection("tasks")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
                         // Handle error
                         return;
                     }
-
+                    assert value != null;
                     for (DocumentChange dc : value.getDocumentChanges()) {
-                        // Check for changes in the data
+                        // Check changes in the data
                         if (dc.getType() == DocumentChange.Type.MODIFIED) {
                             // Handle modified data here
                             TaskData modifiedTask = dc.getDocument().toObject(TaskData.class);
-
                             // Find the position of the modified task in your list and update it
                             int index = findTaskIndex(modifiedTask);
                             if (index >= 0) {
                                 list.set(index, modifiedTask);
-                                notifyItemChanged(index);
                             }
                         }
                     }
+                    // Notify the adapter that the data has changed
+                    notifyDataSetChanged();
                 });
     }
 
@@ -79,7 +80,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         TaskData taskData = list.get(position);
 
-        if (taskData.getAcceptedByUsers().size() < taskData.getMaxUsers()) {
+        if (taskData.getAcceptedByUsers() != null && taskData.getAcceptedByUsers().size() < taskData.getMaxUsers()) {
             holder.tasktitle.setText(taskData.getTaskName());
             holder.taskpoint.setText(taskData.getPoints() + " points");
             holder.taskloc.setText(taskData.getLocation());
@@ -95,22 +96,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.taskMaxUser.setText("Max User: " + taskData.getAcceptedByUsers().size() + "/" + taskData.getMaxUsers());
             holder.taskMaxUser.setVisibility(View.VISIBLE);
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int clickedPosition = holder.getAdapterPosition();
-                    if (clickedPosition != RecyclerView.NO_POSITION) {
-                        TaskData selectedTask = list.get(clickedPosition);
+            holder.itemView.setOnClickListener(v -> {
+                int clickedPosition = holder.getAdapterPosition();
+                if (clickedPosition != RecyclerView.NO_POSITION) {
+                    TaskData selectedTask = list.get(clickedPosition);
 
-                        Intent intent = new Intent(context, TaskDetails.class);
-                        intent.putExtra("tasktitle", selectedTask.getTaskName());
-                        intent.putExtra("taskdetails", selectedTask.getDescription());
-                        intent.putExtra("taskpoint", selectedTask.getPoints());
-                        intent.putExtra("tasklocation", selectedTask.getLocation());
-                        intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
-                        intent.putExtra("taskMaxUser", selectedTask.getMaxUsers());
-                        context.startActivity(intent);
-                    }
+                    Intent intent = new Intent(context, TaskDetails.class);
+                    intent.putExtra("tasktitle", selectedTask.getTaskName());
+                    intent.putExtra("taskdetails", selectedTask.getDescription());
+                    intent.putExtra("taskpoint", selectedTask.getPoints());
+                    intent.putExtra("tasklocation", selectedTask.getLocation());
+                    intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
+                    intent.putExtra("taskMaxUser", selectedTask.getMaxUsers());
+                    context.startActivity(intent);
                 }
             });
         } else {

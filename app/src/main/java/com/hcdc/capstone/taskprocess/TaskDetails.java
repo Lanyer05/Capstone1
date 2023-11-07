@@ -82,7 +82,7 @@ public class TaskDetails extends BaseActivity {
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
                                 // User has already accepted the task
-                                Toast.makeText(TaskDetails.this, "You have already accepted this task.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TaskDetails.this, " You have already accepted this task. ", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Before showing the confirmation overlay, check if the task has reached its max user limit
                                 firestore.collection("tasks")
@@ -98,7 +98,7 @@ public class TaskDetails extends BaseActivity {
                                                     int currentAcceptedUsers = acceptedByUsers.size();
 
                                                     if (currentAcceptedUsers >= maxUsers.intValue()) {
-                                                        Toast.makeText(TaskDetails.this, "Task is full. Cannot be accepted.", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(TaskDetails.this, " Task is full. Cannot be accepted. ", Toast.LENGTH_SHORT).show();
                                                     } else {
                                                         showAcceptConfirmationOverlay();
                                                     }
@@ -195,11 +195,11 @@ public class TaskDetails extends BaseActivity {
                                             });
                                 } else {
                                     Log.d(TAG, "Task cannot be accepted due to users limitation.");
-                                    Toast.makeText(TaskDetails.this, "Task cannot be accepted due to maxUsers limitation", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(TaskDetails.this, " Task cannot be accepted due to maxUsers limitation ", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
                                 Log.e(TAG, "The 'acceptedByUsers' field is not properly initialized");
-                                Toast.makeText(TaskDetails.this, "Task cannot be accepted at the moment", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TaskDetails.this, " Task cannot be accepted at the moment ", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Log.e(TAG, "maxUsers is not a valid integer");
