@@ -52,7 +52,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
         String formattedDate = dateFormat.format(announcementModel.getTimestamp());
-        holder.announceTime.setText("Posted on: "+formattedDate);
+        holder.announceTime.setText("Date Posted: "+formattedDate);
     }
 
     @Override

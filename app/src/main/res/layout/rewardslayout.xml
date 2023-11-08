@@ -4,52 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="10dp"
     app:cardCornerRadius="15dp"
-    android:layout_margin="16dp"
-    android:backgroundTint="#f7f4e1">
+    android:layout_margin="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
-
-        <ImageView
-            android:id="@+id/rewardImage"
-            android:layout_width="0dp"
-            android:layout_height="135dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ecotaskreward_logo" />
+        android:background="@drawable/glass_effect_background">
 
         <TextView
             android:id="@+id/rewardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="13dp"
+            android:fontFamily="sans-serif-black"
             android:text="Task Title"
             android:textAlignment="center"
-            android:textColor="@color/black"
+            android:textColor="#6A6A6A"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rewardImage" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/pointLayout"
             android:layout_width="130dp"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="13dp"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rewardTitle">
+            app:layout_constraintTop_toBottomOf="@+id/rewardTitle">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -63,8 +51,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
+                android:fontFamily="@font/lora_italic"
                 android:text="asd"
-                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textColor="#515151"
                 android:textSize="16sp" />
         </LinearLayout>
 

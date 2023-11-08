@@ -79,7 +79,6 @@ public class RewardAdapter extends RecyclerView.Adapter<RewardAdapter.RewardView
                         holder.category.setText(categoryName);
                     }
                 }).addOnFailureListener(e -> {
-                    // Handle failure
                     Toast.makeText(Rcontext, "Failed to fetch category name.", Toast.LENGTH_SHORT).show();
                 });
 
