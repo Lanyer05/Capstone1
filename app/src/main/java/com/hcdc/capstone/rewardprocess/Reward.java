@@ -115,10 +115,10 @@ public class Reward extends BaseActivity {
                 }
             }
         }).addOnFailureListener(e -> {
-        });
+         });
         batch.commit().addOnSuccessListener(aVoid -> {
         }).addOnFailureListener(e -> {
-        });
+         });
     }
 
     private void navigateToActivity(Class<?> targetActivity) {

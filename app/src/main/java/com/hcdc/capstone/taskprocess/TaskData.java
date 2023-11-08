@@ -1,18 +1,20 @@
 package com.hcdc.capstone.taskprocess;
 
+import java.util.ArrayList;
+
 public class TaskData {
 
-    String taskName, description, points, location;
+    String taskName, description, points, location, camera;
     private boolean isAccepted;
-
-    int hours, minutes;
+    private ArrayList<String> acceptedByUsers;
+    int hours, minutes, maxUsers;
 
     // Add public no-argument constructor
     public TaskData() {
         // Default constructor required by Firestore
     }
 
-    public TaskData(String taskName, String description, String points, String location, boolean isAccepted, int hours, int minutes) {
+    public TaskData(String taskName, String description, String points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;
@@ -20,6 +22,14 @@ public class TaskData {
         this.isAccepted = isAccepted;
         this.hours = hours ;
         this.minutes = minutes;
+        this.maxUsers = maxUsers;
+        this.camera = camera;
+
+        if (acceptedByUsers != null) {
+            this.acceptedByUsers = acceptedByUsers;
+        } else {
+            this.acceptedByUsers = new ArrayList<>();
+        }
     }
 
     public String getTaskName() {
@@ -48,5 +58,17 @@ public class TaskData {
 
     public int getMinutes() {
         return minutes;
+    }
+
+    public int getMaxUsers(){
+        return maxUsers;
+    }
+
+    public String getcamera(){
+        return camera;
+    }
+
+    public ArrayList<String> getAcceptedByUsers() {
+        return acceptedByUsers;
     }
 }
