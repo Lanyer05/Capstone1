@@ -26,7 +26,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.context = context;
         this.list = list;
         db = FirebaseFirestore.getInstance();
-
         // Initialize the Firestore listener
         initFirestoreListener();
     }

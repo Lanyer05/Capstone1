@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -62,9 +64,13 @@ public class taskFragment extends Fragment {
         return rootView;
     }
 
-
     private void fetchDataFromFirestore() {
         emptyTaskView.setVisibility(View.INVISIBLE);
+
+        // Get the current user's UID
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String currentUserUid = currentUser != null ? currentUser.getUid() : null;
+
         db.collection("tasks")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
@@ -74,37 +80,46 @@ public class taskFragment extends Fragment {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
+
+                        // Clear the existing task list
+                        tList.clear();
+
                         for (DocumentChange dc : value.getDocumentChanges()) {
-                            if (dc.getType() == DocumentChange.Type.ADDED || dc.getType() == DocumentChange.Type.MODIFIED) {
-                                TaskData task = dc.getDocument().toObject(TaskData.class);
-                                // Check if the task is accepted before adding it to the list
-                                if (!task.isAccepted()) {
-                                    // Check if the timeFrame field exists in the document
-                                    if (dc.getDocument().contains("timeFrame")) {
-                                        // Retrieve the timeFrame map
-                                        Map<String, Object> timeFrameMap = (Map<String, Object>) dc.getDocument().get("timeFrame");
-                                        if (timeFrameMap != null) {
-                                            // Retrieve hours and minutes from the timeFrame map
-                                            int hours = ((Long) timeFrameMap.get("hours")).intValue();
-                                            int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
-                                            task.hours = hours;
-                                            task.minutes = minutes;
+                            TaskData task = dc.getDocument().toObject(TaskData.class);
+
+                            // Check if the task is accepted
+                            if (!task.isAccepted()) {
+                                // Check if the current user's UID is not in the acceptedBy field
+                                if (!containsUserUid(task.getAcceptedByUsers(), currentUserUid)) {
+                                    if (dc.getType() == DocumentChange.Type.MODIFIED) {
+                                        // Handle the case where a document is modified (optional)
+                                        updateTaskInList(tList, task);
+                                    } else if (dc.getType() == DocumentChange.Type.ADDED) {
+                                        // Check if the timeFrame field exists in the document
+                                        if (dc.getDocument().contains("timeFrame")) {
+                                            // Retrieve the timeFrame map
+                                            Map<String, Object> timeFrameMap = (Map<String, Object>) dc.getDocument().get("timeFrame");
+                                            if (timeFrameMap != null) {
+                                                // Retrieve hours and minutes from the timeFrame map
+                                                int hours = ((Long) timeFrameMap.get("hours")).intValue();
+                                                int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                                task.hours = hours;
+                                                task.minutes = minutes;
+                                            }
+                                        }
+                                        // Check if the task already exists in tList before adding it
+                                        if (!containsTaskWithId(tList, task.getTaskName())) {
+                                            tList.add(task);
+                                        } else {
+                                            // Update the existing task in tList with the new data
+                                            updateTaskInList(tList, task);
                                         }
                                     }
-                                    // Check if the task already exists in tList before adding it
-                                    if (!containsTaskWithId(tList, task.getTaskName())) {
-                                        tList.add(task);
-                                    } else {
-                                        // Update the existing task in tList with the new data
-                                        updateTaskInList(tList, task);
-                                    }
                                 }
-                            } else if (dc.getType() == DocumentChange.Type.REMOVED) {
-                                // Handle the case where a document is removed (optional)
-                                // You might want to remove the corresponding task from tList here
                             }
                         }
                         ta.notifyDataSetChanged();
+
                         // Check if tList is empty and update the TextView
                         if (tList.isEmpty()) {
                             emptyTaskView.setText("No tasks available");
@@ -116,6 +131,11 @@ public class taskFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    // Helper function to check if a user's UID is in the acceptedBy field
+    private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {
+        return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
     }
 
     // Helper function to check if a task with a specific ID already exists in the list
