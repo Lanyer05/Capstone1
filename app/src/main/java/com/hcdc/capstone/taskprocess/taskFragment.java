@@ -137,6 +137,11 @@ public class taskFragment extends Fragment {
         return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
     }
 
+    // Helper function to check if a user's UID is in the acceptedBy field
+    private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {
+        return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
+    }
+
     // Helper function to check if a task with a specific ID already exists in the list
     private boolean containsTaskWithId(@NonNull List<TaskData> taskList, String taskName) {
         for (TaskData task : taskList) {

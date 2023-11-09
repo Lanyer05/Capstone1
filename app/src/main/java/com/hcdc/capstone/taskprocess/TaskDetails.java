@@ -177,7 +177,7 @@ public class TaskDetails extends BaseActivity {
                                     userTaskAccepted.put("isConfirmed", false);
                                     userTaskAccepted.put("acceptedBy", uID);
                                     userTaskAccepted.put("acceptedByEmail", userEmail);
-                                    userTaskAccepted.put("maxUsers", maxUsers); // Store maxUsers as a Long
+                                    userTaskAccepted.put("maxUsers", maxUsers);
                                     userTaskAccepted.put("camera", camera);
 
                                     if (documentSnapshot.contains("timeFrame")) {
