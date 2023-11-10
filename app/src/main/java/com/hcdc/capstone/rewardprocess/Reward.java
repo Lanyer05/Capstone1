@@ -3,39 +3,32 @@ package com.hcdc.capstone.rewardprocess;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.transactionprocess.Transaction;
-import com.hcdc.capstone.adapters.RewardAdapter;
 import com.hcdc.capstone.taskprocess.Task;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Reward extends BaseActivity {
 
     private TextView pointsSystemTextView;
-    RecyclerView recyclerView;
-    FirebaseFirestore firestore;
-    RewardAdapter rewardAdapter;
-    ArrayList<RewardsData> rewardList;
-    ArrayList<RewardItems> rewarditemList;
 
-    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged"})
+    private Button redeem;
+    FirebaseFirestore firestore;
+
+    @SuppressLint({"NonConstantResourceId", "NotifyDataSetChanged", "MissingInflatedId"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +36,7 @@ public class Reward extends BaseActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         pointsSystemTextView = findViewById(R.id.points_system1); // Initialize points_system1 TextView
         ImageView coupon = findViewById(R.id.couponBox);
+        redeem = findViewById(R.id.redeemreward);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -69,30 +63,22 @@ public class Reward extends BaseActivity {
             finish();
         });
 
-        recyclerView = findViewById(R.id.rewardslist);
         firestore = FirebaseFirestore.getInstance();
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        rewardList = new ArrayList<>();
-        rewarditemList = new ArrayList<>();
-        rewardAdapter = new RewardAdapter(this, rewardList,rewarditemList);
-        recyclerView.setAdapter(rewardAdapter);
+
+
 
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
-        firestore.collection("categories").addSnapshotListener((value, error) -> {
-            if (error != null) {
-                Log.e("FirestoreError", "Error fetching tasks: " + error.getMessage());
-                return;
+
+        redeem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),RewardList.class);
+                startActivity(i);
+                finish();
             }
-            rewardList.clear();
-            for (DocumentSnapshot documentSnapshot : Objects.requireNonNull(value).getDocuments()) {
-                RewardsData rewardsData = documentSnapshot.toObject(RewardsData.class);
-                rewardList.add(rewardsData);
-            }
-            rewardAdapter.notifyDataSetChanged();
-            Log.d("FirestoreSuccess", "Number of rewards fetched: " + rewardList.size());
         });
+
     }
 
     private void fetchAndDisplayCurrentUserPoints() {

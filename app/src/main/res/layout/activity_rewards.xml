@@ -10,6 +10,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".rewardprocess.Reward">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/redeemreward"
+        android:layout_width="272dp"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:layout_marginLeft="55dp"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/cirlce_solid"
+        android:text="Redeem Reward"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/greenbar"
@@ -95,39 +108,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#FFFFFF"
         app:textAllCaps="false" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="487dp"
-        android:layout_above="@id/bottom_navigation_view"
-        android:layout_below="@id/claimable_r"
-        android:layout_marginTop="134dp"
-        android:layout_marginBottom="4dp">
-
-        <LinearLayout
-            android:id="@+id/rewardsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="#FFFFFF"
-            android:orientation="vertical">
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rewardslist"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@id/bottom_navigation_view"
-                android:layout_below="@id/rewardsLayout"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:scrollbars="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-        </LinearLayout>
-    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"

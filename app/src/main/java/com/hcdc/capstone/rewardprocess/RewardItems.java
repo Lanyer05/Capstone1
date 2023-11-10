@@ -35,4 +35,20 @@ public class RewardItems {
     public String getRewardName() {
         return rewardName;
     }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setPoints(String points) {
+        this.points = points;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setRewardName(String rewardName) {
+        this.rewardName = rewardName;
+    }
 }
