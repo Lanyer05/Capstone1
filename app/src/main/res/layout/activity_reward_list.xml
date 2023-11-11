@@ -18,9 +18,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/custom_bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:background="#FFFFFF"
+        android:background="#dda15e"
         android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,43 +30,60 @@
         app:layout_constraintVertical_bias="1.0">
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/userPoints"
             android:layout_width="230dp"
             android:layout_height="32dp"
             android:layout_marginTop="4dp"
             android:text="Current points: "
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.044"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="99dp"
-            android:layout_height="38dp"
-            android:layout_marginBottom="12dp"
-            android:layout_toEndOf="@id/textView1"
-            android:text="Items added"
+            android:id="@+id/totalpointselected"
+            android:layout_width="230dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="44dp"
+            android:layout_toEndOf="@id/userPoints"
+            android:text="Total points:"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/custom_button"
-            app:layout_constraintHorizontal_bias="0.053"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.044"
+            app:layout_constraintEnd_toStartOf="@+id/checkout_button"
+            app:layout_constraintTop_toBottomOf="@+id/userPoints" />
+
+        <TextView
+            android:id="@+id/selectedItems"
+            android:layout_width="228dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="16dp"
+            android:layout_toEndOf="@id/userPoints"
+            android:text="Items added:"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/checkout_button"
+            app:layout_constraintTop_toBottomOf="@+id/totalpointselected" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/custom_button"
+            android:id="@+id/checkout_button"
             android:layout_width="147dp"
             android:layout_height="57dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
             android:layout_marginBottom="16dp"
-            android:layout_toEndOf="@id/textView2"
+            android:layout_toEndOf="@id/selectedItems"
             android:background="@drawable/custom_dialog"
-            android:padding="8dp"
             android:text="Checkout"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.939"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.545" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,9 +1,12 @@
 package com.hcdc.capstone.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,12 +34,33 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
         return new RewardCategoryViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RewardCategoryViewHolder holder, int position) {
         RewardItems rewardItems = rewardItemsList.get(position);
         holder.title.setText(rewardItems.getRewardName());
-        holder.points.setText("Points needed: " + rewardItems.getrewardPoints());
+        holder.points.setText("Points needed: " +rewardItems.getPoints());
         holder.quantity.setText("Items left: " + rewardItems.getQuantity());
+
+        holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+
+        // Set click listeners for increment and decrement buttons
+        holder.plus.setOnClickListener(v -> {
+            int currentQuantity = rewardItems.getSelectedquantity();
+            rewardItems.setSelectedquantity(currentQuantity + 1);
+            holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+        });
+
+        holder.minus.setOnClickListener(v -> {
+            int currentQuantity = rewardItems.getSelectedquantity();
+            if (currentQuantity > 0) {
+                rewardItems.setSelectedquantity(currentQuantity - 1);
+                holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+            }
+        });
+
+        Log.d("RewardAdapter", "Points for " + rewardItems.getRewardName() + ": " + rewardItems.getPoints());
+
     }
 
     @Override
@@ -51,13 +75,17 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
 
     public static class RewardCategoryViewHolder extends RecyclerView.ViewHolder {
 
-        TextView title, points, quantity;
+        TextView title, points, quantity, selectedquantity;
+        Button minus,plus;
 
         public RewardCategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.rewarditem_title);
             points = itemView.findViewById(R.id.rewarditem_points);
             quantity = itemView.findViewById(R.id.rewarditem_quantity);
+            selectedquantity = itemView.findViewById(R.id.quantity_text);
+            minus = itemView.findViewById(R.id.decrement_button);
+            plus = itemView.findViewById(R.id.increment_button);
         }
     }
 }

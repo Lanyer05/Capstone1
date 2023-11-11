@@ -7,25 +7,32 @@ public class RewardItems {
     private String quantity;
     private String rewardName;
 
+    private int selectedquantity;
+
 
     public RewardItems()
     {
 
     }
 
-    public RewardItems(String category, String points, String quantity, String rewardName) {
+    public RewardItems(String category, String points, String quantity, String rewardName, String selectedquantity) {
         this.category = category;
         this.points = points;
         this.quantity = quantity;
         this.rewardName = rewardName;
+        this.selectedquantity = Integer.parseInt(selectedquantity);
     }
 
     public String getCategory() {
         return category;
     }
 
-    public String getrewardPoints() {
+    public String getPoints() {
         return points;
+    }
+
+    public void setPoints(String points) {
+        this.points = points;
     }
 
     public String getQuantity() {
@@ -40,9 +47,6 @@ public class RewardItems {
         this.category = category;
     }
 
-    public void setPoints(String points) {
-        this.points = points;
-    }
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
@@ -50,5 +54,13 @@ public class RewardItems {
 
     public void setRewardName(String rewardName) {
         this.rewardName = rewardName;
+    }
+
+    public int getSelectedquantity() {
+        return selectedquantity;
+    }
+
+    public void setSelectedquantity(int selectedquantity) {
+        this.selectedquantity = selectedquantity;
     }
 }
