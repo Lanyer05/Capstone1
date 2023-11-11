@@ -1,5 +1,7 @@
 package com.hcdc.capstone.rewardprocess;
 
+import java.util.Objects;
+
 public class RewardItems {
 
     private String category;
@@ -70,5 +72,18 @@ public class RewardItems {
         } catch (NumberFormatException e) {
             return 0; // handle the case where points is not a valid integer
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        RewardItems that = (RewardItems) obj;
+        return Objects.equals(rewardName, that.rewardName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rewardName);
     }
 }

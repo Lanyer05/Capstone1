@@ -1,5 +1,7 @@
 package com.hcdc.capstone.rewardprocess;
 
+import static java.lang.Integer.parseInt;
+
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +28,7 @@ import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.RewardCategoryItems;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class RewardList extends AppCompatActivity implements RewardCategoryItems.RewardItemClickListener {
@@ -39,6 +43,10 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
     private TextView totalPointsTextView;
     private TextView selectedItemsTextView;
     private int totalPoints = 0;
+    private long currentUserPoints = 0;
+
+    private boolean processingClick = false;
+
 
     Button checkout;
 
@@ -72,7 +80,16 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCustomDialog();
+
+                if (totalPoints > currentUserPoints) {
+                    // Total points exceed user points, show error dialog
+                    showPointsExceedDialog(currentUserPoints);
+                } else if (totalPoints <= 0) {
+                    Toast.makeText(getApplicationContext(),"No items selected to be redeemed",Toast.LENGTH_SHORT).show();
+                } else {
+                    // Total points are within the user points limit, proceed with the checkout
+                    showCustomDialog();
+                }
             }
         });
     }
@@ -108,9 +125,6 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         // Get the current user's UID
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
-        // Create a batch to execute multiple Firestore operations
-        WriteBatch batch = firestore.batch();
-
         // Create a reference to the user's document
         DocumentReference userRef = firestore.collection("users").document(currentUserId);
 
@@ -120,15 +134,16 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                 // Assuming you have a field named "userpoints" in the document
                 Long userPoints = documentSnapshot.getLong("userpoints");
                 if (userPoints != null) {
-                    currentuserPoints.setText("Current points: "+ String.valueOf(userPoints));
+                    currentUserPoints = userPoints; // Store the user points
+                    currentuserPoints.setText("Current points: " + String.valueOf(currentUserPoints));
                 }
             }
         }).addOnFailureListener(e -> {
-        });
-        batch.commit().addOnSuccessListener(aVoid -> {
-        }).addOnFailureListener(e -> {
+            // Handle failure
+            Log.e("RewardList", "Error fetching user points: " + e.getMessage());
         });
     }
+
 
     private void showCustomDialog() {
         // Inflate the custom dialog layout
@@ -136,22 +151,18 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
 
         // Find views in the custom dialog layout
         TextView dialogTitle = dialogView.findViewById(R.id.dialogTitle);
-        EditText userInputEditText = dialogView.findViewById(R.id.userInput);
-        Button dialogButton = dialogView.findViewById(R.id.dialogButton);
+        TextView allItemsTextView = dialogView.findViewById(R.id.all_items);
 
         // Set text or perform any other customization as needed
-        dialogTitle.setText("Custom Dialog Title");
+        dialogTitle.setText("Items Selected");
 
         // Build the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialogView)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Redeem", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // Handle positive button click
-                        String userInput = userInputEditText.getText().toString();
-                        Log.d("RewardList", "User input: " + userInput);
-                        // You can add logic here to perform actions based on user input
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -164,63 +175,89 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
 
         // Show the AlertDialog
         AlertDialog dialog = builder.create();
+
+        // Build the string for all selected items
+        StringBuilder allItemsText = new StringBuilder();
+        for (RewardItems item : rewardItemsArrayList) {
+            allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append("\n");
+        }
+        // Set the text to the TextView
+        allItemsTextView.setText(allItemsText.toString());
+
         dialog.show();
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public void onItemClicked(RewardItems rewardItem, int position) {
-        // Handle the item click, update total points and selected items
-        if (rewardItem.getSelectedquantity() > 0) {
-            totalPoints += rewardItem.getPointsAsInt(); // Add points
-            rewardItemsArrayList.add(rewardItem);
-        } else {
-            totalPoints -= rewardItem.getPointsAsInt(); // Subtract points
-            rewardItemsArrayList.remove(rewardItem);
+        // Disable further clicks while processing
+        if (processingClick) {
+            return;
         }
 
-        // Update the UI
-        totalPointsTextView.setText("Total points: " + totalPoints);
-        StringBuilder selectedItemsText = new StringBuilder("Items added: ");
-        for (RewardItems item : rewardItemsArrayList) {
-            selectedItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
-        }
-        if (selectedItemsText.length() > 2) {
-            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length()); // Remove the trailing comma and space
-        }
-        selectedItemsTextView.setText(selectedItemsText.toString());
+        processingClick = true;
 
-        Log.d("RewardList", "Item clicked: " + rewardItem.getRewardName());
-        Log.d("RewardList", "Total points: " + totalPoints);
-        Log.d("RewardList", "Selected items: " + selectedItemsText.toString());
-    }
-    /* @Override
-    public void onItemClicked(RewardItems rewardItem, int position) {
-        // Handle the item click, update total points and selected items
         Log.d("RewardList", "Clicked on item: " + rewardItem.getRewardName());
 
-        if (rewardItem.getSelectedquantity() > 0) {
-            int pointsToAdd = rewardItem.getPointsAsInt();
-            totalPoints += pointsToAdd; // Add points
-            Log.d("RewardList", "Adding points: " + pointsToAdd);
-            rewardItemsArrayList.add(rewardItem);
+        int selectedQuantity = rewardItem.getSelectedquantity();
+
+        // Calculate points for the selected quantity and item
+        int pointsForItem = rewardItem.getPointsAsInt() * selectedQuantity;
+
+        if (selectedQuantity > 0) {
+            // Check for duplicates before adding
+            if (!rewardItemsArrayList.contains(rewardItem)) {
+                totalPoints += pointsForItem; // Add points
+                Log.d("RewardList", "Adding points for " + rewardItem.getRewardName() + ": " + pointsForItem);
+                rewardItemsArrayList.add(rewardItem);
+            }
         } else {
-            int pointsToSubtract = rewardItem.getPointsAsInt();
-            totalPoints -= pointsToSubtract; // Subtract points
-            Log.d("RewardList", "Subtracting points: " + pointsToSubtract);
-            rewardItemsArrayList.remove(rewardItem);
+            // Check for duplicates before removing
+            if (rewardItemsArrayList.contains(rewardItem)) {
+                totalPoints -= pointsForItem; // Subtract points
+                Log.d("RewardList", "Subtracting points for " + rewardItem.getRewardName() + ": " + pointsForItem);
+                rewardItemsArrayList.remove(rewardItem);
+            }
         }
 
-        // Update the UI
-        totalPointsTextView.setText("Total points: " + totalPoints);
-        StringBuilder selectedItemsText = new StringBuilder("Items added: ");
+        // Recalculate total points by iterating through the array
+        totalPoints = 0;
         for (RewardItems item : rewardItemsArrayList) {
-            selectedItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
+            totalPoints += item.getPointsAsInt() * item.getSelectedquantity();
         }
-        if (selectedItemsText.length() > 2) {
-            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length()); // Remove the trailing comma and space
-        }
-        selectedItemsTextView.setText(selectedItemsText.toString());
-    }*/
+
+        // Update the UI on the main thread
+        runOnUiThread(() -> {
+            totalPointsTextView.setText("Total points: " + totalPoints);
+            StringBuilder selectedItemsText = new StringBuilder("Items added: ");
+            for (RewardItems item : rewardItemsArrayList) {
+                selectedItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
+            }
+            if (selectedItemsText.length() > 2) {
+                selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length()); // Remove the trailing comma and space
+            }
+            selectedItemsTextView.setText(selectedItemsText.toString());
+        });
+
+        // Enable further clicks after processing is completed
+        processingClick = false;
+    }
+
+
+
+
+    private void showPointsExceedDialog(long userPoints) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error")
+                .setMessage("Total points exceed your current points. You have " + userPoints + " points.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Handle OK button click
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
 
 }
