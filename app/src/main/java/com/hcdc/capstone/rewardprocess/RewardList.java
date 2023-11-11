@@ -1,15 +1,14 @@
 package com.hcdc.capstone.rewardprocess;
 
-import static java.lang.Integer.parseInt;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,14 +20,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.RewardCategoryItems;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class RewardList extends AppCompatActivity implements RewardCategoryItems.RewardItemClickListener {
@@ -39,7 +43,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
 
     FirebaseFirestore firestore;
 
-    TextView currentuserPoints ;
+    TextView currentuserPoints;
     private TextView totalPointsTextView;
     private TextView selectedItemsTextView;
     private int totalPoints = 0;
@@ -47,10 +51,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
 
     private boolean processingClick = false;
 
-
     Button checkout;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +81,11 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if (totalPoints > currentUserPoints) {
                     // Total points exceed user points, show error dialog
                     showPointsExceedDialog(currentUserPoints);
                 } else if (totalPoints <= 0) {
-                    Toast.makeText(getApplicationContext(),"No items selected to be redeemed",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No items selected to be redeemed", Toast.LENGTH_SHORT).show();
                 } else {
                     // Total points are within the user points limit, proceed with the checkout
                     showCustomDialog();
@@ -103,7 +103,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                     // Handle successful data retrieval
                     // Convert the QuerySnapshot to a list of RewardItems
                     ArrayList<RewardItems> rewardsList = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
                         RewardItems reward = document.toObject(RewardItems.class);
                         rewardsList.add(reward);
                     }
@@ -144,7 +144,6 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         });
     }
 
-
     private void showCustomDialog() {
         // Inflate the custom dialog layout
         View dialogView = LayoutInflater.from(this).inflate(R.layout.items_selected_dialog, null);
@@ -152,9 +151,11 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         // Find views in the custom dialog layout
         TextView dialogTitle = dialogView.findViewById(R.id.dialogTitle);
         TextView allItemsTextView = dialogView.findViewById(R.id.all_items);
+        TextView totalpowents = dialogView.findViewById(R.id.totalpoints_items);
 
         // Set text or perform any other customization as needed
         dialogTitle.setText("Items Selected");
+        totalpowents.setText("Total points: " + String.valueOf(totalPoints));
 
         // Build the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -163,6 +164,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // Handle positive button click
+                        redeemSelectedItems();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -179,12 +181,98 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         // Build the string for all selected items
         StringBuilder allItemsText = new StringBuilder();
         for (RewardItems item : rewardItemsArrayList) {
-            allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append("\n");
+            allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
         }
         // Set the text to the TextView
         allItemsTextView.setText(allItemsText.toString());
 
         dialog.show();
+    }
+
+    private void redeemSelectedItems() {
+        // Generate a unique coupon code for the user
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String couponCode = generateCouponCode(userId);
+
+        // Calculate the new user points after deduction
+        long newUserPoints = currentUserPoints - totalPoints;
+
+        // Update the user's points in Firestore
+        updatePointsInFirestore(userId, newUserPoints);
+
+        // Assuming you have a "coupons" collection in your Firestore
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        CollectionReference couponsCollection = firestore.collection("coupons");
+
+        // Create a new coupon document with the user's ID, coupon code, selected items, and isClaimed flag
+        Map<String, Object> couponData = new HashMap<>();
+        couponData.put("userId", userId);
+        couponData.put("couponCode", couponCode);
+        couponData.put("isClaimed", false);
+
+        // List to store the selected items with their quantities
+        List<Map<String, Object>> selectedItemsList = new ArrayList<>();
+
+        // Add selected items with quantities to the list
+        for (RewardItems item : rewardItemsArrayList) {
+            Map<String, Object> selectedItemData = new HashMap<>();
+            selectedItemData.put("rewardId", item.getRewardName());
+            selectedItemData.put("selectedQuantity", item.getSelectedquantity());
+            selectedItemsList.add(selectedItemData);
+        }
+
+        // Add the list of selected items to the coupon data
+        couponData.put("selectedItems", selectedItemsList);
+
+        // Add the coupon to the "coupons" collection
+        couponsCollection.add(couponData)
+                .addOnSuccessListener(documentReference -> {
+                    // Coupon added successfully
+                    Log.d("RewardList", "Coupon added with ID: " + documentReference.getId());
+
+                    // TODO: You may want to update your database or perform other actions here
+
+
+                    // Clear the selected items list after redemption
+                    rewardItemsArrayList.clear();
+
+                    // Update the UI to reflect the changes
+                    totalPoints = 0;
+                    totalPointsTextView.setText("Total points: " + totalPoints);
+                    selectedItemsTextView.setText("Items added: ");
+
+                  //  updateClaimedQuantityInFirestore();
+
+
+                    // Delay the transition to the Homepage
+                    new Handler().postDelayed(() -> {
+                        Toast.makeText(getApplicationContext(), "Redeemed Successfully!", Toast.LENGTH_SHORT).show();
+                        Intent i = new Intent(getApplicationContext(), Homepage.class);
+                        startActivity(i);
+                        finish();
+                    }, 2000); // 2000 milliseconds (adjust as needed)
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("RewardList", "Error adding coupon: " + e.getMessage());
+                });
+    }
+
+
+    private void updatePointsInFirestore(String userId, long newUserPoints) {
+        // Reference to the user's document
+        DocumentReference userRef = firestore.collection("users").document(userId);
+
+        // Update the user's points field in Firestore
+        userRef.update("userpoints", newUserPoints)
+                .addOnSuccessListener(aVoid -> {
+                    // User points updated successfully
+                    Log.d("RewardList", "User points updated to: " + newUserPoints);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                    Log.e("RewardList", "Error updating user points: " + e.getMessage());
+                });
     }
 
     @Override
@@ -242,22 +330,71 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         processingClick = false;
     }
 
-
-
-
     private void showPointsExceedDialog(long userPoints) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error")
                 .setMessage("Total points exceed your current points. You have " + userPoints + " points.")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle OK button click
-                        dialog.dismiss();
-                    }
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // Handle OK button click
+                    dialog.dismiss();
                 })
                 .show();
     }
 
+    private String generateCouponCode(String userId) {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] randomBytes = new byte[8];
+        secureRandom.nextBytes(randomBytes);
+
+        String base64Code = Base64.getEncoder().encodeToString(randomBytes);
+        return userId + "-" + base64Code.substring(0, 8);
+    }
+
+    // update rewards quantity
+    private void updateClaimedQuantityInFirestore() {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        WriteBatch batch = firestore.batch();
+
+        for (RewardItems rewardItem : rewardItemsArrayList) {
+            String rewardId = rewardItem.getRewardName();
+            int selectedQuantity = rewardItem.getSelectedquantity();
+
+            DocumentReference rewardRef = firestore.collection("rewards").document(rewardId);
+
+            // Retrieve the current quantity of the reward
+            rewardRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String currentQuantityStr = documentSnapshot.getString("quantity");
+
+                    // Convert the current quantity from string to integer
+                    int currentQuantity = Integer.parseInt(currentQuantityStr);
+
+                    // Calculate the new quantity after deduction
+                    int newQuantity = currentQuantity - selectedQuantity;
+
+                    // Convert the new quantity to string
+                    String newQuantityStr = String.valueOf(newQuantity);
+
+                    // Update the quantity field in Firestore
+                    batch.update(rewardRef, "quantity", newQuantityStr);
+                }
+            }).addOnFailureListener(e -> {
+                // Handle failure
+                Log.e("RewardList", "Error updating claimed quantity: " + e.getMessage());
+            });
+        }
+
+        // Commit the batch write
+        batch.commit().addOnSuccessListener(aVoid -> {
+            // Batch write successful
+            Log.d("RewardList", "Claimed quantities updated successfully");
+
+            // Continue with redeeming the items
+            redeemSelectedItems();
+        }).addOnFailureListener(e -> {
+            // Handle failure
+            Log.e("RewardList", "Error committing batch write: " + e.getMessage());
+        });
+    }
 
 }
