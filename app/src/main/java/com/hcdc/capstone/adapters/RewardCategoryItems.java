@@ -21,11 +21,18 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
 
     private Context context;
     private ArrayList<RewardItems> rewardItemsList;
+    public RewardItemClickListener itemClickListener;
 
     public RewardCategoryItems(Context context,ArrayList<RewardItems> rewardItemsList) {
         this.context = context;
         this.rewardItemsList = rewardItemsList;
     }
+
+    public interface RewardItemClickListener {
+        void onItemClicked(RewardItems rewardItem, int position);
+    }
+
+
 
     @NonNull
     @Override
@@ -36,32 +43,48 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull RewardCategoryViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RewardCategoryViewHolder holder, @SuppressLint("RecyclerView") int position) {
         RewardItems rewardItems = rewardItemsList.get(position);
         holder.title.setText(rewardItems.getRewardName());
-        holder.points.setText("Points needed: " +rewardItems.getPoints());
+        holder.points.setText("Points needed: " + rewardItems.getPoints());
         holder.quantity.setText("Items left: " + rewardItems.getQuantity());
 
         holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
 
         // Set click listeners for increment and decrement buttons
-        holder.plus.setOnClickListener(v -> {
-            int currentQuantity = rewardItems.getSelectedquantity();
-            rewardItems.setSelectedquantity(currentQuantity + 1);
-            holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+        holder.plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentQuantity = rewardItems.getSelectedquantity();
+                rewardItems.setSelectedquantity(currentQuantity + 1);
+                holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+
+                // Notify the activity/fragment about the click
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClicked(rewardItems, position);
+                }
+            }
         });
 
-        holder.minus.setOnClickListener(v -> {
-            int currentQuantity = rewardItems.getSelectedquantity();
-            if (currentQuantity > 0) {
-                rewardItems.setSelectedquantity(currentQuantity - 1);
-                holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+        holder.minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentQuantity = rewardItems.getSelectedquantity();
+                if (currentQuantity > 0) {
+                    rewardItems.setSelectedquantity(currentQuantity - 1);
+                    holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+
+                    // Notify the activity/fragment about the click
+                    if (itemClickListener != null) {
+                        itemClickListener.onItemClicked(rewardItems, position);
+                    }
+                }
             }
         });
 
         Log.d("RewardAdapter", "Points for " + rewardItems.getRewardName() + ": " + rewardItems.getPoints());
-
     }
+
 
     @Override
     public int getItemCount() {

@@ -63,4 +63,12 @@ public class RewardItems {
     public void setSelectedquantity(int selectedquantity) {
         this.selectedquantity = selectedquantity;
     }
+
+    public int getPointsAsInt() {
+        try {
+            return Integer.parseInt(points);
+        } catch (NumberFormatException e) {
+            return 0; // handle the case where points is not a valid integer
+        }
+    }
 }

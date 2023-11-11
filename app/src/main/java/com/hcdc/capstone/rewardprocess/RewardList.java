@@ -1,5 +1,6 @@
 package com.hcdc.capstone.rewardprocess;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,7 @@ import com.hcdc.capstone.adapters.RewardCategoryItems;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class RewardList extends AppCompatActivity {
+public class RewardList extends AppCompatActivity implements RewardCategoryItems.RewardItemClickListener {
 
     RecyclerView recyclerView;
     RewardCategoryItems rewardCategoryItems;
@@ -34,14 +35,22 @@ public class RewardList extends AppCompatActivity {
 
     FirebaseFirestore firestore;
 
-    TextView currentuserPoints;
+    TextView currentuserPoints ;
+    private TextView totalPointsTextView;
+    private TextView selectedItemsTextView;
+    private int totalPoints = 0;
 
     Button checkout;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reward_list);
+
+        totalPointsTextView = findViewById(R.id.totalpointselected);
+        selectedItemsTextView = findViewById(R.id.selectedItems);
 
         currentuserPoints = findViewById(R.id.userPoints);
         checkout = findViewById(R.id.checkout_button);
@@ -52,6 +61,7 @@ public class RewardList extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         rewardItemsArrayList = new ArrayList<>();
         rewardCategoryItems = new RewardCategoryItems(this, rewardItemsArrayList);
+        rewardCategoryItems.itemClickListener = this;
         recyclerView.setAdapter(rewardCategoryItems);
 
         // Fetch data from Firestore and set the adapter after successful retrieval
@@ -156,4 +166,61 @@ public class RewardList extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onItemClicked(RewardItems rewardItem, int position) {
+        // Handle the item click, update total points and selected items
+        if (rewardItem.getSelectedquantity() > 0) {
+            totalPoints += rewardItem.getPointsAsInt(); // Add points
+            rewardItemsArrayList.add(rewardItem);
+        } else {
+            totalPoints -= rewardItem.getPointsAsInt(); // Subtract points
+            rewardItemsArrayList.remove(rewardItem);
+        }
+
+        // Update the UI
+        totalPointsTextView.setText("Total points: " + totalPoints);
+        StringBuilder selectedItemsText = new StringBuilder("Items added: ");
+        for (RewardItems item : rewardItemsArrayList) {
+            selectedItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
+        }
+        if (selectedItemsText.length() > 2) {
+            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length()); // Remove the trailing comma and space
+        }
+        selectedItemsTextView.setText(selectedItemsText.toString());
+
+        Log.d("RewardList", "Item clicked: " + rewardItem.getRewardName());
+        Log.d("RewardList", "Total points: " + totalPoints);
+        Log.d("RewardList", "Selected items: " + selectedItemsText.toString());
+    }
+    /* @Override
+    public void onItemClicked(RewardItems rewardItem, int position) {
+        // Handle the item click, update total points and selected items
+        Log.d("RewardList", "Clicked on item: " + rewardItem.getRewardName());
+
+        if (rewardItem.getSelectedquantity() > 0) {
+            int pointsToAdd = rewardItem.getPointsAsInt();
+            totalPoints += pointsToAdd; // Add points
+            Log.d("RewardList", "Adding points: " + pointsToAdd);
+            rewardItemsArrayList.add(rewardItem);
+        } else {
+            int pointsToSubtract = rewardItem.getPointsAsInt();
+            totalPoints -= pointsToSubtract; // Subtract points
+            Log.d("RewardList", "Subtracting points: " + pointsToSubtract);
+            rewardItemsArrayList.remove(rewardItem);
+        }
+
+        // Update the UI
+        totalPointsTextView.setText("Total points: " + totalPoints);
+        StringBuilder selectedItemsText = new StringBuilder("Items added: ");
+        for (RewardItems item : rewardItemsArrayList) {
+            selectedItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
+        }
+        if (selectedItemsText.length() > 2) {
+            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length()); // Remove the trailing comma and space
+        }
+        selectedItemsTextView.setText(selectedItemsText.toString());
+    }*/
+
 }
