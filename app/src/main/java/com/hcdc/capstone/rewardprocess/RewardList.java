@@ -393,7 +393,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
             redeemSelectedItems();
         }).addOnFailureListener(e -> {
             // Handle failure
-            Log.e("RewardList", "Error committing batch write: " + e.getMessage());
+            Log.e("RewardList", "Error committing batch writes: " + e.getMessage());
         });
     }
 
