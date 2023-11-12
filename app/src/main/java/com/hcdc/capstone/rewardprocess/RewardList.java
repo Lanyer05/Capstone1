@@ -197,7 +197,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         // Calculate the new user points after deduction
         long newUserPoints = currentUserPoints - totalPoints;
 
-        // Update the user's points in Firestore
+        // Update the user's points in Firestores
         updatePointsInFirestore(userId, newUserPoints);
 
         // Assuming you have a "coupons" collection in your Firestore
