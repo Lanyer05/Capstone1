@@ -70,6 +70,7 @@ public class Homepage extends BaseActivity {
         profileImageView = findViewById(R.id.profile);
 
         bottomNavigationView.setSelectedItemId(R.id.action_home);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

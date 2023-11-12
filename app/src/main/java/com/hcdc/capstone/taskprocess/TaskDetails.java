@@ -24,13 +24,14 @@ import com.hcdc.capstone.R;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class TaskDetails extends BaseActivity {
 
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private TextView tskTitle, tskPoint, tskDesc, tskLoc, tskDura, tskMaxUser;
+    private TextView tskTitle, tskPoint, tskDesc, tskLoc, tskDura, tskMaxUser, tskCalendar;
 
     private String uID, userEmail;
 
@@ -52,6 +53,7 @@ public class TaskDetails extends BaseActivity {
         tskMaxUser = findViewById(R.id.tdMaxUser);
         acceptTask = findViewById(R.id.tdAccept);
         cancelTask = findViewById(R.id.tdCancel);
+        tskCalendar = findViewById(R.id.tdCalendar);
 
         Bundle extra = getIntent().getExtras();
         String tTitle = extra.getString("tasktitle");
@@ -60,49 +62,71 @@ public class TaskDetails extends BaseActivity {
         String tLoc = extra.getString("tasklocation");
         String tDura = extra.getString("taskDuration");
         String tMaxUser = extra.getString("taskMaxUser");
+        Date tExpirationDateTime = (Date) extra.getSerializable("expirationDateTime");
+
 
         tskTitle.setText(tTitle);
         tskDesc.setText(tDesc);
         tskLoc.setText(tLoc);
         tskPoint.setText(tPoints);
         tskDura.setText(tDura);
-
         displayAcceptedUserRatio(tMaxUser);
+        String formattedExpirationDateTime = getFormattedExpirationDateTime(tExpirationDateTime);
+        tskCalendar.setText(formattedExpirationDateTime);
 
         acceptTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 uID = auth.getCurrentUser().getUid();
 
-                // Check if the user has already accepted the task
+                // Check if the user has already accepted any task
                 firestore.collection("user_acceptedTask")
                         .whereEqualTo("acceptedBy", uID)
-                        .whereEqualTo("taskName", tskTitle.getText().toString()) // Add this condition to check for the task
                         .get()
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
-                                // User has already accepted the task
-                                Toast.makeText(TaskDetails.this, " You have already accepted this task. ", Toast.LENGTH_SHORT).show();
+                                // User has already accepted a task
+                                Toast.makeText(TaskDetails.this, " You have already accepted a task. Finish or cancel it before accepting a new one. ", Toast.LENGTH_SHORT).show();
                             } else {
-                                // Before showing the confirmation overlay, check if the task has reached its max user limit
-                                firestore.collection("tasks")
+                                // Continue with the logic to check if the specific task has been accepted
+                                firestore.collection("user_acceptedTask")
+                                        .whereEqualTo("acceptedBy", uID)
                                         .whereEqualTo("taskName", tskTitle.getText().toString())
                                         .get()
                                         .addOnSuccessListener(queryDocumentSnapshots1 -> {
                                             if (!queryDocumentSnapshots1.isEmpty()) {
-                                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots1.getDocuments().get(0);
-                                                List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
-                                                Long maxUsers = documentSnapshot.getLong("maxUsers"); // Retrieve maxUsers as a Long
+                                                // User has already accepted the specific task
+                                                Toast.makeText(TaskDetails.this, " You have already accepted this task. ", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                // Continue with the logic to check if the task has reached its maximum user limit
+                                                firestore.collection("tasks")
+                                                        .whereEqualTo("taskName", tskTitle.getText().toString())
+                                                        .get()
+                                                        .addOnSuccessListener(queryDocumentSnapshots2 -> {
+                                                            if (!queryDocumentSnapshots2.isEmpty()) {
+                                                                DocumentSnapshot documentSnapshot = queryDocumentSnapshots2.getDocuments().get(0);
+                                                                Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
 
-                                                if (acceptedByUsers != null && maxUsers != null) {
-                                                    int currentAcceptedUsers = acceptedByUsers.size();
+                                                                if (expirationDateTime != null && System.currentTimeMillis() > expirationDateTime.getTime()) {
+                                                                    // Task has expired, show a message to the user
+                                                                    Toast.makeText(TaskDetails.this, " Task has already expired, Task cannot be accepted.", Toast.LENGTH_SHORT).show();
+                                                                } else {
+                                                                    // Continue with the logic to check other conditions and show the accept confirmation overlay
+                                                                    List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
+                                                                    Long maxUsers = documentSnapshot.getLong("maxUsers");
 
-                                                    if (currentAcceptedUsers >= maxUsers.intValue()) {
-                                                        Toast.makeText(TaskDetails.this, " Task is full. Cannot be accepted. ", Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        showAcceptConfirmationOverlay();
-                                                    }
-                                                }
+                                                                    if (acceptedByUsers != null && maxUsers != null) {
+                                                                        int currentAcceptedUsers = acceptedByUsers.size();
+
+                                                                        if (currentAcceptedUsers >= maxUsers.intValue()) {
+                                                                            Toast.makeText(TaskDetails.this, " Task is full. Cannot be accepted. ", Toast.LENGTH_SHORT).show();
+                                                                        } else {
+                                                                            showAcceptConfirmationOverlay();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        });
                                             }
                                         });
                             }
@@ -116,6 +140,17 @@ public class TaskDetails extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    private String getFormattedExpirationDateTime(Date expirationDateTime) {
+        // Format expirationDateTime as a human-readable string
+        if (expirationDateTime != null) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd | hh:mm:ss a", Locale.getDefault());
+            return sdf.format(expirationDateTime);
+        } else {
+            return "N/A"; // or handle the case when expirationDateTime is null
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -132,6 +167,15 @@ public class TaskDetails extends BaseActivity {
                             Long maxUsers = documentSnapshot.getLong("maxUsers");
                             String ratioText = currentAcceptedUsers + "/" + maxUsers;
                             tskMaxUser.setText("Max User: " + ratioText);
+
+                            // Display timestamp
+                            Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
+                            if (expirationDateTime != null) {
+                                String formattedExpirationDateTime = formatDateTime(expirationDateTime.getTime());
+                                // Assuming you have another TextView for timestamp display
+                                // If not, you can modify the line below accordingly
+                                tskCalendar.setText("Expires: " + formattedExpirationDateTime);
+                            }
                         } else {
                             tskMaxUser.setText("Max User: N/A");
                         }
@@ -141,6 +185,7 @@ public class TaskDetails extends BaseActivity {
                 });
     }
 
+
     private void acceptNewTask() {
         uID = auth.getCurrentUser().getUid();
         firestore.collection("tasks")
@@ -149,17 +194,17 @@ public class TaskDetails extends BaseActivity {
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                        Long maxUsers = documentSnapshot.getLong("maxUsers"); // Retrieve maxUsers as a Long
+                        Long maxUsers = documentSnapshot.getLong("maxUsers");
                         String camera = documentSnapshot.getString("camera");
+                        String taskId = documentSnapshot.getString("taskId");
+                        Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
+
                         if (maxUsers != null) {
                             List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
                             if (acceptedByUsers != null) {
                                 int currentAcceptedUsers = acceptedByUsers.size();
 
                                 if (currentAcceptedUsers < maxUsers.intValue()) {
-                                    firestore.collection("tasks")
-                                            .document(documentSnapshot.getId())
-                                            .update("isAccepted", true);
                                     acceptedByUsers.add(uID);
                                     firestore.collection("tasks")
                                             .document(documentSnapshot.getId())
@@ -179,10 +224,16 @@ public class TaskDetails extends BaseActivity {
                                     userTaskAccepted.put("acceptedByEmail", userEmail);
                                     userTaskAccepted.put("maxUsers", maxUsers);
                                     userTaskAccepted.put("camera", camera);
+                                    userTaskAccepted.put("taskId", taskId);
 
                                     if (documentSnapshot.contains("timeFrame")) {
                                         userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
                                     }
+
+                                    if (expirationDateTime != null) {
+                                        userTaskAccepted.put("expirationDateTime", expirationDateTime);
+                                    }
+
                                     long currentTimeMillis = System.currentTimeMillis();
                                     String formattedDate = formatDateTime(currentTimeMillis);
                                     userTaskAccepted.put("acceptedDateTime", formattedDate);
@@ -212,9 +263,10 @@ public class TaskDetails extends BaseActivity {
                 });
     }
 
+
     private String formatDateTime(long timestamp) {
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a MM/dd/yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM/dd/yy");
         Date date = new Date(timestamp);
         return sdf.format(date);
     }

@@ -52,7 +52,7 @@
     <LinearLayout
         android:id="@+id/durationLayout"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
@@ -72,17 +72,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="420 hrs"
             android:fontFamily="@font/lora_italic"
+            android:text="420 hrs"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/locationLayout"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="30dp"
@@ -105,14 +105,14 @@
             android:fontFamily="@font/lora_italic"
             android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
             android:textColor="@color/black"
-            android:textStyle="bold"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/taskMaxuserLayout"
         android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="30dp"
@@ -126,19 +126,18 @@
             android:id="@+id/max"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_person" />
+            android:src="@drawable/person" />
 
         <TextView
             android:id="@+id/taskMaxUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Max Users"
             android:fontFamily="@font/lora_italic"
+            android:text="Max Users"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="15sp"
-             />
+            android:textStyle="bold" />
     </LinearLayout>
 
     <TextView

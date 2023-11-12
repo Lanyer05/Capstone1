@@ -22,7 +22,4 @@
         android:icon="@drawable/ic_baseline_monetization_on_24"
         android:title="Transaction"
         app:showAsAction="ifRoom" />
-
-
-
 </menu>

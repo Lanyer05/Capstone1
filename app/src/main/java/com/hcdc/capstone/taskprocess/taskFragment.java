@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
@@ -39,7 +38,6 @@ public class taskFragment extends Fragment {
     TextView emptyTaskView;
 
     public taskFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -48,10 +46,8 @@ public class taskFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.task_fragment, container, false);
         emptyTaskView = rootView.findViewById(R.id.emptyTask);
 
-        // Create sample data for the RecyclerView
         db = FirebaseFirestore.getInstance();
 
-        // Set up the RecyclerView
         rv = rootView.findViewById(R.id.tasklistsfragment);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         rv.setHasFixedSize(true);
@@ -59,7 +55,6 @@ public class taskFragment extends Fragment {
         ta = new TaskAdapter(getContext(), tList);
         rv.setAdapter(ta);
 
-        // Fetch data from Firestore
         fetchDataFromFirestore();
         return rootView;
     }
@@ -80,10 +75,6 @@ public class taskFragment extends Fragment {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
-
-                        // Clear the existing task list
-                        tList.clear();
-
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             TaskData task = dc.getDocument().toObject(TaskData.class);
 
@@ -119,8 +110,6 @@ public class taskFragment extends Fragment {
                             }
                         }
                         ta.notifyDataSetChanged();
-
-                        // Check if tList is empty and update the TextView
                         if (tList.isEmpty()) {
                             emptyTaskView.setText("No tasks available");
                             emptyTaskView.setVisibility(View.VISIBLE);
@@ -132,13 +121,10 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
-
-    // Helper function to check if a user's UID is in the acceptedBy field
     private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {
         return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
     }
 
-    // Helper function to check if a task with a specific ID already exists in the list
     private boolean containsTaskWithId(@NonNull List<TaskData> taskList, String taskName) {
         for (TaskData task : taskList) {
             if (task.getTaskName().equals(taskName)) {
@@ -147,8 +133,6 @@ public class taskFragment extends Fragment {
         }
         return false;
     }
-
-    // Helper function to update an existing task in the list with new data
     private void updateTaskInList(@NonNull List<TaskData> taskList, TaskData updatedTask) {
         for (int i = 0; i < taskList.size(); i++) {
             if (taskList.get(i).getTaskName().equals(updatedTask.getTaskName())) {

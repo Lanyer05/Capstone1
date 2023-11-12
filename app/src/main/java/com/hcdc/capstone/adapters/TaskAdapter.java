@@ -27,7 +27,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         this.list = list;
         db = FirebaseFirestore.getInstance();
 
-        // Initialize the Firestore listener
         initFirestoreListener();
     }
 
@@ -50,11 +49,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                             int index = findTaskIndex(modifiedTask);
                             if (index >= 0) {
                                 list.set(index, modifiedTask);
+                                notifyItemChanged(index);  // Notify only the specific item change
                             }
                         }
                     }
-                    // Notify the adapter that the data has changed
-                    notifyDataSetChanged();
                 });
     }
 
@@ -86,16 +84,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.taskloc.setText(taskData.getLocation());
             holder.taskdesc.setText(taskData.getDescription());
 
+            // Display the time frame if hours or minutes are greater than 0
             if (taskData.getHours() > 0 || taskData.getMinutes() > 0) {
                 String timeFrameText = "Time Frame: " + taskData.getHours() + " hours " + taskData.getMinutes() + " minutes";
                 holder.taskTimer.setText(timeFrameText);
                 holder.taskTimer.setVisibility(View.VISIBLE);
-            } else {
-                holder.taskTimer.setVisibility(View.GONE);
             }
+
+            String expirationDateTime = taskData.getFormattedExpirationDateTime();
+            holder.taskCalendar.setText("Expires: " + expirationDateTime);
+            holder.taskCalendar.setVisibility(View.VISIBLE);
+
             holder.taskMaxUser.setText("Max User: " + taskData.getAcceptedByUsers().size() + "/" + taskData.getMaxUsers());
             holder.taskMaxUser.setVisibility(View.VISIBLE);
 
+            // Update the time frame visibility when there is a change
             holder.itemView.setOnClickListener(v -> {
                 int clickedPosition = holder.getAdapterPosition();
                 if (clickedPosition != RecyclerView.NO_POSITION) {
@@ -108,6 +111,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                     intent.putExtra("tasklocation", selectedTask.getLocation());
                     intent.putExtra("taskDuration", "Hours: " + selectedTask.getHours() + " Minutes: " + selectedTask.getMinutes());
                     intent.putExtra("taskMaxUser", selectedTask.getMaxUsers());
+                    intent.putExtra("taskCalendar",selectedTask.getFormattedExpirationDateTime());
                     context.startActivity(intent);
                 }
             });
@@ -118,13 +122,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         }
     }
 
+
     @Override
     public int getItemCount() {
         return list.size();
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tasktitle, taskdesc, taskpoint, taskloc, taskTimer, taskMaxUser;
+        TextView tasktitle, taskdesc, taskpoint, taskloc, taskTimer, taskMaxUser, taskCalendar;
 
         public TaskViewHolder(@NonNull View taskView) {
             super(taskView);
@@ -134,6 +139,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             taskloc = taskView.findViewById(R.id.taskLocation);
             taskTimer = taskView.findViewById(R.id.taskTimeFrame);
             taskMaxUser = taskView.findViewById(R.id.taskMaxUser);
+            taskCalendar = taskView.findViewById(R.id.taskCalendar);
         }
     }
 }
