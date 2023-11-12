@@ -1,6 +1,10 @@
 package com.hcdc.capstone.taskprocess;
 
+import com.google.firebase.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class TaskData {
 
@@ -8,13 +12,14 @@ public class TaskData {
     private boolean isAccepted;
     private ArrayList<String> acceptedByUsers;
     int hours, minutes, maxUsers;
+    private Timestamp expirationDateTime;
 
     // Add public no-argument constructor
     public TaskData() {
         // Default constructor required by Firestore
     }
 
-    public TaskData(String taskName, String description, String points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers) {
+    public TaskData(String taskName, String description, String points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;
@@ -24,6 +29,7 @@ public class TaskData {
         this.minutes = minutes;
         this.maxUsers = maxUsers;
         this.camera = camera;
+        this.expirationDateTime = expirationDateTime;
 
         if (acceptedByUsers != null) {
             this.acceptedByUsers = acceptedByUsers;
@@ -70,5 +76,20 @@ public class TaskData {
 
     public ArrayList<String> getAcceptedByUsers() {
         return acceptedByUsers;
+    }
+
+    public Timestamp getExpirationDateTime() {
+        return expirationDateTime;
+    }
+
+    public String getFormattedExpirationDateTime() {
+        // Format expirationDateTime as a human-readable string with AM/PM indicator
+        if (expirationDateTime != null) {
+            Date date = expirationDateTime.toDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM/dd/yy", Locale.getDefault());
+            return sdf.format(date);
+        } else {
+            return "N/A"; // or handle the case when expirationDateTime is null
+        }
     }
 }

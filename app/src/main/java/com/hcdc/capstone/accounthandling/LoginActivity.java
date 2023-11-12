@@ -1,5 +1,4 @@
 package com.hcdc.capstone.accounthandling;
-import androidx.annotation.NonNull;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,19 +12,18 @@ import android.widget.Toast;
 
 import android.text.method.PasswordTransformationMethod;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.DocumentReference;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.taskprocess.TaskProgress;
 
 public class LoginActivity extends BaseActivity {
 
@@ -55,7 +53,6 @@ public class LoginActivity extends BaseActivity {
         progressDialog.setMessage(" Logging in... ");
         progressDialog.setCancelable(false);
 
-
         loginBttn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,39 +67,16 @@ public class LoginActivity extends BaseActivity {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
                                         // Check if the user is approved
-                                        DocumentReference userRef = fstore.collection("users").document(auth.getCurrentUser().getUid());
-                                        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()) {
-                                                    DocumentSnapshot document = task.getResult();
-                                                    if (document != null && document.exists()) {
-                                                        Boolean isApproved = document.getBoolean("isApproved");
-                                                        if (isApproved != null && isApproved.booleanValue()) {
-                                                            // User is approved, allow login
-                                                            progressDialog.dismiss();
-                                                            Toast.makeText(LoginActivity.this, "  Login Successful  ", Toast.LENGTH_SHORT).show();
-                                                            startActivity(new Intent(LoginActivity.this, Homepage.class));
-                                                            finish();
-                                                        } else {
-                                                            // User is not approved yet
-                                                            progressDialog.dismiss();
-                                                            Toast.makeText(LoginActivity.this, "  Your registration is pending approval by the admin  ", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    } else {
-                                                        // Document does not exist or is null, handle accordingly
-                                                        // For example, if the document doesn't exist, the user may not be registered properly.
-                                                        progressDialog.dismiss();
-                                                        Toast.makeText(LoginActivity.this, "  User not found or registration data missing. Please register first.  ", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                                else {
-                                                    // Task failed with an exception, handle accordingly
-                                                    progressDialog.dismiss();
-                                                    Toast.makeText(LoginActivity.this, "  Error fetching user data:  " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-                                        });
+                                        FirebaseUser user = auth.getCurrentUser();
+                                        if (user != null && user.isEmailVerified()) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(LoginActivity.this, "  Login Successful  ", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(LoginActivity.this, Homepage.class));
+                                            finish();
+                                        } else {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(LoginActivity.this, "  Your email is not verified. Please check your email for verification.  ", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -115,17 +89,16 @@ public class LoginActivity extends BaseActivity {
                         progressDialog.dismiss();
                         loginPassword.setError("  Password cannot be empty  ");
                     }
-                }
-                else if (email.isEmpty()) {
+                } else if (email.isEmpty()) {
                     progressDialog.dismiss();
                     loginEmail.setError("  Email Cannot be empty  ");
                 } else {
                     progressDialog.dismiss();
                     loginEmail.setError("  Please enter valid email  ");
                 }
-
             }
         });
+
         signupRedirect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -28,7 +28,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void sendNotification(String title, String messageBody) {
-        String channelId = "MyChannelId"; // You can change this channel ID
+        String channelId = "my_notification_channel"; // You can change this channel ID
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder notificationBuilder =
@@ -43,7 +43,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Create a notification channel for Android Oreo and higher
-        String channelName = "MyChannelName"; // You can change this channel name
+        String channelName = "my_notification_channel"; // You can change this channel name
         NotificationChannel channel = new NotificationChannel(
                 channelId,
                 channelName,

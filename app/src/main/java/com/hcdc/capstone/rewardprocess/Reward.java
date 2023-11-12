@@ -34,7 +34,7 @@ public class Reward extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rewards);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-        pointsSystemTextView = findViewById(R.id.points_system1); // Initialize points_system1 TextView
+        pointsSystemTextView = findViewById(R.id.points_system1);
         ImageView coupon = findViewById(R.id.couponBox);
         redeem = findViewById(R.id.redeemreward);
 
@@ -57,6 +57,7 @@ public class Reward extends BaseActivity {
             }
             return false;
         });
+
         coupon.setOnClickListener(v -> {
             Intent i = new Intent(getApplicationContext(), userCoupons.class);
             startActivity(i);
