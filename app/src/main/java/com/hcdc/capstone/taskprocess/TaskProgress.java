@@ -433,6 +433,7 @@ public class TaskProgress extends BaseActivity {
                     startTimer();
                     startButton.setVisibility(View.GONE);
                     doneButton.setVisibility(View.VISIBLE);
+                    sendNotification("User Started a Task!", taskLocation);
                     db.collection("user_acceptedTask")
                             .whereEqualTo("acceptedBy", currentUserUID)
                             .get()

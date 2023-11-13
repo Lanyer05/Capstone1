@@ -8,13 +8,9 @@ public class RewardItems {
     private String points;
     private int quantity;
     private String rewardName;
-
     private int selectedquantity;
 
-
-    public RewardItems()
-    {
-
+    public RewardItems() {
     }
 
     public RewardItems(String category, String points, int quantity, String rewardName, String selectedquantity) {
@@ -70,7 +66,7 @@ public class RewardItems {
         try {
             return Integer.parseInt(points);
         } catch (NumberFormatException e) {
-            return 0; // handle the case where points is not a valid integer
+            return 0;
         }
     }
 

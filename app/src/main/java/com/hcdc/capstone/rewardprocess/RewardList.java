@@ -198,7 +198,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                     totalPointsTextView.setText("Total points: " + totalPoints);
                     selectedItemsTextView.setText("Items: ");
                     new Handler().postDelayed(() -> {
-                        Toast.makeText(getApplicationContext(), "Redeemed Successfully!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), " Redeemed Successfully! ", Toast.LENGTH_SHORT).show();
                         Intent i = new Intent(getApplicationContext(), Reward.class);
                         startActivity(i);
                         finish();
@@ -266,7 +266,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
     private void showPointsExceedDialog(long userPoints) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Error")
-                .setMessage("Total points exceed your current points. You have " + userPoints + " points.")
+                .setMessage(" Total points exceed your current points. You have " + userPoints + " points. ")
                 .setPositiveButton("OK", (dialog, which) -> {
                     // Handle OK button click
                     dialog.dismiss();
