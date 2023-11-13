@@ -35,8 +35,26 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
     public void onBindViewHolder(@NonNull CouponAdapter.CouponViewHolder holder, int position) {
         Coupons coupons = coupList.get(position);
 
-        holder.coupName.setText(coupons.getRewardName());
-        holder.coupCod.setText(coupons.getCouponuserCode());
+        holder.coupCod.setText(coupons.getCouponCode());
+
+        // Iterate through the list of SelectedItems and concatenate the data
+        StringBuilder selectedItemsText = new StringBuilder();
+        for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
+            String rewardId = selectedItem.getRewardId();
+            int selectedQuantity = selectedItem.getSelectedQuantity();
+
+            // Concatenate the data into a single string
+            String itemText = rewardId + " x" + selectedQuantity + ", ";
+            selectedItemsText.append(itemText);
+        }
+
+        // Remove the trailing comma and space
+        if (selectedItemsText.length() > 2) {
+            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length());
+        }
+
+        // Set the concatenated string to the TextView
+        holder.coupName.setText(selectedItemsText.toString());
     }
 
     @Override

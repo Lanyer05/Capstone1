@@ -160,7 +160,8 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
     @SuppressLint("SetTextI18n")
     private void redeemSelectedItems() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String couponCode = generateCouponCode(userId);
+        String userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String couponCode = generateCouponCode();
         long newUserPoints = currentUserPoints - totalPoints;
 
         // Update the user's points in Firestores
@@ -173,6 +174,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         // Create a new coupon document with the user's ID, coupon code, selected items, and isClaimed flag
         Map<String, Object> couponData = new HashMap<>();
         couponData.put("userId", userId);
+        couponData.put("email", userEmail);
         couponData.put("couponCode", couponCode);
         couponData.put("isClaimed", false);
         // List to store the selected items with their quantities
@@ -274,14 +276,15 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                 .show();
     }
 
-    private String generateCouponCode(String userId) {
+    private String generateCouponCode() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[8];
         secureRandom.nextBytes(randomBytes);
 
         String base64Code = Base64.getEncoder().encodeToString(randomBytes);
-        return userId + "-" + base64Code.substring(0, 8);
+        return  base64Code.substring(0, 8);
     }
+
 
     private void deductStocksFromFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -316,5 +319,12 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                         Log.e("RewardList", "Error fetching document for rewardName: " + rewardName + ", Error: " + e.getMessage());
                     });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Reward.class);
+        startActivity(intent);
+        finish();
     }
 }
