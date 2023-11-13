@@ -2,52 +2,62 @@ package com.hcdc.capstone.rewardprocess;
 
 import com.google.firebase.Timestamp;
 
+import java.util.List;
+
 public class Coupons {
 
-    private String rewardName;
     private String userId;
-    private boolean pendingStatus;
-    private String userEmail;
-    private int rewardPoints;
-    private  String couponuserCode;
-    private Timestamp claimDate;
+    private String couponCode;
+    private Timestamp claimDate; // ignore this
+    private List<SelectedItems> selectedItems;
 
-    public Coupons()
-    {
-        //firebase shizz
+    public Coupons() {
+        // Default constructor required for Firestore
     }
 
-    public Coupons(String rewardName, String userId, boolean pendingStatus, String userEmail, int rewardPoints, String couponuserCode)
-    {
-        this.rewardName = rewardName;
+    public Coupons(String userId, String couponCode, List<SelectedItems> selectedItems) {
         this.userId = userId;
-        this.pendingStatus = pendingStatus;
-        this.userEmail = userEmail;
-        this.rewardPoints = rewardPoints;
-        this.couponuserCode = couponuserCode;
-    }
-
-    public String getRewardName() {
-        return rewardName;
+        this.couponCode = couponCode;
+        this.selectedItems = selectedItems;
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public boolean isPendingStatus() {
-        return pendingStatus;
+    public String getCouponCode() {
+        return couponCode;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public Timestamp getClaimDate() {
+        return claimDate;
     }
 
-    public int getRewardPoints() {
-        return rewardPoints;
+    public List<SelectedItems> getSelectedItems() {
+        return selectedItems;
     }
 
-    public String getCouponuserCode() {return couponuserCode;}
+    // Add setters if needed
 
-    public Timestamp getClaimDate() { return claimDate;}
+    public static class SelectedItems {
+        private String rewardId;
+        private int selectedQuantity;
+
+        public SelectedItems() {
+            // Default constructor required for Firestore
+        }
+
+        public SelectedItems(String rewardId, int selectedQuantity) {
+            this.rewardId = rewardId;
+            this.selectedQuantity = selectedQuantity;
+        }
+
+        public String getRewardId() {
+            return rewardId;
+        }
+
+        public int getSelectedQuantity() {
+            return selectedQuantity;
+        }
+    }
 }

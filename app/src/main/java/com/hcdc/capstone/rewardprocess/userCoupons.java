@@ -4,12 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Window;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +14,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.BaseActivity;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.CouponAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class userCoupons extends BaseActivity {
@@ -32,67 +30,25 @@ public class userCoupons extends BaseActivity {
     private CouponAdapter couponAdapter;
     private ArrayList<Coupons> couponList;
 
-    private TextView progCode, progRewardName;
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_user_coupons);
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
-
-        //Coupon List
+        // Coupon List
         RecyclerView couponRecyclerView = findViewById(R.id.couponRecyclerView);
         couponList = new ArrayList<>();
         couponAdapter = new CouponAdapter(this, couponList);
-        fetchCoupons();
-        fetchprogressCoupons();
 
         couponRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         couponRecyclerView.setAdapter(couponAdapter);
 
+        fetchCoupons();
     }
-
-    @SuppressLint("SetTextI18n")
-    private void fetchprogressCoupons() {
-        String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        firestore.collection("rewardrequest")
-                .whereEqualTo("userId", currentUserUID)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot querySnapshot = task.getResult();
-                        if (querySnapshot != null && !querySnapshot.isEmpty()) {
-                            // Assuming you only expect one document, you can access the first one
-                            QueryDocumentSnapshot documentSnapshot = (QueryDocumentSnapshot) querySnapshot.getDocuments().get(0);
-                            String rewardName = documentSnapshot.getString("rewardName");
-                            String couponuserCode = documentSnapshot.getString("couponuserCode");
-
-                            // Add debug logs to check values
-                            Log.d("ProgressCouponName", "rewards fetched: " + rewardName);
-                            Log.d("ProgressCouponCode", "coupon fetched: " + couponuserCode);
-
-                            progCode.setText(couponuserCode);
-                            progRewardName.setText(rewardName);
-                        } else {
-                            progCode.setText("No reward requested...");
-                            progRewardName.setText("");
-                        }
-                    } else {
-                        Exception exception = task.getException();
-                        if (exception != null) {
-                            // Handle the error here
-                            Log.e("FirestoreError", "Error fetching reward request: " + exception.getMessage());
-                        }
-                    }
-                });
-    }
-
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchCoupons() {
@@ -101,47 +57,52 @@ public class userCoupons extends BaseActivity {
 
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
-        firestore.collection("complete_rewardreq")
-                .whereEqualTo("userId", currentUserUID)
+        firestore.collection("coupons")
+                .whereEqualTo("userId", currentUserUID).whereEqualTo("isClaimed",Boolean.FALSE)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot documents = task.getResult();
                         if (documents != null) {
                             for (QueryDocumentSnapshot document : documents) {
-                                String rewardName = document.getString("rewardName");
-                                String userCouponCode = document.getString("couponuserCode");
-                                boolean status = Boolean.TRUE.equals(document.getBoolean("pendingStatus"));
-                                String useremail = document.getString("email");
-                                boolean isClaimable = Boolean.TRUE.equals(document.getBoolean("isClaimable"));
+                                Log.d("userCoupons", "Document data: " + document.getData());
 
-                                // Check if the coupon is claimable
-                                if (isClaimable) {
-                                    // Check the type of rewardPoints and convert it to int
-                                    Object rewardPointsObj = document.get("rewardPoints");
-                                    int rewardPoints = 0; // Default value if not found or conversion fails
-                                    if (rewardPointsObj != null) {
-                                        if (rewardPointsObj instanceof Long) {
-                                            rewardPoints = ((Long) rewardPointsObj).intValue();
-                                        } else if (rewardPointsObj instanceof Integer) {
-                                            rewardPoints = (int) rewardPointsObj;
-                                        }
-                                    }
-
-                                    Coupons coupon = new Coupons(rewardName, currentUserUID, status, useremail, rewardPoints, userCouponCode);
-                                    couponList.add(coupon);
-
-                                    Log.d("CouponFetch", "Reward Name: " + rewardName + ", Coupon Code: " + userCouponCode);
-                                }
+                                Coupons coupon = new Coupons(
+                                        document.getString("userId"),
+                                        document.getString("couponCode"),
+                                        parseSelectedItems(document.get("selectedItems"))
+                                );
+                                couponList.add(coupon);
                             }
 
                             // Notify the adapter that data has changed
                             couponAdapter.notifyDataSetChanged();
+                            Toast.makeText(userCoupons.this, "Coupons fetched", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        // Handle the error here
+                        Log.e("userCoupons", "Failed to fetch coupons", task.getException());
+                        Toast.makeText(userCoupons.this, "Failed to fetch coupons", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+
+    // Parse the List<Map<String, Object>> to List<Coupons.SelectedItems>
+    private List<Coupons.SelectedItems> parseSelectedItems(Object selectedItemsObj) {
+        List<Coupons.SelectedItems> selectedItems = new ArrayList<>();
+
+        if (selectedItemsObj instanceof List) {
+            List<Map<String, Object>> selectedItemsList = (List<Map<String, Object>>) selectedItemsObj;
+            for (Map<String, Object> itemData : selectedItemsList) {
+                String rewardId = (String) itemData.get("rewardId");
+                long selectedQuantity = (long) itemData.get("selectedQuantity");
+                selectedItems.add(new Coupons.SelectedItems(rewardId, (int) selectedQuantity));
+            }
+        }
+
+        return selectedItems;
+    }
 
 
     @Override
@@ -150,5 +111,4 @@ public class userCoupons extends BaseActivity {
         startActivity(intent);
         finish();
     }
-
 }

@@ -36,8 +36,26 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
     @Override
     public void onBindViewHolder(@NonNull RewardViewHolder holder, int position) {
         Coupons coupons = finRewardList.get(position);
-        holder.finRewardCode.setText(coupons.getCouponuserCode());
-        holder.finRewardName.setText(coupons.getRewardName());
+        holder.finRewardCode.setText(coupons.getCouponCode());
+
+        // Iterate through the list of SelectedItems and concatenate the data
+        StringBuilder selectedItemsText = new StringBuilder();
+        for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
+            String rewardId = selectedItem.getRewardId();
+            int selectedQuantity = selectedItem.getSelectedQuantity();
+
+            // Concatenate the data into a single string
+            String itemText = rewardId + " x" + selectedQuantity + ", ";
+            selectedItemsText.append(itemText);
+        }
+
+        // Remove the trailing comma and space
+        if (selectedItemsText.length() > 2) {
+            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length());
+        }
+
+        // Set the concatenated string to the TextView
+        holder.finRewardName.setText(selectedItemsText.toString());
 
         // Format the Timestamp to "MM/DD/YYYY HH:MM" and set it to TextView
         String formattedClaimDate = formatTimestamp(coupons.getClaimDate());
