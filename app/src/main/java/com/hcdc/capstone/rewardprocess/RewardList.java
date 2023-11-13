@@ -268,7 +268,6 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         builder.setTitle("Error")
                 .setMessage(" Total points exceed your current points. You have " + userPoints + " points. ")
                 .setPositiveButton("OK", (dialog, which) -> {
-                    // Handle OK button click
                     dialog.dismiss();
                 })
                 .show();
@@ -280,7 +279,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         secureRandom.nextBytes(randomBytes);
 
         String base64Code = Base64.getEncoder().encodeToString(randomBytes);
-        return userId + "-" + base64Code.substring(0, 8);
+        return base64Code.substring(0, 8);
     }
 
     private void deductStocksFromFirestore() {
