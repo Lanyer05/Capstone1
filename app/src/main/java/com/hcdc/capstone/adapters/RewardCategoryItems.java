@@ -46,8 +46,8 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
     public void onBindViewHolder(@NonNull RewardCategoryViewHolder holder, @SuppressLint("RecyclerView") int position) {
         RewardItems rewardItems = rewardItemsList.get(position);
         holder.title.setText(rewardItems.getRewardName());
-        holder.points.setText("Points needed: " + rewardItems.getPoints());
-        holder.quantity.setText("Items left: " + rewardItems.getQuantity());
+        holder.points.setText("Points: " + rewardItems.getPoints());
+        holder.quantity.setText("Stock: " + rewardItems.getQuantity());
 
         holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
 
@@ -56,12 +56,16 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
             @Override
             public void onClick(View v) {
                 int currentQuantity = rewardItems.getSelectedquantity();
-                rewardItems.setSelectedquantity(currentQuantity + 1);
-                holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+                int maxQuantity = rewardItems.getQuantity();
 
-                // Notify the activity/fragment about the click
-                if (itemClickListener != null) {
-                    itemClickListener.onItemClicked(rewardItems, position);
+                if (currentQuantity < maxQuantity) {
+                    rewardItems.setSelectedquantity(currentQuantity + 1);
+                    holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
+
+                    // Notify the activity/fragment about the click
+                    if (itemClickListener != null) {
+                        itemClickListener.onItemClicked(rewardItems, position);
+                    }
                 }
             }
         });
@@ -70,11 +74,11 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
             @Override
             public void onClick(View v) {
                 int currentQuantity = rewardItems.getSelectedquantity();
+
                 if (currentQuantity > 0) {
                     rewardItems.setSelectedquantity(currentQuantity - 1);
                     holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
 
-                    // Notify the activity/fragment about the click
                     if (itemClickListener != null) {
                         itemClickListener.onItemClicked(rewardItems, position);
                     }
@@ -111,4 +115,5 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
             plus = itemView.findViewById(R.id.increment_button);
         }
     }
+
 }

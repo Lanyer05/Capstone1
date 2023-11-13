@@ -43,8 +43,6 @@ public class Task extends BaseActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                // Handle navigation item clicks
-                // ...
                 int itemId = item.getItemId();
 
                 if (itemId == R.id.action_home) {

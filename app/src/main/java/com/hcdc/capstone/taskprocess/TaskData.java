@@ -89,7 +89,7 @@ public class TaskData {
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM/dd/yy", Locale.getDefault());
             return sdf.format(date);
         } else {
-            return "N/A"; // or handle the case when expirationDateTime is null
+            return "N/A";
         }
     }
 }

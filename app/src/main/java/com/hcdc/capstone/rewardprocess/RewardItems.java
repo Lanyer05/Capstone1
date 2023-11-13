@@ -6,7 +6,7 @@ public class RewardItems {
 
     private String category;
     private String points;
-    private String quantity;
+    private int quantity;
     private String rewardName;
 
     private int selectedquantity;
@@ -17,7 +17,7 @@ public class RewardItems {
 
     }
 
-    public RewardItems(String category, String points, String quantity, String rewardName, String selectedquantity) {
+    public RewardItems(String category, String points, int quantity, String rewardName, String selectedquantity) {
         this.category = category;
         this.points = points;
         this.quantity = quantity;
@@ -37,7 +37,7 @@ public class RewardItems {
         this.points = points;
     }
 
-    public String getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
@@ -50,7 +50,7 @@ public class RewardItems {
     }
 
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
