@@ -58,7 +58,7 @@ public class userCoupons extends BaseActivity {
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         firestore.collection("coupons")
-                .whereEqualTo("userId", currentUserUID)
+                .whereEqualTo("userId", currentUserUID).whereEqualTo("isClaimed",Boolean.FALSE)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
