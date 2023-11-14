@@ -44,7 +44,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
         holder.coupCod.setText(coupons.getCouponCode());
 
         // Iterate through the list of SelectedItems and concatenate the data
-        StringBuilder selectedItemsText = new StringBuilder();
+         StringBuilder selectedItemsText = new StringBuilder();
         for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
             String rewardId = selectedItem.getRewardId();
             int selectedQuantity = selectedItem.getSelectedQuantity();
@@ -87,6 +87,7 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
         }
     }
     private void showCustomDialog(Coupons coupons) {
+
         AlertDialog.Builder builder = new AlertDialog.Builder(coupContext);
         View dialogView = LayoutInflater.from(coupContext).inflate(R.layout.coupon_details, null);
         builder.setView(dialogView);
@@ -97,9 +98,24 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
         TextView couponItems = dialogView.findViewById(R.id.textCouponList);
         ImageButton closeButton = dialogView.findViewById(R.id.closeDialog);
 
+        StringBuilder selectedItemsText = new StringBuilder();
+        for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
+            String rewardId = selectedItem.getRewardId();
+            int selectedQuantity = selectedItem.getSelectedQuantity();
+
+            // Concatenate the data into a single string
+            String itemText = rewardId + " x" + selectedQuantity + "\n";
+            selectedItemsText.append(itemText);
+        }
+
+        // Remove the trailing comma and space
+        if (selectedItemsText.length() > 2) {
+            selectedItemsText.delete(selectedItemsText.length() - 2, selectedItemsText.length());
+        }
+
         // Set the title and description in the dialog
-        couponCode.setText("Sample muna");
-        couponItems.setText("blank text muna");
+        couponCode.setText(coupons.getCouponCode());
+        couponItems.setText(selectedItemsText.toString());
 
         // Close the dialog when the "Close" button is clicked
         closeButton.setOnClickListener(new View.OnClickListener() {

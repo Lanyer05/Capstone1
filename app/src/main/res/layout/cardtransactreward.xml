@@ -35,7 +35,7 @@
         <TextView
             android:id="@+id/fincoupCode"
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:text="code5678901"
             android:textColor="#354f52"
@@ -48,21 +48,22 @@
         <TextView
             android:id="@+id/fincoupRewardName"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="4dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="reward name"
             android:textColor="#2f3e46"
             android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.054"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fincoupCode" />
+            app:layout_constraintTop_toBottomOf="@+id/coupRewardDate" />
 
         <TextView
             android:id="@+id/coupRewardDate"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="152dp"
             android:gravity="center"
             android:text="10/10/1010"
             android:textColor="#2f3e46"
