@@ -2,13 +2,14 @@ package com.hcdc.capstone.rewardprocess;
 
 import com.google.firebase.Timestamp;
 
+import java.util.Date;
 import java.util.List;
 
 public class Coupons {
 
     private String userId;
     private String couponCode;
-    private Timestamp claimDate; // ignore this
+    private Timestamp claimDateTime;
     private List<SelectedItems> selectedItems;
 
     public Coupons() {
@@ -21,6 +22,13 @@ public class Coupons {
         this.selectedItems = selectedItems;
     }
 
+    public Coupons(String userId, String couponCode, List<SelectedItems> selectedItems, Timestamp claimDateTime) {
+        this.userId = userId;
+        this.couponCode = couponCode;
+        this.selectedItems = selectedItems;
+        this.claimDateTime = claimDateTime;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -30,7 +38,7 @@ public class Coupons {
     }
 
     public Timestamp getClaimDate() {
-        return claimDate;
+        return claimDateTime != null ? claimDateTime : new Timestamp(new Date());
     }
 
     public List<SelectedItems> getSelectedItems() {
