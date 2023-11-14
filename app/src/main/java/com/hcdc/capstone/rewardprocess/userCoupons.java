@@ -52,8 +52,6 @@ public class userCoupons extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchCoupons() {
-        // Clear the existing list
-        couponList.clear();
 
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
@@ -77,7 +75,7 @@ public class userCoupons extends BaseActivity {
 
                             // Notify the adapter that data has changed
                             couponAdapter.notifyDataSetChanged();
-                            Toast.makeText(userCoupons.this, "Coupons fetched", Toast.LENGTH_SHORT).show();
+
                         }
                     } else {
                         // Handle the error here

@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         new Handler().postDelayed(() -> {
             checkUserAuthenticationStatus();
-        }, 2000);
+        }, 3000);
     }
 
     private void checkUserAuthenticationStatus() {

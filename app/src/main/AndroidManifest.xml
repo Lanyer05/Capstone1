@@ -20,9 +20,12 @@
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
         <activity
-            android:name=".rewardprocess.RewardList"
-            android:theme="@style/AppTheme"
+            android:name=".MainActivity2"
             android:exported="false" />
+        <activity
+            android:name=".rewardprocess.RewardList"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".reward_category_items"
             android:exported="false"
