@@ -209,40 +209,58 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         couponData.put("selectedItems", selectedItemsList);
 
         // Add the coupon to the "coupons" collection
-        couponsCollection.add(couponData)
-                .addOnSuccessListener(documentReference -> {
-                    // Coupon added successfully
-                    Log.d("RewardList", "Coupon added with ID: " + documentReference.getId());
+        couponsCollection.whereEqualTo("userId", userId)
+                .whereEqualTo("isClaimed", false)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    int unclaimedItemCount = queryDocumentSnapshots.size();
 
-                    // Clear the selected items list after redemption
-                    rewardItemsArrayList.clear();
+                    if (unclaimedItemCount >= 3) {
+                        Toast.makeText(getApplicationContext(),"Coupon capacity full, You have (3) unclaimed coupons.",Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
+                    }
+                    else {
+                        couponsCollection.add(couponData)
+                                .addOnSuccessListener(documentReference -> {
+                                    // Coupon added successfully
+                                    Log.d("RewardList", "Coupon added with ID: " + documentReference.getId());
 
-                    // Update the UI to reflect the changes
-                    totalPoints = 0;
-                    totalPointsTextView.setText("Total points: " + totalPoints);
-                    selectedItemsTextView.setText("Items: ");
+                                    // Clear the selected items list after redemption
+                                    rewardItemsArrayList.clear();
 
-                    // Dismiss the progress bar
-                    progressDialog.dismiss();
+                                    // Update the UI to reflect the changes
+                                    totalPoints = 0;
+                                    totalPointsTextView.setText("Total points: " + totalPoints);
+                                    selectedItemsTextView.setText("Items: ");
 
-                    // Show success message
-                    Toast.makeText(getApplicationContext(), "Redeemed Successfully!", Toast.LENGTH_SHORT).show();
+                                    // Dismiss the progress bar
+                                    progressDialog.dismiss();
 
-                    // Navigate to the Reward activity after a delay
-                    new Handler().postDelayed(() -> {
-                        Intent i = new Intent(getApplicationContext(), Reward.class);
-                        startActivity(i);
-                        finish();
-                    }, 2000);
+                                    // Show success message
+                                    Toast.makeText(getApplicationContext(), "Redeemed Successfully!", Toast.LENGTH_SHORT).show();
+
+                                    // Navigate to the Reward activity after a delay
+                                    new Handler().postDelayed(() -> {
+                                        Intent i = new Intent(getApplicationContext(), Reward.class);
+                                        startActivity(i);
+                                        finish();
+                                    }, 2000);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("RewardList", "Error adding coupon: " + e.getMessage());
+
+                                    // Dismiss the progress bar
+                                    progressDialog.dismiss();
+
+                                    // Show an error message
+                                    Toast.makeText(getApplicationContext(), "Redeem Failed. Please try again.", Toast.LENGTH_SHORT).show();
+                                });
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("RewardList", "Error adding coupon: " + e.getMessage());
-
-                    // Dismiss the progress bar
-                    progressDialog.dismiss();
-
-                    // Show an error message
-                    Toast.makeText(getApplicationContext(), "Redeem Failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    Log.e("RewardList", "Error checking unclaimed items count: " + e.getMessage());
+                    // Show an error message or take appropriate action
+                    Toast.makeText(getApplicationContext(), "Error checking unclaimed items count", Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -363,4 +381,6 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         startActivity(intent);
         finish();
     }
+
 }
+
