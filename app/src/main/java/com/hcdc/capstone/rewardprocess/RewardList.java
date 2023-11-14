@@ -82,7 +82,7 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                 if (totalPoints > currentUserPoints) {
                     showPointsExceedDialog(currentUserPoints);
                 } else if (totalPoints <= 0) {
-                    Toast.makeText(getApplicationContext(), "No items selected to be redeemed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No Reward selected", Toast.LENGTH_SHORT).show();
                 } else {
                     showCustomDialog();
                 }
@@ -315,5 +315,11 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
                         Log.e("RewardList", "Error fetching document for rewardName: " + rewardName + ", Error: " + e.getMessage());
                     });
         }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, Reward.class);
+        startActivity(intent);
+        finish();
     }
 }

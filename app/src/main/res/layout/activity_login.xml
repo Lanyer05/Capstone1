@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/rewardImage2"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="220dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
@@ -36,6 +36,7 @@
         android:lineSpacingExtra="-6sp"
         android:text="WELCOME"
         android:textColor="#808080"
+        android:textSize="25sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/rewardImage2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal|top"
         android:lineSpacingExtra="-2sp"
@@ -78,7 +79,7 @@
         android:id="@+id/login_password"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/custom_edittext"
         android:drawableLeft="@drawable/ic_lock"
         android:drawablePadding="8dp"
@@ -95,7 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:padding="8dp"
         android:text="Don’t have an account ?"
         android:textColor="@color/black"
@@ -103,21 +104,21 @@
         app:layout_constraintEnd_toStartOf="@+id/singupRedirect"
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logingmail" />
+        app:layout_constraintTop_toBottomOf="@+id/loginbtn" />
 
     <TextView
         android:id="@+id/singupRedirect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="13dp"
         android:padding="8dp"
         android:text="Sign Up"
         android:textColor="#588157"
-        android:textSize="14dp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/singupRedirect1"
-        app:layout_constraintTop_toBottomOf="@+id/logingmail" />
+        app:layout_constraintTop_toBottomOf="@+id/loginbtn" />
 
     <Button
         android:id="@+id/loginbtn"
@@ -125,31 +126,14 @@
         android:layout_height="62dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:backgroundTint="#588157"
-        android:textColor="#FFFF"
         android:text="Sign In"
+        android:textColor="#FFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_password" />
 
-    <Button
-        android:id="@+id/logingmail"
-        android:layout_width="300dp"
-        android:layout_height="62dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="5dp"
-        android:backgroundTint="#FFFFFF"
-        android:fontFamily="sans-serif-black"
-        android:text="GMAIL"
-        android:textColor="#588157"
-        android:textSize="14sp"
-        app:icon="@drawable/icongmail"
-        app:iconGravity="textStart"
-        app:iconTint="#588157"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginbtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
