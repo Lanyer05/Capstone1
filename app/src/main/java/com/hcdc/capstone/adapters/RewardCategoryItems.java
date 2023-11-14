@@ -50,7 +50,7 @@ public class RewardCategoryItems extends RecyclerView.Adapter<RewardCategoryItem
             @Override
             public void onClick(View v) {
                 int currentQuantity = rewardItems.getSelectedquantity();
-                int maxQuantity = rewardItems.getQuantity();
+                int maxQuantity = 3;
                 if (currentQuantity < maxQuantity) {
                     rewardItems.setSelectedquantity(currentQuantity + 1);
                     holder.selectedquantity.setText(String.valueOf(rewardItems.getSelectedquantity()));
