@@ -38,9 +38,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="95dp"
+        android:layout_width="0dp"
+        android:layout_height="130dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -50,14 +52,27 @@
         android:id="@+id/tdTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="30dp"
         android:text="TextView"
-        android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textColor="#322E2E"
+        android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <View
+        android:id="@+id/line2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="40dp"
+        android:background="#322E2E"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tdTitle" />
 
     <TextView
         android:id="@+id/tdPoints"
@@ -65,12 +80,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="145dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textColor="#6A6A6A"
+        android:textColor="#322E2E"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/tdPoints3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tdTitle"
+        app:layout_constraintTop_toBottomOf="@+id/line2"
         app:textAllCaps="false" />
 
     <TextView
@@ -80,28 +97,33 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="145dp"
         android:text="points"
+        android:textSize="17sp"
+        android:textColor="#322E2E"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tdPoints"
-        app:layout_constraintTop_toBottomOf="@+id/tdTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/line2" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/location"
+        app:layout_constraintEnd_toStartOf="@+id/tdLocation"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tdPoints" />
 
     <TextView
         android:id="@+id/tdLocation"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="30dp"
         android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
         android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/tdPoints" />
 
@@ -109,20 +131,23 @@
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="7dp"
         android:src="@drawable/timer"
+        app:layout_constraintEnd_toStartOf="@+id/tdDuration"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <TextView
         android:id="@+id/tdDuration"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
         android:text="420 hrs"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/tdLocation" />
 
@@ -130,9 +155,10 @@
         android:id="@+id/imageView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="7dp"
         android:src="@drawable/person"
+        app:layout_constraintEnd_toStartOf="@+id/tdMaxUser"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
@@ -140,31 +166,36 @@
         android:id="@+id/imageView5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="7dp"
         android:src="@drawable/calendar"
+        app:layout_constraintEnd_toStartOf="@+id/tdCalendar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
     <TextView
         android:id="@+id/tdMaxUser"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
         android:text="max user"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/tdDuration" />
 
     <TextView
         android:id="@+id/tdCalendar"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
         android:text="Expiration Date"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView5"
         app:layout_constraintTop_toBottomOf="@+id/tdMaxUser" />
 
@@ -173,9 +204,15 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/glass_effect_background"
+        android:elevation="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="5dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="10dp"
         android:text="TextView"
         app:layout_constraintBottom_toTopOf="@+id/tdAccept"
         app:layout_constraintEnd_toEndOf="parent"

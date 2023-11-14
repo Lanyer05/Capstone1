@@ -70,6 +70,7 @@ public class RewardItems {
         }
     }
 
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

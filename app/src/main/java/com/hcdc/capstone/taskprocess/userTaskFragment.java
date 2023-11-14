@@ -76,7 +76,8 @@ public class userTaskFragment extends Fragment {
                             QueryDocumentSnapshot document = (QueryDocumentSnapshot) documents.getDocuments().get(0);
 
                             String taskName = document.getString("taskName");
-                            String taskPoints = document.getString("points");
+                            Long taskPointsLong = document.getLong("points");
+                            String taskPoints = String.valueOf(taskPointsLong) + " points";
                             String taskLocation = document.getString("location");
                             String taskDescription = document.getString("description");
                             Long taskMaxUser = document.getLong("maxUsers");
