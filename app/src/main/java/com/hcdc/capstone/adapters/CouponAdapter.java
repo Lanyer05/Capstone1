@@ -1,12 +1,18 @@
 package com.hcdc.capstone.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hcdc.capstone.R;
@@ -55,6 +61,13 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
 
         // Set the concatenated string to the TextView
         holder.coupName.setText(selectedItemsText.toString());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "You clicked me",Toast.LENGTH_SHORT).show();
+                showCustomDialog(coupons);
+            }
+        });
     }
 
     @Override
@@ -72,5 +85,30 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
             coupCod = itemView.findViewById(R.id.coupCode);
             coupName= itemView.findViewById(R.id.coupRewardName);
         }
+    }
+    private void showCustomDialog(Coupons coupons) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(coupContext);
+        View dialogView = LayoutInflater.from(coupContext).inflate(R.layout.coupon_details, null);
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        // Find the views in the custom dialog
+        TextView couponCode = dialogView.findViewById(R.id.textCoupon);
+        TextView couponItems = dialogView.findViewById(R.id.textCouponList);
+        ImageButton closeButton = dialogView.findViewById(R.id.closeDialog);
+
+        // Set the title and description in the dialog
+        couponCode.setText("Sample muna");
+        couponItems.setText("blank text muna");
+
+        // Close the dialog when the "Close" button is clicked
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
     }
 }
