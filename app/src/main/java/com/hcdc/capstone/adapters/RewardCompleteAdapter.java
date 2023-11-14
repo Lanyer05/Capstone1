@@ -1,5 +1,6 @@
 package com.hcdc.capstone.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,13 +41,14 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
 
         // Iterate through the list of SelectedItems and concatenate the data
         StringBuilder selectedItemsText = new StringBuilder();
-        for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
-            String rewardId = selectedItem.getRewardId();
-            int selectedQuantity = selectedItem.getSelectedQuantity();
+        if (coupons.getSelectedItems() != null) {
+            for (Coupons.SelectedItems selectedItem : coupons.getSelectedItems()) {
+                String rewardId = selectedItem.getRewardId();
+                int selectedQuantity = selectedItem.getSelectedQuantity();
 
-            // Concatenate the data into a single string
-            String itemText = rewardId + " x" + selectedQuantity + ", ";
-            selectedItemsText.append(itemText);
+                String itemText = rewardId + " x" + selectedQuantity + ", ";
+                selectedItemsText.append(itemText);
+            }
         }
 
         // Remove the trailing comma and space
@@ -57,9 +59,12 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
         // Set the concatenated string to the TextView
         holder.finRewardName.setText(selectedItemsText.toString());
 
-        // Format the Timestamp to "MM/DD/YYYY HH:MM" and set it to TextView
-        String formattedClaimDate = formatTimestamp(coupons.getClaimDate());
-        holder.finClaimDate.setText(formattedClaimDate);
+        if (coupons.getClaimDate() != null) {
+            String formattedClaimDate = formatTimestamp(coupons.getClaimDate());
+            holder.finClaimDate.setText(formattedClaimDate);
+        } else {
+            holder.finClaimDate.setText("N/A");
+        }
     }
 
     @Override
@@ -67,6 +72,7 @@ public class RewardCompleteAdapter extends RecyclerView.Adapter<RewardCompleteAd
         return finRewardList.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setFinRewardList(ArrayList<Coupons> claimedRewards) {
         finRewardList = claimedRewards;
         notifyDataSetChanged();
