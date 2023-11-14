@@ -8,18 +8,19 @@ import java.util.Locale;
 
 public class TaskData {
 
-    String taskName, description, points, location, camera;
+    String taskName, description, location, camera;
     private boolean isAccepted;
     private ArrayList<String> acceptedByUsers;
     int hours, minutes, maxUsers;
     private Timestamp expirationDateTime;
+    private long points;
 
     // Add public no-argument constructor
     public TaskData() {
         // Default constructor required by Firestore
     }
 
-    public TaskData(String taskName, String description, String points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
+    public TaskData(String taskName, String description, long points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;
@@ -46,7 +47,7 @@ public class TaskData {
         return description;
     }
 
-    public String getPoints() {
+    public long getPoints() {
         return points;
     }
 
