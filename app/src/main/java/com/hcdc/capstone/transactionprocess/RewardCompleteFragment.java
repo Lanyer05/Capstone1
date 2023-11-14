@@ -86,7 +86,6 @@ public class RewardCompleteFragment extends Fragment {
                             // Notify the adapter that data has changed
                             adapter.setFinRewardList(couponList);
                             adapter.notifyDataSetChanged();
-                            Toast.makeText(getContext(), "Coupons fetched", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         // Handle the error here
