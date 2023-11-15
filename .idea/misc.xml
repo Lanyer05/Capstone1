@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
@@ -65,6 +66,7 @@
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/completedreward_fragment.xml" value="0.371875" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/completedtask_fragment.xml" value="0.371875" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/confirmation_overlay.xml" value="0.5" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/coupon_details.xml" value="0.33" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/couponlayout.xml" value="0.371875" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/items_selected_dialog.xml" value="0.37083333333333335" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout/reward_dialog.xml" value="0.371875" />

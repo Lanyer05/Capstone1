@@ -755,9 +755,6 @@ public class TaskProgress extends BaseActivity {
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
-            Intent notificationIntent = new Intent(this, TaskProgress.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-            builder.setContentIntent(pendingIntent);
             return builder;
         }
     }
