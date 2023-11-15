@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Context;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +22,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.hcdc.capstone.Homepage;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.RewardCategoryItems;
 
@@ -383,4 +381,3 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
     }
 
 }
-

@@ -18,7 +18,7 @@
         <ImageView
             android:id="@+id/taskImage"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginStart="30dp"
             android:layout_marginTop="10dp"
@@ -42,19 +42,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/taskImage" />
 
+        <View
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:background="#322E2E"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
+
         <TextView
             android:id="@+id/taskPoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
+            android:fontFamily="@font/lora_italic"
             android:text="(xx pts)"
             android:textColor="#6A6A6A"
             android:textSize="16sp"
-            android:fontFamily="@font/lora_italic"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/line2" />
 
         <LinearLayout
             android:id="@+id/locationLayout"

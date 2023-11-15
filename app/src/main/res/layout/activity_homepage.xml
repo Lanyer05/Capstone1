@@ -102,10 +102,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_announce"
-        android:layout_width="match_parent"
-        android:layout_height="391dp"
-        android:layout_marginTop="275dp"
+        android:layout_width="355dp"
+        android:layout_height="354dp"
+        android:layout_above="@+id/bottom_navigation_view"
+        android:layout_below="@+id/container"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
-        android:padding="16dp" />
+        android:padding="16dp"/>
 
 </RelativeLayout>

@@ -19,6 +19,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.hcdc.capstone.rewardprocess.Reward;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -546,7 +547,8 @@ public class TaskProgress extends BaseActivity {
         if (timerRunning) {
             Toast.makeText(this, " Task is in progress. Cannot go back. ", Toast.LENGTH_SHORT).show();
         } else {
-            super.onBackPressed();
+            Intent intent = new Intent(this, Task.class);
+            startActivity(intent);
         }
     }
 

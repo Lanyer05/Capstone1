@@ -58,7 +58,7 @@ public class TaskDetails extends BaseActivity {
         Bundle extra = getIntent().getExtras();
         String tTitle = extra.getString("tasktitle");
         String tDesc = extra.getString("taskdetails");
-        String tPoints = extra.getString("taskpoint");
+        Long tPoints = extra.getLong("taskpoint");
         String tLoc = extra.getString("tasklocation");
         String tDura = extra.getString("taskDuration");
         String tMaxUser = extra.getString("taskMaxUser");
@@ -68,7 +68,7 @@ public class TaskDetails extends BaseActivity {
         tskTitle.setText(tTitle);
         tskDesc.setText(tDesc);
         tskLoc.setText(tLoc);
-        tskPoint.setText(tPoints);
+        tskPoint.setText(String.valueOf(tPoints));
         tskDura.setText(tDura);
         displayAcceptedUserRatio(tMaxUser);
         String formattedExpirationDateTime = getFormattedExpirationDateTime(tExpirationDateTime);
@@ -197,6 +197,7 @@ public class TaskDetails extends BaseActivity {
                         Long maxUsers = documentSnapshot.getLong("maxUsers");
                         String camera = documentSnapshot.getString("camera");
                         String taskId = documentSnapshot.getString("taskId");
+                        Long points = documentSnapshot.getLong("points");
                         Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
 
                         if (maxUsers != null) {
@@ -215,7 +216,7 @@ public class TaskDetails extends BaseActivity {
                                     userTaskAccepted.put("taskName", tskTitle.getText().toString());
                                     userTaskAccepted.put("description", tskDesc.getText().toString());
                                     userTaskAccepted.put("location", tskLoc.getText().toString());
-                                    userTaskAccepted.put("points", tskPoint.getText().toString());
+                                    userTaskAccepted.put("points", points);
                                     userTaskAccepted.put("isAccepted", true);
                                     userTaskAccepted.put("isStarted", false);
                                     userTaskAccepted.put("isCompleted", false);
