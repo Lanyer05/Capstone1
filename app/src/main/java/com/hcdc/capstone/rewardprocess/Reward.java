@@ -2,13 +2,20 @@ package com.hcdc.capstone.rewardprocess;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -71,6 +78,9 @@ public class Reward extends BaseActivity {
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
 
+        //Snackbar message
+        showBubbleText(findViewById(R.id.couponBox));
+
         redeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,4 +123,69 @@ public class Reward extends BaseActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(intent);
     }
+
+    private void showBubbleText(View targetView) {
+        // Create a Snackbar with the custom layout
+        Snackbar snackbar = Snackbar.make(targetView, "", Snackbar.LENGTH_LONG);
+
+        // Get the Snackbar view
+        View snackbarView = snackbar.getView();
+
+        // Inflate the custom layout into the Snackbar view
+        View customSnackbarLayout = getLayoutInflater().inflate(R.layout.custom_snackbar_layout, null);
+        ((TextView) customSnackbarLayout.findViewById(R.id.snackbar_text)).setText("Click here for coupons");
+
+        // Add the custom layout to the Snackbar view
+        Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbarView;
+        snackbarLayout.addView(customSnackbarLayout, 0);
+
+        // Set the background color of the Snackbar to transparent
+        snackbarLayout.setBackgroundColor(Color.TRANSPARENT);
+
+        // Customize the Snackbar view
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        params.setMargins(450, 130, 100, 120); // Adjust the margin as needed
+        snackbarView.setLayoutParams(params);
+
+        // Set up fade-in animation
+        AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
+        fadeIn.setDuration(1000); // Adjust the duration as needed
+        snackbarLayout.setAnimation(fadeIn);
+
+        // Show the Snackbar
+        snackbar.show();
+
+        // Use Handler to delay the start of fade-out animation
+        new Handler().postDelayed(() -> {
+            // Set up fade-out animation
+            AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
+            fadeOut.setDuration(3000); // Adjust the duration as needed
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                    // Do something when fade-out starts
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    // Do something when fade-out ends
+                    if (snackbar.isShown()) {
+                        snackbar.dismiss();
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                    // Do something if needed
+                }
+            });
+
+            // Apply fade-out animation to the Snackbar view
+            snackbarLayout.startAnimation(fadeOut);
+        }, 3000); // Delay in milliseconds before starting fade-out animation
+    }
+
+
+
 }

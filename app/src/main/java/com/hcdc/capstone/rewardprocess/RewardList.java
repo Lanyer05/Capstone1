@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -156,9 +158,10 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         AlertDialog dialog = builder.create();
         StringBuilder allItemsText = new StringBuilder();
         for (RewardItems item : rewardItemsArrayList) {
-            allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append(", ");
+            allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append("\n ");
         }
         allItemsTextView.setText(allItemsText.toString());
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 
