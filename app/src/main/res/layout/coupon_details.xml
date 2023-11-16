@@ -36,6 +36,7 @@
             android:layout_marginTop="-70dp"
             android:text="Coupon"
             android:textSize="25dp"
+            android:textStyle="bold"
             app:drawableLeftCompat="@drawable/info_alert" />
 
         <TextView
