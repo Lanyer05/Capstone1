@@ -64,7 +64,6 @@ public class CouponAdapter extends RecyclerView.Adapter<CouponAdapter.CouponView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "You clicked me",Toast.LENGTH_SHORT).show();
                 showCustomDialog(coupons);
             }
         });

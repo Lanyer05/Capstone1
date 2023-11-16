@@ -9,12 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/custom_dialog"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -23,29 +22,30 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="right|top"
-            android:layout_margin="10dp"
-            android:background="@drawable/custom_dialog"
+            android:layout_marginTop="35dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/custom_edittext"
             android:src="@drawable/closeimg"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
             android:id="@+id/textCoupon"
-            android:layout_width="265dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="-50dp"
-            android:layout_marginLeft="20dp"
-            android:textSize="25dp"
-            android:layout_gravity="left"
+            android:layout_gravity="center"
+            android:layout_marginTop="-70dp"
             android:text="Coupon"
+            android:textSize="25dp"
             app:drawableLeftCompat="@drawable/info_alert" />
+
         <TextView
             android:id="@+id/textCouponList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:text="List of items owraaayyt "
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="23dp"/>
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="List of items owraaayyt " />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 
