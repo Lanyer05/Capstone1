@@ -32,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ecotaskreward_logo" />
+        app:srcCompat="@drawable/no_eco" />
 
     <TextView
         android:id="@+id/timerTextView"
@@ -66,11 +66,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:text="(xx pts)"
-        android:textColor="#322E2E"
+        android:textColor="#605F5F"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/line" />
+        app:layout_constraintTop_toBottomOf="@+id/line"
+        android:fontFamily="@font/lora_italic"/>
 
     <LinearLayout
         android:id="@+id/durationLayout"
@@ -95,7 +97,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="420 hrs"
-            android:textColor="#6A6A6A"
+            android:fontFamily="@font/lora_italic"
+            android:textColor="#605F5F"
+            android:textStyle="bold"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -122,7 +126,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="Brgy.69 DC, Duol balay sa inyo korap na kapitan"
-            android:textColor="#6A6A6A"
+            android:textColor="#605F5F"
+            android:textStyle="bold"
+            android:fontFamily="@font/lora_italic"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -133,16 +139,17 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/glass_effect_background"
-        android:elevation="10dp"
+        android:background="@drawable/glass_effect_background2"
+        android:fontFamily="@font/lora_italic"
         android:paddingStart="10dp"
         android:paddingTop="5dp"
         android:paddingEnd="10dp"
         android:paddingBottom="10dp"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
         android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textColor="#605F5F"
+        android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/durationLayout" />
