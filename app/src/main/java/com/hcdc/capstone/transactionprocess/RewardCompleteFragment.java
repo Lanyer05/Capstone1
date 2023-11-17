@@ -63,34 +63,36 @@ public class RewardCompleteFragment extends Fragment {
     private void fetchCompletedRewardsFromFirestore() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        firestore.collection("coupons") // Replace with your Firestore collection name for completed rewards
-                .whereEqualTo("isClaimed", true).whereEqualTo("userId", currentUserUID) // Fetch only claimed rewards
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot documents = task.getResult();
-                        if (documents != null) {
-                            for (QueryDocumentSnapshot document : documents) {
-                                Log.d("userCoupons", "Document data: " + document.getData());
-
-                                Coupons coupon = new Coupons(
-                                        document.getString("userId"),
-                                        document.getString("couponCode"),
-                                        parseSelectedItems(document.get("selectedItems")),
-                                        getTimestampFromDocument(document, "claimDateTime")
-                                );
-                                couponList.add(coupon);
-                                Log.d("CouponListSize", "Size: " + couponList.size());
-                            }
-
-                            // Notify the adapter that data has changed
-                            adapter.setFinRewardList(couponList);
-                            adapter.notifyDataSetChanged();
-                        }
-                    } else {
-                        // Handle the error here
-                        Log.e("userCoupons", "Failed to fetch coupons", task.getException());
+        firestore.collection("coupons")
+                .whereEqualTo("isClaimed", true)
+                .whereEqualTo("userId", currentUserUID)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        // Handle the error
+                        Log.e("userCoupons", "Listen failed.", error);
                         Toast.makeText(getContext(), "Failed to fetch coupons", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    couponList.clear(); // Clear the list before adding new data
+
+                    if (value != null) {
+                        for (QueryDocumentSnapshot document : value) {
+                            Log.d("userCoupons", "Document data: " + document.getData());
+
+                            Coupons coupon = new Coupons(
+                                    document.getString("userId"),
+                                    document.getString("couponCode"),
+                                    parseSelectedItems(document.get("selectedItems")),
+                                    getTimestampFromDocument(document, "claimDateTime")
+                            );
+                            couponList.add(coupon);
+                            Log.d("CouponListSize", "Size: " + couponList.size());
+                        }
+
+                        // Notify the adapter that data has changed
+                        adapter.setFinRewardList(couponList);
+                        adapter.notifyDataSetChanged();
                     }
                 });
     }

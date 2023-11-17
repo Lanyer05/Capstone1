@@ -38,7 +38,7 @@ public class TaskCompletedAdapter extends RecyclerView.Adapter<TaskCompletedAdap
     TaskCompleteData data = completelist.get(position);
     holder.comTaskname.setText(data.getTaskName());
     holder.comTaskLoc.setText(data.getLocation());
-    holder.comTaskPoint.setText("+"+data.getPoints());
+    holder.comTaskPoint.setText("+" + String.valueOf(data.getPoints()));
 
 
     }

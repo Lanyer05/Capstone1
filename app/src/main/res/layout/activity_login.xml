@@ -75,28 +75,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/go_green_go" />
 
-    <EditText
-        android:id="@+id/login_password"
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/custom_edittext"
-        android:drawableLeft="@drawable/ic_lock"
-        android:drawablePadding="8dp"
-        android:hint="Enter Password"
-        android:inputType="textPassword"
-        android:padding="8dp"
-        android:textColor="@color/black"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordTextInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:boxBackgroundMode="outline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_email" />
+        app:layout_constraintTop_toBottomOf="@+id/login_email">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/login_password"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:drawableStart="@drawable/ic_lock"
+            android:background="@drawable/custom_edittext"
+            android:drawablePadding="8dp"
+            android:hint="Enter Password"
+            android:inputType="textPassword"
+            android:padding="8dp"
+            android:textColor="@color/black" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ToggleButton
+        android:id="@+id/togglePassword"
+        android:layout_width="39dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/toggle_show"
+        android:checked="true"
+        android:textOff=""
+        android:textOn=""
+        app:layout_constraintEnd_toEndOf="@+id/passwordTextInputLayout"
+        app:layout_constraintTop_toTopOf="@+id/passwordTextInputLayout" />
+
 
     <TextView
         android:id="@+id/singupRedirect1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:padding="8dp"
         android:text="Don’t have an account ?"
         android:textColor="@color/black"
@@ -111,7 +134,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="12dp"
         android:padding="8dp"
         android:text="Sign Up"
         android:textColor="#588157"
@@ -126,13 +149,14 @@
         android:layout_height="62dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="48dp"
         android:backgroundTint="#588157"
         android:text="Sign In"
         android:textColor="#FFFF"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_password" />
+        app:layout_constraintTop_toBottomOf="@+id/passwordTextInputLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

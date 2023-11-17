@@ -3,6 +3,7 @@ package com.hcdc.capstone.accounthandling;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.util.Patterns;
 import android.widget.Button;
@@ -11,12 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import android.text.method.PasswordTransformationMethod;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,11 +32,13 @@ public class LoginActivity extends BaseActivity {
 
     private FirebaseAuth auth;
     private Button loginBttn, login_gmail;
-    private EditText loginEmail, loginPassword;
+    private EditText loginEmail;
     private TextView signupRedirect;
     private FirebaseFirestore fstore;
     private ProgressDialog progressDialog;
 
+    ToggleButton togglePassword ;
+    TextInputEditText passwordEditText ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +48,13 @@ public class LoginActivity extends BaseActivity {
         auth = FirebaseAuth.getInstance();
         fstore = FirebaseFirestore.getInstance();
 
+        togglePassword = findViewById(R.id.togglePassword);
+        passwordEditText = findViewById(R.id.login_password);
         loginEmail = findViewById(R.id.login_email);
-        loginPassword = findViewById(R.id.login_password);
+
         signupRedirect = findViewById(R.id.singupRedirect);
         loginBttn = findViewById(R.id.loginbtn);
-        loginPassword.setTransformationMethod(new PasswordTransformationMethod());
+        passwordEditText.setTransformationMethod(new PasswordTransformationMethod());
 
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setMessage(" Logging in... ");
@@ -58,7 +65,7 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
                 progressDialog.show();
                 String email = loginEmail.getText().toString();
-                String pass = loginPassword.getText().toString();
+                String pass = passwordEditText.getText().toString();
 
                 if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     if (!pass.isEmpty()) {
@@ -87,7 +94,7 @@ public class LoginActivity extends BaseActivity {
                                 });
                     } else {
                         progressDialog.dismiss();
-                        loginPassword.setError("  Password cannot be empty  ");
+                        passwordEditText.setError("  Password cannot be empty  ");
                     }
                 } else if (email.isEmpty()) {
                     progressDialog.dismiss();
@@ -104,6 +111,17 @@ public class LoginActivity extends BaseActivity {
             public void onClick(View view) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
+        });
+
+        togglePassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                passwordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            } else {
+                passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+
+            // Move the cursor to the end of the text to maintain cursor position
+            passwordEditText.setSelection(passwordEditText.getText().length());
         });
     }
 }

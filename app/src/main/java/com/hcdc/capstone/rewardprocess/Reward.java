@@ -145,7 +145,7 @@ public class Reward extends BaseActivity {
         // Customize the Snackbar view
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
         params.gravity = Gravity.TOP;
-        params.setMargins(450, 130, 100, 120); // Adjust the margin as needed
+        params.setMargins(400, 130, 100, 120); // Adjust the margin as needed
         snackbarView.setLayoutParams(params);
 
         // Set up fade-in animation
@@ -160,7 +160,7 @@ public class Reward extends BaseActivity {
         new Handler().postDelayed(() -> {
             // Set up fade-out animation
             AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-            fadeOut.setDuration(3000); // Adjust the duration as needed
+            fadeOut.setDuration(1000); // Adjust the duration as needed
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -185,6 +185,7 @@ public class Reward extends BaseActivity {
             snackbarLayout.startAnimation(fadeOut);
         }, 3000); // Delay in milliseconds before starting fade-out animation
     }
+
 
 
 

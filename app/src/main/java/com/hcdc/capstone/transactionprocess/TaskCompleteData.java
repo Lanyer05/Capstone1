@@ -1,17 +1,15 @@
 package com.hcdc.capstone.transactionprocess;
 
-public class TaskCompleteData
-{
-    String taskName,location,points;
+public class TaskCompleteData {
+    String taskName, location;
+    int points;
     Boolean isConfirmed;
 
-    public  TaskCompleteData()
-    {
-        //for firebase
+    public TaskCompleteData() {
+        // For Firebase
     }
 
-    public TaskCompleteData( String taskName,String location,String points, Boolean isConfirmed)
-    {
+    public TaskCompleteData(String taskName, String location, int points, Boolean isConfirmed) {
         this.taskName = taskName;
         this.location = location;
         this.points = points;
@@ -26,7 +24,7 @@ public class TaskCompleteData
         return location;
     }
 
-    public String getPoints() {
+    public int getPoints() {
         return points;
     }
 

@@ -63,7 +63,7 @@ public class TaskCompleteFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             String taskName = document.getString("taskName");
                             String location = document.getString("location");
-                            String points = document.getString("points");
+                            int points = document.getLong("points").intValue();
                             boolean isConfirmed = Boolean.TRUE.equals(document.getBoolean("isConfirmed"));
 
                             TaskCompleteData taskCompleteData = new TaskCompleteData(taskName, location, points, isConfirmed);

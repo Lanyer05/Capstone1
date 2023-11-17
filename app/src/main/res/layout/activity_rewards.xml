@@ -25,11 +25,11 @@
         android:textStyle="bold"
         android:visibility="visible" />
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
-        android:src="@drawable/rewdes" />
+        android:src="@drawable/animreward" />
 
     <ImageView
         android:id="@+id/greenbar"
@@ -41,7 +41,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/cirlce_solid_noborder1" />
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/couponBox"
         android:layout_width="47dp"
         android:layout_height="46dp"
@@ -49,8 +49,8 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/cirlce_solid"
-        android:padding="8dp"
-        android:src="@drawable/gift" />
+        android:padding="9dp"
+        android:src="@drawable/animcoup" />
 
     <FrameLayout
         android:id="@+id/container"
