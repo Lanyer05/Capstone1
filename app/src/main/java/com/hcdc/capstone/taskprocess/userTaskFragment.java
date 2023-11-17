@@ -114,7 +114,6 @@ public class userTaskFragment extends Fragment {
                             String formattedExpirationDateTime = getFormattedExpirationDateTime(taskExpirationDateTime);
                             taskDateTextView.setText(formattedExpirationDateTime);
 
-                            // Handle cancel button click to delete the document
                             cancelButton.setOnClickListener(v -> {
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -122,10 +121,8 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog alertDialog = alertDialogBuilder.create();
                                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 alertDialog.show();
-
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
-
                                 confirmButton.setOnClickListener(viewConfirm -> {
                                     WriteBatch batch = firestore.batch();
 
@@ -196,9 +193,8 @@ public class userTaskFragment extends Fragment {
                                     Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
                                     confirmButton.setOnClickListener(viewConfirm -> {
-                                        // Calculate task duration in milliseconds
-                                        long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
 
+                                        long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
                                         Intent intent = new Intent(getContext(), TaskProgress.class);
                                         intent.putExtra("taskName", taskName);
                                         intent.putExtra("taskPoints", taskPoints);
@@ -219,7 +215,6 @@ public class userTaskFragment extends Fragment {
                             });
 
                         } else {
-                            // Handle the case when there are no accepted tasks
                             taskNameTextView.setVisibility(View.GONE);
                             taskPointsTextView.setVisibility(View.GONE);
                             taskLocationTextView.setVisibility(View.GONE);
@@ -244,13 +239,12 @@ public class userTaskFragment extends Fragment {
     }
 
     private String getFormattedExpirationDateTime(Date expirationDateTime) {
-        // Format expirationDateTime as a human-readable string
         if (expirationDateTime != null) {
             @SuppressLint("SimpleDateFormat")
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM-dd-yy", Locale.getDefault());
             return sdf.format(expirationDateTime);
         } else {
-            return "N/A"; // or handle the case when expirationDateTime is null
+            return "N/A";
         }
     }
 
@@ -278,7 +272,6 @@ public class userTaskFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error
                 });
     }
 
