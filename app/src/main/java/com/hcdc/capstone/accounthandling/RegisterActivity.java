@@ -2,12 +2,15 @@ package com.hcdc.capstone.accounthandling;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +38,8 @@ public class RegisterActivity extends BaseActivity {
     private String userID;
     int userpoints;
 
+    ToggleButton firstpassword, secondpassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +53,30 @@ public class RegisterActivity extends BaseActivity {
         regConfirmpass = findViewById(R.id.confirmReg_password);
         regButton = findViewById(R.id.registerbtn);
         regRedirect = findViewById(R.id.registerRedirect);
+        firstpassword = findViewById(R.id.togglePasswordFirst);
+        secondpassword = findViewById(R.id.togglePasswordSecond);
+
+        firstpassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                regPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            } else {
+                regPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+            // Move the cursor to the end of the text to maintain cursor position
+            regPassword.setSelection(regPassword.getText().length());
+        });
+
+        secondpassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                regConfirmpass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            } else {
+                regConfirmpass.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+            }
+            // Move the cursor to the end of the text to maintain cursor position
+            regConfirmpass.setSelection(regConfirmpass.getText().length());
+        });
+
+
 
         regButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +85,9 @@ public class RegisterActivity extends BaseActivity {
                 String Remail = regEmail.getText().toString().trim();
                 String Rbrgy = regBrgy.getText().toString();
                 String Rpass = regPassword.getText().toString().trim();
+                String CRpass = regConfirmpass.getText().toString().trim();
 
+                if (Rpass.equals(CRpass)) {
                 auth.createUserWithEmailAndPassword(Remail, Rpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -69,7 +100,7 @@ public class RegisterActivity extends BaseActivity {
                             user.put("Barangay", regBrgy.getText().toString());
                             user.put("email", regEmail.getText().toString());
                             user.put("Uid", userID);
-                            user.put("userpoints",userpoints);
+                            user.put("userpoints", userpoints);
                             documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -87,6 +118,20 @@ public class RegisterActivity extends BaseActivity {
                         }
                     }
                 });
+            }
+                else if (Rname.isEmpty() || Rbrgy.isEmpty() || Remail.isEmpty() || Rpass.isEmpty() || CRpass.isEmpty())
+                {
+                    regName.setError("required");
+                    regEmail.setError("required");
+                    regBrgy.setError("required");
+                    regPassword.setError("required");
+                    regConfirmpass.setError("required");
+                }
+                else {
+                    regPassword.setError("Passwords do not match");
+                    regConfirmpass.setError("Passwords do not match");
+                    Toast.makeText(getApplicationContext(),"Passwords not matched",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

@@ -38,7 +38,7 @@ public class LoginActivity extends BaseActivity {
     private ProgressDialog progressDialog;
 
     ToggleButton togglePassword ;
-    TextInputEditText passwordEditText ;
+    EditText passwordEditText ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +119,6 @@ public class LoginActivity extends BaseActivity {
             } else {
                 passwordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             }
-
             // Move the cursor to the end of the text to maintain cursor position
             passwordEditText.setSelection(passwordEditText.getText().length());
         });
