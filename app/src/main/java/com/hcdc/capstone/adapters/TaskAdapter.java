@@ -82,7 +82,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             holder.tasktitle.setText(taskData.getTaskName());
             holder.taskpoint.setText(taskData.getPoints() + " points");
             holder.taskloc.setText(taskData.getLocation());
-            holder.taskdesc.setText(taskData.getDescription());
+            holder.taskdiff.setText("Task Difficulty:  "+taskData.getDifficulty());
 
             // Display the time frame if hours or minutes are greater than 0
             if (taskData.getHours() > 0 || taskData.getMinutes() > 0) {
@@ -129,12 +129,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     }
 
     public static class TaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tasktitle, taskdesc, taskpoint, taskloc, taskTimer, taskMaxUser, taskCalendar;
+        TextView tasktitle, taskdiff, taskpoint, taskloc, taskTimer, taskMaxUser, taskCalendar;
 
         public TaskViewHolder(@NonNull View taskView) {
             super(taskView);
             tasktitle = taskView.findViewById(R.id.taskTitle);
-            taskdesc = taskView.findViewById(R.id.taskDesc);
+            taskdiff = taskView.findViewById(R.id.taskDiff);
             taskpoint = taskView.findViewById(R.id.taskPoint);
             taskloc = taskView.findViewById(R.id.taskLocation);
             taskTimer = taskView.findViewById(R.id.taskTimeFrame);

@@ -172,8 +172,6 @@ public class TaskDetails extends BaseActivity {
                             Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
                             if (expirationDateTime != null) {
                                 String formattedExpirationDateTime = formatDateTime(expirationDateTime.getTime());
-                                // Assuming you have another TextView for timestamp display
-                                // If not, you can modify the line below accordingly
                                 tskCalendar.setText("Expires: " + formattedExpirationDateTime);
                             }
                         } else {
@@ -198,6 +196,8 @@ public class TaskDetails extends BaseActivity {
                         String camera = documentSnapshot.getString("camera");
                         String taskId = documentSnapshot.getString("taskId");
                         Long points = documentSnapshot.getLong("points");
+                        String difficulty = documentSnapshot.getString("difficulty");
+
                         Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
 
                         if (maxUsers != null) {
@@ -226,6 +226,7 @@ public class TaskDetails extends BaseActivity {
                                     userTaskAccepted.put("maxUsers", maxUsers);
                                     userTaskAccepted.put("camera", camera);
                                     userTaskAccepted.put("taskId", taskId);
+                                    userTaskAccepted.put("difficulty", difficulty);
 
                                     if (documentSnapshot.contains("timeFrame")) {
                                         userTaskAccepted.put("timeFrame", documentSnapshot.get("timeFrame"));
