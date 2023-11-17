@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +15,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -24,18 +26,19 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.hcdc.capstone.R;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class userTaskFragment extends Fragment {
 
     private FirebaseFirestore firestore;
-    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView, taskMaxUserTextView;
+    private TextView taskNameTextView, taskPointsTextView, taskLocationTextView, taskTimeFrameTextView, taskDescriptionTextView, taskEmptyTextView, taskMaxUserTextView, taskDateTextView;
     private Button cancelButton, startButton;
 
-    private ImageView imgLoc, imgTime, imgMax;
+    private ImageView imgLoc, imgTime, imgMax, imgDate;
 
     public userTaskFragment() {
         // Required empty public constructor
@@ -56,6 +59,7 @@ public class userTaskFragment extends Fragment {
         taskDescriptionTextView = view.findViewById(R.id.taskDesc);
         taskMaxUserTextView = view.findViewById(R.id.taskMaxUser);
         taskEmptyTextView = view.findViewById(R.id.taskEmptyuser);
+        taskDateTextView = view.findViewById(R.id.taskCalendar);
 
         cancelButton = view.findViewById(R.id.button2);
         startButton = view.findViewById(R.id.button);
@@ -63,6 +67,7 @@ public class userTaskFragment extends Fragment {
         imgLoc = view.findViewById(R.id.loc);
         imgTime = view.findViewById(R.id.ctTimer);
         imgMax = view.findViewById(R.id.max);
+        imgDate = view.findViewById(R.id.date);
 
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
@@ -81,6 +86,7 @@ public class userTaskFragment extends Fragment {
                             String taskLocation = document.getString("location");
                             String taskDescription = document.getString("description");
                             Long taskMaxUser = document.getLong("maxUsers");
+                            Date taskExpirationDateTime = document.getDate("expirationDateTime");
                             Map<String, Object> timeFrameMap = (Map<String, Object>) document.get("timeFrame");
                             int taskHours = 0;
                             int taskMinutes = 0;
@@ -105,7 +111,9 @@ public class userTaskFragment extends Fragment {
                             int finalTaskHours = taskHours;
                             int finalTaskMinutes = taskMinutes;
 
-                            // Handle cancel button click to delete the document
+                            String formattedExpirationDateTime = getFormattedExpirationDateTime(taskExpirationDateTime);
+                            taskDateTextView.setText(formattedExpirationDateTime);
+
                             cancelButton.setOnClickListener(v -> {
                                 View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.confirmation_overlay, null);
                                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -113,10 +121,8 @@ public class userTaskFragment extends Fragment {
                                 AlertDialog alertDialog = alertDialogBuilder.create();
                                 alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 alertDialog.show();
-
                                 Button confirmButton = overlayView.findViewById(R.id.confirmButton);
                                 Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
-
                                 confirmButton.setOnClickListener(viewConfirm -> {
                                     WriteBatch batch = firestore.batch();
 
@@ -165,49 +171,57 @@ public class userTaskFragment extends Fragment {
 
                             // Implement the startButton click listener here
                             startButton.setOnClickListener(v -> {
-                                View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.start_confirmation_overlay, null);
-                                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                                alertDialogBuilder.setView(overlayView);
-                                AlertDialog alertDialog = alertDialogBuilder.create();
-                                alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                                alertDialog.show();
+                                // Check if the task has already expired
+                                if (isTaskExpired(taskExpirationDateTime)) {
+                                    // Task has expired, show an alert or toast message to the user
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                    alertDialogBuilder.setMessage("Task deadline has passed. Submissions are closed.");
+                                    alertDialogBuilder.setPositiveButton("OK", (dialog, which) -> dialog.dismiss());
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show();
+                                    alertDialog.getWindow().setBackgroundDrawableResource(R.drawable.custom_dialog);
+                                } else {
+                                    // Task is not expired, proceed with starting the task
+                                    View overlayView = LayoutInflater.from(getContext()).inflate(R.layout.start_confirmation_overlay, null);
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                                    alertDialogBuilder.setView(overlayView);
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                    alertDialog.show();
 
-                                Button confirmButton = overlayView.findViewById(R.id.confirmButton);
-                                Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
+                                    Button confirmButton = overlayView.findViewById(R.id.confirmButton);
+                                    Button cancelButtonOverlay = overlayView.findViewById(R.id.cancelButton);
 
-                                confirmButton.setOnClickListener(viewConfirm -> {
-                                    // Calculate task duration in milliseconds
-                                    long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+                                    confirmButton.setOnClickListener(viewConfirm -> {
 
-                                    Intent intent = new Intent(getContext(), TaskProgress.class);
+                                        long taskDurationMillis = (finalTaskHours * 60 + finalTaskMinutes) * 60 * 1000;
+                                        Intent intent = new Intent(getContext(), TaskProgress.class);
+                                        intent.putExtra("taskName", taskName);
+                                        intent.putExtra("taskPoints", taskPoints);
+                                        intent.putExtra("taskDescription", taskDescription);
+                                        intent.putExtra("taskLocation", taskLocation);
+                                        intent.putExtra("taskDurationMillis", taskDurationMillis);
+                                        intent.putExtra("timeFrameHours", finalTaskHours);
+                                        intent.putExtra("timeFrameMinutes", finalTaskMinutes);
 
-                                    intent.putExtra("taskName", taskName);
-                                    intent.putExtra("taskPoints", taskPoints);
-                                    intent.putExtra("taskDescription", taskDescription);
-                                    intent.putExtra("taskLocation", taskLocation);
-                                    intent.putExtra("taskDurationMillis", taskDurationMillis);
-                                    intent.putExtra("timeFrameHours", finalTaskHours);
-                                    intent.putExtra("timeFrameMinutes", finalTaskMinutes);
-
-                                    startActivity(intent);
-
-                                    alertDialog.dismiss();
-
-                                    getActivity().finish();
-                                });
-
-                                cancelButtonOverlay.setOnClickListener(viewCancel -> {
-                                    alertDialog.dismiss();
-                                });
+                                        startActivity(intent);
+                                        alertDialog.dismiss();
+                                        getActivity().finish();
+                                    });
+                                    cancelButtonOverlay.setOnClickListener(viewCancel -> {
+                                        alertDialog.dismiss();
+                                    });
+                                }
                             });
+
                         } else {
-                            // Handle the case when there are no accepted tasks
                             taskNameTextView.setVisibility(View.GONE);
                             taskPointsTextView.setVisibility(View.GONE);
                             taskLocationTextView.setVisibility(View.GONE);
                             taskTimeFrameTextView.setVisibility(View.GONE);
                             taskDescriptionTextView.setVisibility(View.GONE);
                             taskMaxUserTextView.setVisibility(View.GONE);
+                            taskDateTextView.setVisibility(View.GONE);
                             taskEmptyTextView.setVisibility(View.VISIBLE);
 
                             cancelButton.setVisibility(View.GONE);
@@ -216,11 +230,26 @@ public class userTaskFragment extends Fragment {
                             imgTime.setVisibility(View.GONE);
                             imgLoc.setVisibility(View.GONE);
                             imgMax.setVisibility(View.GONE);
+                            imgDate.setVisibility(View.GONE);
                         }
                     }
                 });
 
         return view;
+    }
+
+    private String getFormattedExpirationDateTime(Date expirationDateTime) {
+        if (expirationDateTime != null) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM-dd-yy", Locale.getDefault());
+            return sdf.format(expirationDateTime);
+        } else {
+            return "N/A";
+        }
+    }
+
+    private boolean isTaskExpired(Date expirationDateTime) {
+        return expirationDateTime != null && expirationDateTime.before(new Date());
     }
 
     @SuppressLint("SetTextI18n")
@@ -243,7 +272,6 @@ public class userTaskFragment extends Fragment {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Handle the error
                 });
     }
 

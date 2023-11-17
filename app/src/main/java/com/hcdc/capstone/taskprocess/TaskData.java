@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class TaskData {
 
-    String taskName, description, location, camera;
+    String taskName, description, location, camera, difficulty;
     private boolean isAccepted;
     private ArrayList<String> acceptedByUsers;
     int hours, minutes, maxUsers;
@@ -20,7 +20,7 @@ public class TaskData {
         // Default constructor required by Firestore
     }
 
-    public TaskData(String taskName, String description, long points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
+    public TaskData(String taskName, String description, String difficulty, long points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;
@@ -31,6 +31,7 @@ public class TaskData {
         this.maxUsers = maxUsers;
         this.camera = camera;
         this.expirationDateTime = expirationDateTime;
+        this.difficulty = difficulty;
 
         if (acceptedByUsers != null) {
             this.acceptedByUsers = acceptedByUsers;
@@ -82,6 +83,8 @@ public class TaskData {
     public Timestamp getExpirationDateTime() {
         return expirationDateTime;
     }
+
+    public String getDifficulty(){return difficulty;}
 
     public String getFormattedExpirationDateTime() {
         // Format expirationDateTime as a human-readable string with AM/PM indicator
