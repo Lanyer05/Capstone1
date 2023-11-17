@@ -2,29 +2,46 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/custom_dialog"
     android:orientation="vertical">
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:background="@drawable/cirlce_solid_noborder1"
         android:padding="16dp"
-        android:text="Close" />
+        android:text="Close"
+        android:layout_margin="10dp"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Title"
-        android:textSize="18sp"
-        android:padding="16dp"/>
-
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="-5dp"
+        android:textSize="30sp"
+        android:padding="0dp"
+        android:textStyle="bold"
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp">
     <TextView
         android:id="@+id/dialog_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Description"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:padding="16dp"/>
+
+    </ScrollView>
 
 
 </LinearLayout>

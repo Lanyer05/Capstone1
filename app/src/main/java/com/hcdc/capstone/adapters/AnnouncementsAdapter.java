@@ -1,6 +1,8 @@
 package com.hcdc.capstone.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,7 +101,7 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
                 dialog.dismiss();
             }
         });
-
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
 }
