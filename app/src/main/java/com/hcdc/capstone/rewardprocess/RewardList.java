@@ -139,28 +139,32 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         TextView dialogTitle = dialogView.findViewById(R.id.dialogTitle);
         TextView allItemsTextView = dialogView.findViewById(R.id.all_items);
         TextView totalPointsTextView = dialogView.findViewById(R.id.totalpoints_items);
+        Button cancelreward = dialogView.findViewById(R.id.cancelRedeeem);
+        Button redeemrewards = dialogView.findViewById(R.id.redeemItems);
         dialogTitle.setText("Items Selected");
         totalPointsTextView.setText("Total points: " + String.valueOf(totalPoints));
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView)
-                .setPositiveButton("Redeem", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        redeemSelectedItems();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Log.d("RewardList", "Dialog cancelled");
-                    }
-                });
+        builder.setView(dialogView);
         AlertDialog dialog = builder.create();
         StringBuilder allItemsText = new StringBuilder();
         for (RewardItems item : rewardItemsArrayList) {
             allItemsText.append(item.getRewardName()).append(" x").append(item.getSelectedquantity()).append("\n ");
         }
-        allItemsTextView.setText(allItemsText.toString());
+        cancelreward.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        redeemrewards.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+              redeemSelectedItems();
+            }
+        });
+
+        allItemsTextView.setText("Items Selected: \n"+allItemsText.toString());
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
