@@ -14,6 +14,7 @@
         android:background="@drawable/cirlce_solid_noborder1"
         android:padding="10dp"
         android:text="Close"
+        android:elevation="3dp"
         android:textColor="@color/white"
         android:textStyle="bold" />
 

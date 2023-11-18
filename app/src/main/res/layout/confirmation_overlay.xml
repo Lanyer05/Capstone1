@@ -20,7 +20,7 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/confirmButton"
             android:layout_width="120dp"
             android:layout_height="48dp"
@@ -33,7 +33,7 @@
             android:layout_width="20dp"
             android:layout_height="1dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancelButton"
             android:layout_width="120dp"
             android:layout_height="48dp"

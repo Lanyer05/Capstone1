@@ -26,6 +26,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/cirlce_solid"
+        android:elevation="10dp"
         app:srcCompat="@drawable/ic_person2" />
 
     <ImageView
@@ -57,9 +58,9 @@
             android:id="@+id/points"
             android:layout_width="match_parent"
             android:layout_height="95dp"
-            android:layout_marginRight="30dp"
             android:layout_marginLeft="30dp"
-            android:background="@drawable/custom_pointsbox" />
+            android:layout_marginRight="30dp"
+            android:background="@drawable/custom_pointsbox"/>
 
         <TextView
             android:id="@+id/textView"

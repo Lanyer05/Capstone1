@@ -109,7 +109,7 @@ public class TaskDetails extends BaseActivity {
 
                                                                 if (expirationDateTime != null && System.currentTimeMillis() > expirationDateTime.getTime()) {
                                                                     // Task has expired, show a message to the user
-                                                                    Toast.makeText(TaskDetails.this, " Task has already expired, Task cannot be accepted.  ", Toast.LENGTH_SHORT).show();
+                                                                    Toast.makeText(TaskDetails.this, " Expired task, cannot be accepted, will be deleted soon. ", Toast.LENGTH_SHORT).show();
                                                                 } else {
                                                                     // Continue with the logic to check other conditions and show the accept confirmation overlay
                                                                     List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
@@ -155,7 +155,7 @@ public class TaskDetails extends BaseActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd | hh:mm:ss a", Locale.getDefault());
             return sdf.format(expirationDateTime);
         } else {
-            return "N/A"; // or handle the case when expirationDateTime is null
+            return "N/A";
         }
     }
 

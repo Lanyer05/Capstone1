@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -19,20 +20,20 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="120dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:background="@drawable/cirlce_solid_noborder1"
-            android:text="Yes"
-            android:textColor="@color/white" />
+        <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/confirmButton"
+        android:layout_width="120dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:background="@drawable/cirlce_solid_noborder1"
+        android:text="Yes"
+        android:textColor="@color/white" />
 
         <Space
             android:layout_width="20dp"
             android:layout_height="1dp" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancelButton"
             android:layout_width="120dp"
             android:layout_height="48dp"

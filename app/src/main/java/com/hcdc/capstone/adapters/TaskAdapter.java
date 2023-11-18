@@ -49,7 +49,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                             int index = findTaskIndex(modifiedTask);
                             if (index >= 0) {
                                 list.set(index, modifiedTask);
-                                notifyItemChanged(index);  // Notify only the specific item change
+                                notifyItemChanged(index);
                             }
                         }
                     }

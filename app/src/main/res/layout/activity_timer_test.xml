@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#DAD7CD"
     tools:context=".MainActivity">
 
     <pl.droidsonroids.gif.GifImageView
@@ -144,10 +145,11 @@
         android:id="@+id/taskDesc"
         android:layout_width="0dp"
         android:layout_height="138dp"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/glass_effect_background2"
+        android:elevation="3dp"
         android:fontFamily="@font/lora_italic"
         android:paddingStart="10dp"
         android:paddingTop="5dp"
@@ -162,21 +164,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/durationLayout" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/startButton"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/cirlce_solid_noborder1"
         android:text="Start Task"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/doneButton"
         android:layout_width="0dp"
         android:layout_height="50dp"

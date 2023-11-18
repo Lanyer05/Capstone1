@@ -26,8 +26,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/custom_dialog"
             android:src="@drawable/closeimg"
-            tools:ignore="SpeakableTextPresentCheck"
-            />
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageView
             android:id="@+id/upload_submission"
@@ -35,16 +34,18 @@
             android:layout_height="100dp"
             android:layout_gravity="center"
             android:layout_marginTop="-50dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:background="#344e41"
-            android:src="@drawable/file_upload" />
+            android:src="@drawable/ic_baseline_photo_camera_24" />
 
         <TextView
             android:id="@+id/textAlert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Make sure to upload a clear image"
+            android:text="Tap the camera icon to take a photo"
+            android:textColor="#fe6969"
+            android:textSize="16sp"
             app:drawableLeftCompat="@drawable/info_alert" />
 
         <androidx.appcompat.widget.AppCompatButton
