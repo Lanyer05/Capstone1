@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -269,10 +267,19 @@ public class userTaskFragment extends Fragment {
                         } else {
                             taskMaxUserTextView.setText("Max User: N/A");
                         }
+                        // Display timestamp
+                        Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
+                        if (expirationDateTime != null) {
+                            String formattedExpirationDateTime = formatDateTime(expirationDateTime.getTime());
+                            taskDateTextView.setText("Expires: " + formattedExpirationDateTime);
+                        }
                     }
                 })
                 .addOnFailureListener(e -> {
                 });
     }
-
+    private String formatDateTime(long timestamp) {
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM-dd-yy", Locale.getDefault());
+        return sdf.format(new Date(timestamp));
+    }
 }

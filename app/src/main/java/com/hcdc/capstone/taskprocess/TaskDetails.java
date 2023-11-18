@@ -86,7 +86,7 @@ public class TaskDetails extends BaseActivity {
                         .addOnSuccessListener(queryDocumentSnapshots -> {
                             if (!queryDocumentSnapshots.isEmpty()) {
                                 // User has already accepted a task
-                                Toast.makeText(TaskDetails.this, "You have already accepted a task. Finish or cancel it before accepting a new one.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(TaskDetails.this, " You have already accepted a task. Finish or cancel it before accepting a new one. ", Toast.LENGTH_SHORT).show();
                             } else {
                                 // Continue with the logic to check if the specific task has been accepted
                                 firestore.collection("user_acceptedTask")
@@ -96,7 +96,7 @@ public class TaskDetails extends BaseActivity {
                                         .addOnSuccessListener(queryDocumentSnapshots1 -> {
                                             if (!queryDocumentSnapshots1.isEmpty()) {
                                                 // User has already accepted the specific task
-                                                Toast.makeText(TaskDetails.this, "You have already accepted this task.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(TaskDetails.this, " You have already accepted this task. ", Toast.LENGTH_SHORT).show();
                                             } else {
                                                 // Continue with the logic to check if the task has reached its maximum user limit
                                                 firestore.collection("tasks")
@@ -109,7 +109,7 @@ public class TaskDetails extends BaseActivity {
 
                                                                 if (expirationDateTime != null && System.currentTimeMillis() > expirationDateTime.getTime()) {
                                                                     // Task has expired, show a message to the user
-                                                                    Toast.makeText(TaskDetails.this, "Task has already expired, Task cannot be accepted.", Toast.LENGTH_SHORT).show();
+                                                                    Toast.makeText(TaskDetails.this, " Task has already expired, Task cannot be accepted.  ", Toast.LENGTH_SHORT).show();
                                                                 } else {
                                                                     // Continue with the logic to check other conditions and show the accept confirmation overlay
                                                                     List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
@@ -118,12 +118,12 @@ public class TaskDetails extends BaseActivity {
                                                                     if (acceptedByUsers != null && maxUsers != null) {
                                                                         // Check if the user has already accepted the task
                                                                         if (acceptedByUsers.contains(uID)) {
-                                                                            Toast.makeText(TaskDetails.this, "You have already accepted this task.", Toast.LENGTH_SHORT).show();
+                                                                            Toast.makeText(TaskDetails.this, " You have already accepted this task. ", Toast.LENGTH_SHORT).show();
                                                                         } else {
                                                                             int currentAcceptedUsers = acceptedByUsers.size();
 
                                                                             if (currentAcceptedUsers >= maxUsers.intValue()) {
-                                                                                Toast.makeText(TaskDetails.this, "Task is full. Cannot be accepted.", Toast.LENGTH_SHORT).show();
+                                                                                Toast.makeText(TaskDetails.this, " Task is full. Cannot be accepted. ", Toast.LENGTH_SHORT).show();
                                                                             } else {
                                                                                 showAcceptConfirmationOverlay();
                                                                             }
@@ -262,7 +262,7 @@ public class TaskDetails extends BaseActivity {
                             }
                         } else {
                             Log.e(TAG, "maxUsers is not a valid integer");
-                            Toast.makeText(TaskDetails.this, "Task cannot be accepted due to maxUsers format issue", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TaskDetails.this, " Task cannot be accepted due to maxUsers format issue ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
