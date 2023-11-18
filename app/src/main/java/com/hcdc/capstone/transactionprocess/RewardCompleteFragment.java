@@ -1,5 +1,7 @@
 package com.hcdc.capstone.transactionprocess;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,17 +19,13 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
-import com.hcdc.capstone.adapters.CouponAdapter;
 import com.hcdc.capstone.adapters.RewardCompleteAdapter;
 import com.hcdc.capstone.rewardprocess.Coupons;
-import com.hcdc.capstone.rewardprocess.userCoupons;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class RewardCompleteFragment extends Fragment {
 
@@ -40,7 +38,6 @@ public class RewardCompleteFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         adapter = new RewardCompleteAdapter(requireContext(), new ArrayList<>());
-
         auth = FirebaseAuth.getInstance();
         couponList = new ArrayList<>();
     }
@@ -54,32 +51,36 @@ public class RewardCompleteFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
-        // Fetch claimed rewards from Firestore
         fetchCompletedRewardsFromFirestore();
 
         return view;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchCompletedRewardsFromFirestore() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            Log.e("userCoupons", "User not authenticated");
+            return;
+        }
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-        String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        String currentUserUID = auth.getCurrentUser().getUid();
+        Context context = getContext();
+        if (context == null) {
+            Log.e("userCoupons", "Context is null");
+            return;
+        }
         firestore.collection("coupons")
                 .whereEqualTo("isClaimed", true)
                 .whereEqualTo("userId", currentUserUID)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
-                        // Handle the error
                         Log.e("userCoupons", "Listen failed.", error);
-                        Toast.makeText(getContext(), "Failed to fetch coupons", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    couponList.clear(); // Clear the list before adding new data
-
                     if (value != null) {
                         for (QueryDocumentSnapshot document : value) {
                             Log.d("userCoupons", "Document data: " + document.getData());
-
                             Coupons coupon = new Coupons(
                                     document.getString("userId"),
                                     document.getString("couponCode"),
@@ -89,17 +90,16 @@ public class RewardCompleteFragment extends Fragment {
                             couponList.add(coupon);
                             Log.d("CouponListSize", "Size: " + couponList.size());
                         }
-
-                        // Notify the adapter that data has changed
                         adapter.setFinRewardList(couponList);
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
 
+
+    @NonNull
     private List<Coupons.SelectedItems> parseSelectedItems(Object selectedItemsObj) {
         List<Coupons.SelectedItems> selectedItems = new ArrayList<>();
-
         if (selectedItemsObj instanceof List) {
             List<Map<String, Object>> selectedItemsList = (List<Map<String, Object>>) selectedItemsObj;
             for (Map<String, Object> itemData : selectedItemsList) {
@@ -108,11 +108,11 @@ public class RewardCompleteFragment extends Fragment {
                 selectedItems.add(new Coupons.SelectedItems(rewardId, (int) selectedQuantity));
             }
         }
-
         return selectedItems;
     }
 
-    private Timestamp getTimestampFromDocument(QueryDocumentSnapshot document, String fieldName) {
+    @Nullable
+    private Timestamp getTimestampFromDocument(@NonNull QueryDocumentSnapshot document, String fieldName) {
         Object timestampObj = document.get(fieldName);
         if (timestampObj instanceof Timestamp) {
             return (Timestamp) timestampObj;

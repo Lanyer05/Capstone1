@@ -29,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
-        android:src="@drawable/animreward" />
+        android:src="@drawable/animreward"
+        tools:ignore="MissingClass" />
 
     <ImageView
         android:id="@+id/greenbar"
@@ -43,14 +44,15 @@
 
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/couponBox"
-        android:layout_width="47dp"
-        android:layout_height="46dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/cirlce_solid"
-        android:padding="9dp"
-        android:src="@drawable/animcoup" />
+        android:padding="10dp"
+        android:src="@drawable/animcoup"
+        tools:ignore="MissingClass" />
 
     <FrameLayout
         android:id="@+id/container"
