@@ -86,55 +86,56 @@ public class RegisterActivity extends BaseActivity {
                 String Rpass = regPassword.getText().toString().trim();
                 String CRpass = regConfirmpass.getText().toString().trim();
 
-                if (!Remail.endsWith("@gmail.com")) {
-                    Toast.makeText(RegisterActivity.this, " Please use a Gmail address for registration ", Toast.LENGTH_SHORT).show();
-                    return;
+
+                if (Rname.isEmpty() || Rbrgy.isEmpty() || Rpass.isEmpty() || CRpass.isEmpty() || Remail.isEmpty()) {
+                    // Set error messages for required fields
+                    if (Remail.isEmpty()) regEmail.setError("Email is required");
+                    if (Rname.isEmpty()) regName.setError("Name is required");
+                    if (Rbrgy.isEmpty()) regBrgy.setError("Barangay is required");
+                    if (Rpass.isEmpty()) regPassword.setError("Password is required");
+                    if (CRpass.isEmpty()) regConfirmpass.setError("Confirm Password is required");
                 }
+                else if (!Remail.endsWith("@gmail.com")) {
+                    Toast.makeText(RegisterActivity.this, " Please use a @gmail address for registration ", Toast.LENGTH_SHORT).show();
+                }
+                else if (Rpass.equals(CRpass)) {
 
-                if (Rpass.equals(CRpass)) {
-                auth.createUserWithEmailAndPassword(Remail, Rpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, " Registration Successful ", Toast.LENGTH_SHORT).show();
-                            userID = auth.getCurrentUser().getUid();
-                            DocumentReference documentReference = fstore.collection("users").document(userID);
-                            Map<String, Object> user = new HashMap<>();
-                            user.put("name", regName.getText().toString());
-                            user.put("Barangay", regBrgy.getText().toString());
-                            user.put("email", regEmail.getText().toString());
-                            user.put("Uid", userID);
-                            user.put("userpoints", userpoints);
-                            documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void unused) {
-                                    Log.d(TAG, "Success: user profile is created for" + userID);
-                                }
-                            });
-                            sendEmailVerification();
+                    auth.createUserWithEmailAndPassword(Remail, Rpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(RegisterActivity.this, " Registration Successful ", Toast.LENGTH_SHORT).show();
+                                userID = auth.getCurrentUser().getUid();
+                                DocumentReference documentReference = fstore.collection("users").document(userID);
+                                Map<String, Object> user = new HashMap<>();
+                                user.put("name", regName.getText().toString());
+                                user.put("Barangay", regBrgy.getText().toString());
+                                user.put("email", regEmail.getText().toString());
+                                user.put("Uid", userID);
+                                user.put("userpoints", userpoints);
+                                documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d(TAG, "Success: user profile is created for" + userID);
+                                    }
+                                });
+                                sendEmailVerification();
 
-                            // Show a message to the user that their registration is pending approval
-                            Toast.makeText(RegisterActivity.this, " Registration request sent for approval. Please check your email for verification. ", Toast.LENGTH_SHORT).show();
+                                // Show a message to the user that their registration is pending approval
+                                Toast.makeText(RegisterActivity.this, " Registration request sent for approval. Please check your email for verification. ", Toast.LENGTH_SHORT).show();
 
-                            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                        } else {
-                            Toast.makeText(RegisterActivity.this, " Sign Up Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                            } else {
+                                Toast.makeText(RegisterActivity.this, " Sign Up Failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
-            }
-                else if (Rname.isEmpty() || Rbrgy.isEmpty() || Remail.isEmpty() || Rpass.isEmpty() || CRpass.isEmpty())
-                {
-                    regName.setError("required");
-                    regEmail.setError("required");
-                    regBrgy.setError("required");
-                    regPassword.setError("required");
-                    regConfirmpass.setError("required");
-                }
-                else {
+                    });
+
+                } else {
+                    // Set error messages for password mismatch
                     regPassword.setError("Passwords do not match");
                     regConfirmpass.setError("Passwords do not match");
-                    Toast.makeText(getApplicationContext(),"Passwords not matched",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Passwords not matched", Toast.LENGTH_SHORT).show();
                 }
             }
         });
