@@ -19,9 +19,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+
+        // Check if the activity is already in the task stack
+        if (!isTaskRoot() && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER) && getIntent().getAction() != null
+                && getIntent().getAction().equals(Intent.ACTION_MAIN)) {
+            finish();
+            return;
+        }
+
         new Handler().postDelayed(() -> {
             checkUserAuthenticationStatus();
         }, 3000);
+
     }
 
     private void checkUserAuthenticationStatus() {
@@ -32,4 +41,5 @@ public class MainActivity extends AppCompatActivity {
         }
         finish();
     }
+
 }

@@ -1,6 +1,5 @@
 package com.hcdc.capstone;
 
-import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -251,7 +250,6 @@ public class Homepage extends BaseActivity {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         // Clear the list and add the fetched data
-                        arrayList.clear();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             AnnouncementModel announcement = document.toObject(AnnouncementModel.class);
                             arrayList.add(announcement);

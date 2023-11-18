@@ -77,7 +77,6 @@ public class RegisterActivity extends BaseActivity {
         });
 
 
-
         regButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +85,11 @@ public class RegisterActivity extends BaseActivity {
                 String Rbrgy = regBrgy.getText().toString();
                 String Rpass = regPassword.getText().toString().trim();
                 String CRpass = regConfirmpass.getText().toString().trim();
+
+                if (!Remail.endsWith("@gmail.com")) {
+                    Toast.makeText(RegisterActivity.this, " Please use a Gmail address for registration ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (Rpass.equals(CRpass)) {
                 auth.createUserWithEmailAndPassword(Remail, Rpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {

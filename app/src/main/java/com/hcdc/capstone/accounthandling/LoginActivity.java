@@ -31,7 +31,7 @@ import com.hcdc.capstone.R;
 public class LoginActivity extends BaseActivity {
 
     private FirebaseAuth auth;
-    private Button loginBttn, login_gmail;
+    private Button loginBttn;
     private EditText loginEmail;
     private TextView signupRedirect;
     private FirebaseFirestore fstore;
@@ -73,35 +73,36 @@ public class LoginActivity extends BaseActivity {
                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
-                                        // Check if the user is approved
+                                        // Check if the user is approved and email is verified
                                         FirebaseUser user = auth.getCurrentUser();
                                         if (user != null && user.isEmailVerified()) {
                                             progressDialog.dismiss();
-                                            Toast.makeText(LoginActivity.this, "  Login Successful  ", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(LoginActivity.this, " Login Successful ", Toast.LENGTH_SHORT).show();
                                             startActivity(new Intent(LoginActivity.this, Homepage.class));
                                             finish();
                                         } else {
                                             progressDialog.dismiss();
-                                            Toast.makeText(LoginActivity.this, "  Your email is not verified. Please check your email for verification.  ", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(LoginActivity.this, " Your email is not verified. Please check your email for verification. ", Toast.LENGTH_SHORT).show();
+                                            auth.signOut();
                                         }
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         progressDialog.dismiss();
-                                        Toast.makeText(LoginActivity.this, "  Please enter correct password  ", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, " Please enter correct password ", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
                         progressDialog.dismiss();
-                        passwordEditText.setError("  Password cannot be empty  ");
+                        passwordEditText.setError(" Password cannot be empty ");
                     }
                 } else if (email.isEmpty()) {
                     progressDialog.dismiss();
-                    loginEmail.setError("  Email Cannot be empty  ");
+                    loginEmail.setError(" Email Cannot be empty ");
                 } else {
                     progressDialog.dismiss();
-                    loginEmail.setError("  Please enter valid email  ");
+                    loginEmail.setError(" Please enter valid email ");
                 }
             }
         });
