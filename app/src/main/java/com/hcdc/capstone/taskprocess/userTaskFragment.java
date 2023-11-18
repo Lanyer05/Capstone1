@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -254,8 +255,12 @@ public class userTaskFragment extends Fragment {
     private void displayAcceptedUserRatio(String taskName, Long taskMaxUser) {
         firestore.collection("tasks")
                 .whereEqualTo("taskName", taskName)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        Log.e("Firestore Error", e.getMessage());
+                        return;
+                    }
+
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
                         List<String> acceptedByUsers = (List<String>) documentSnapshot.get("acceptedByUsers");
@@ -267,17 +272,16 @@ public class userTaskFragment extends Fragment {
                         } else {
                             taskMaxUserTextView.setText("Max User: N/A");
                         }
-                        // Display timestamp
+
                         Date expirationDateTime = documentSnapshot.getDate("expirationDateTime");
                         if (expirationDateTime != null) {
                             String formattedExpirationDateTime = formatDateTime(expirationDateTime.getTime());
                             taskDateTextView.setText("Expires: " + formattedExpirationDateTime);
                         }
                     }
-                })
-                .addOnFailureListener(e -> {
                 });
     }
+
     private String formatDateTime(long timestamp) {
         SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM-dd-yy", Locale.getDefault());
         return sdf.format(new Date(timestamp));

@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hcdc.capstone.accounthandling.LoginActivity;
+import com.hcdc.capstone.taskprocess.TaskProgress;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -31,17 +32,28 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, getClass());
-        if (getClass() == Homepage.class) {
-            return;
-        }
-        boolean isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
-        if (isActivityInStack) {
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
-        } else {
+        if (!handleBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    protected boolean handleBackPressed() {
+        Intent intent = new Intent(this, getClass());
+
+        if (getClass() == Homepage.class) {
+            return false;
+        }
+
+        boolean isExcludedActivity = getClass() == TaskProgress.class;
+        boolean isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
+
+        if (isActivityInStack && !isExcludedActivity) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean isLoggedIn() {

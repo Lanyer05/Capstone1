@@ -153,23 +153,17 @@ public class Reward extends BaseActivity {
         fadeIn.setDuration(1000); // Adjust the duration as needed
         snackbarLayout.setAnimation(fadeIn);
 
-        // Show the Snackbar
         snackbar.show();
 
-        // Use Handler to delay the start of fade-out animation
         new Handler().postDelayed(() -> {
-            // Set up fade-out animation
             AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.0f);
-            fadeOut.setDuration(1000); // Adjust the duration as needed
+            fadeOut.setDuration(1000);
             fadeOut.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
-                    // Do something when fade-out starts
                 }
-
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    // Do something when fade-out ends
                     if (snackbar.isShown()) {
                         snackbar.dismiss();
                     }
@@ -180,13 +174,7 @@ public class Reward extends BaseActivity {
                     // Do something if needed
                 }
             });
-
-            // Apply fade-out animation to the Snackbar view
             snackbarLayout.startAnimation(fadeOut);
-        }, 3000); // Delay in milliseconds before starting fade-out animation
+        }, 3000);
     }
-
-
-
-
 }

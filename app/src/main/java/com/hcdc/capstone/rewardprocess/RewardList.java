@@ -94,25 +94,24 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
     private void fetchDataFromFirestore() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference rewardsCollection = db.collection("rewards");
-        rewardsCollection.get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<RewardItems> rewardsList = new ArrayList<>();
-                    for (DocumentSnapshot document : queryDocumentSnapshots) {
-                        RewardItems reward = document.toObject(RewardItems.class);
-
-                        // Only add items with quantity greater than 0
-                        if (reward != null && reward.getQuantity() > 0) {
-                            rewardsList.add(reward);
-                        }
+        rewardsCollection.addSnapshotListener((queryDocumentSnapshots, error) -> {
+            if (error != null) {
+                Log.e("RewardList", "Error fetching data: " + error.getMessage());
+                return;
+            }
+            if (queryDocumentSnapshots != null) {
+                ArrayList<RewardItems> rewardsList = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    RewardItems reward = document.toObject(RewardItems.class);
+                    if (reward != null && reward.getQuantity() > 0) {
+                        rewardsList.add(reward);
                     }
-
-                    rewardCategoryItems.setRewardItems(rewardsList);
-                    int itemCount = rewardsList.size();
-                    Log.d("Firestore", "Collected " + itemCount + " items from Firestore");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Error fetching data: " + e.getMessage());
-                });
+                }
+                rewardCategoryItems.setRewardItems(rewardsList);
+                int itemCount = rewardsList.size();
+                Log.d("Firestore", "Collected " + itemCount + " items from Firestore");
+            }
+        });
     }
 
 
@@ -386,5 +385,4 @@ public class RewardList extends AppCompatActivity implements RewardCategoryItems
         startActivity(intent);
         finish();
     }
-
 }

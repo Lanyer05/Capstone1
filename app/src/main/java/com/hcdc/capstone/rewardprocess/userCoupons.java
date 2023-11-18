@@ -52,35 +52,34 @@ public class userCoupons extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchCoupons() {
-
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         firestore.collection("coupons")
-                .whereEqualTo("userId", currentUserUID).whereEqualTo("isClaimed",Boolean.FALSE)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot documents = task.getResult();
-                        if (documents != null) {
-                            for (QueryDocumentSnapshot document : documents) {
-                                Log.d("userCoupons", "Document data: " + document.getData());
-
-                                Coupons coupon = new Coupons(
-                                        document.getString("userId"),
-                                        document.getString("couponCode"),
-                                        parseSelectedItems(document.get("selectedItems"))
-                                );
-                                couponList.add(coupon);
-                            }
-
-                            // Notify the adapter that data has changed
-                            couponAdapter.notifyDataSetChanged();
-
-                        }
-                    } else {
+                .whereEqualTo("userId", currentUserUID)
+                .whereEqualTo("isClaimed", Boolean.FALSE)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
                         // Handle the error here
-                        Log.e("userCoupons", "Failed to fetch coupons", task.getException());
+                        Log.e("userCoupons", "Failed to fetch coupons", error);
                         Toast.makeText(userCoupons.this, "Failed to fetch coupons", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (value != null) {
+                        couponList.clear();
+                        for (QueryDocumentSnapshot document : value) {
+                            Log.d("userCoupons", "Document data: " + document.getData());
+
+                            Coupons coupon = new Coupons(
+                                    document.getString("userId"),
+                                    document.getString("couponCode"),
+                                    parseSelectedItems(document.get("selectedItems"))
+                            );
+                            couponList.add(coupon);
+                        }
+
+                        // Notify the adapter that data has changed
+                        couponAdapter.notifyDataSetChanged();
                     }
                 });
     }

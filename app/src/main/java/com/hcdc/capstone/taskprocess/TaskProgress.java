@@ -547,6 +547,7 @@ public class TaskProgress extends BaseActivity {
         } else {
             Intent intent = new Intent(this, Task.class);
             startActivity(intent);
+            finish();
         }
     }
 
