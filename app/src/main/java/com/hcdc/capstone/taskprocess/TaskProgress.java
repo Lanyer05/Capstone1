@@ -112,11 +112,15 @@ public class TaskProgress extends BaseActivity {
                     int hours = minutes / 60;
                     minutes = minutes % 60;
                     timerTextView.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-                    handler.postDelayed(this, 1000);
+
+                    if (remainingMillis > 1000) {
+                        handler.postDelayed(this, 1000);
+                    }
                 }
             }
         }
     };
+
     private void showToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }

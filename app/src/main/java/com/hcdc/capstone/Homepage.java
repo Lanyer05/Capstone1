@@ -108,7 +108,6 @@ public class Homepage extends BaseActivity {
             // If the timer is not running, fetch user points and display them
             fetchAndDisplayCurrentUserPoints();
         }
-
         retrieveAndStoreFCMToken();
         fetchAnnouncements();
 
@@ -189,7 +188,6 @@ public class Homepage extends BaseActivity {
             Toast.makeText(Homepage.this, " You haven't accepted a task yet. ", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void fetchAndDisplayCurrentUserPoints() {
         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
