@@ -3,6 +3,7 @@ package com.hcdc.capstone.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hcdc.capstone.AnnouncementModel;
@@ -24,6 +26,10 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
 
     Context announceContext;
     ArrayList<AnnouncementModel> announceList;
+
+    private final Handler handler = new Handler();
+    private final int scrollDelay = 5000;
+    RecyclerView recyclerView;
 
     public AnnouncementsAdapter(Context announceContext, ArrayList<AnnouncementModel> announceList)
     {
@@ -40,21 +46,23 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
 
     @Override
     public void onBindViewHolder(@NonNull AnnounceViewHolder holder, int position) {
-        AnnouncementModel announcementModel = announceList.get(position);
-
         // Set the click listener for the card view
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showCustomDialog(announcementModel); // Pass the clicked AnnouncementModel
-            }
-        });
+        if (position < announceList.size()) {
+            AnnouncementModel announcementModel = announceList.get(position);
 
-        holder.announceTitle.setText(announcementModel.getTitle());
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showCustomDialog(announcementModel); // Pass the clicked AnnouncementModel
+                }
+            });
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
-        String formattedDate = dateFormat.format(announcementModel.getTimestamp());
-        holder.announceTime.setText("Date Posted: "+formattedDate);
+            holder.announceTitle.setText(announcementModel.getTitle());
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
+            String formattedDate = dateFormat.format(announcementModel.getTimestamp());
+            holder.announceTime.setText("Date Posted: " + formattedDate);
+        }
     }
 
     @Override
@@ -69,14 +77,18 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
     public static class AnnounceViewHolder extends RecyclerView.ViewHolder{
 
         TextView announceTitle, announceTime;
+
+
         public AnnounceViewHolder(@NonNull View itemView) {
             super(itemView);
 
             announceTitle = itemView.findViewById(R.id.announce_title);
             announceTime = itemView.findViewById(R.id.announce_post_time);
-
-
         }
+
+    }
+    public void setRecyclerView(RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
     }
 
     private void showCustomDialog(AnnouncementModel announcementModel) {
@@ -104,4 +116,41 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
+
+    private final Runnable autoScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            autoScroll();
+            handler.postDelayed(this, scrollDelay);
+        }
+    };
+
+    // Method to start auto-scrolling
+    public void startAutoScroll() {
+        handler.postDelayed(autoScrollRunnable, scrollDelay);
+    }
+
+    // Method to stop auto-scrolling
+    public void stopAutoScroll() {
+        handler.removeCallbacks(autoScrollRunnable);
+    }
+
+    // Method to scroll to the next item
+    private void autoScroll() {
+        int itemCount = getItemCount();
+        if (itemCount > 0) {
+            int nextPosition = (getCurrentPosition() + 1) % itemCount;
+            recyclerView.smoothScrollToPosition(nextPosition);
+        }
+    }
+
+    // Method to get the current visible position
+    private int getCurrentPosition() {
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        if (layoutManager != null) {
+            return layoutManager.findFirstVisibleItemPosition();
+        }
+        return 0;
+    }
+
 }

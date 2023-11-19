@@ -36,10 +36,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -697,6 +699,7 @@ public class TaskProgress extends BaseActivity {
                 taskDurationMillis = intent.getLongExtra("taskDurationMillis", 0);
                 startTime = intent.getLongExtra("startTime", 0);
                 timerRunnable = new Runnable() {
+
                     @Override
                     public void run() {
                         long millis = System.currentTimeMillis() - startTime;
@@ -708,7 +711,7 @@ public class TaskProgress extends BaseActivity {
                             int hours = minutes / 60;
                             minutes %= 60;
                             currentTimerValue = String.format("%02d:%02d:%02d", hours, minutes, seconds);
-                            updateNotification(currentTimerValue);
+                            updateNotification(currentTimerValue, remainingMillis);
                             handler.postDelayed(this, 1000);
                         }
                     }
@@ -738,26 +741,49 @@ public class TaskProgress extends BaseActivity {
         }
 
         @SuppressLint("MissingPermission")
-        private void updateNotification(String timerValue) {
+        private void updateNotification(String timerValue, long remainingMillis) {
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
+
+            // Vibrate when 10 seconds or less remaining
+            if (remainingMillis <= 10000) {
+                vibrate();
+            }
+
             notificationManager.notify(NOTIFICATION_ID, builder.build());
+        }
+
+        @SuppressLint("MissingPermission")
+        private void vibrate() {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null) {
+                // Vibrate for 500 milliseconds
+                vibrator.vibrate(500);
+            }
         }
 
         @NonNull
         private NotificationCompat.Builder createNotification(String timerValue) {
+            Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, SILENT_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_timer)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setOngoing(true);
-            builder.setDefaults(0);
+
+            builder.setDefaults(Notification.DEFAULT_SOUND); // Add this line to play the default notification sound
+            builder.setSound(soundUri);  // Set custom sound if needed
+
             builder.setOnlyAlertOnce(true);
+
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
+
             return builder;
         }
+
 
 
     }

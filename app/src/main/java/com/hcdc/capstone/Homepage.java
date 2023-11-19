@@ -3,6 +3,7 @@ package com.hcdc.capstone;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -48,6 +49,7 @@ public class Homepage extends BaseActivity {
     private AnnouncementsAdapter adapter;
     private FirebaseFirestore db;
 
+    private boolean isLastItemReached = false;
     private ArrayList<AnnouncementModel> arrayList;
 
     @Override
@@ -62,7 +64,9 @@ public class Homepage extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         arrayList = new ArrayList<>();
         adapter = new AnnouncementsAdapter(this,arrayList);
+        adapter.setRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
+        adapter.startAutoScroll();
         db = FirebaseFirestore.getInstance();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
@@ -112,12 +116,32 @@ public class Homepage extends BaseActivity {
         retrieveAndStoreFCMToken();
         fetchAnnouncements();
 
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                int totalItemCount = layoutManager.getItemCount();
+
+                if (lastVisibleItemPosition == totalItemCount - 1) {
+                    // Last item reached, set the flag
+                    isLastItemReached = true;
+                } else {
+                    // Reset the flag when scrolling to other items
+                    isLastItemReached = false;
+                }
+            }
+        });
+
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         stopNotificationTimer();
+        adapter.stopAutoScroll();
     }
 
     private void stopNotificationTimer() {
@@ -175,7 +199,7 @@ public class Homepage extends BaseActivity {
 
                                 startActivity(intent);
                             } else {
-                                Toast.makeText(Homepage.this, " You haven't accepted a task yet. ", Toast.LENGTH_SHORT).show();
+                                Log.d("user no task","have no tasks");
                             }
                         }
                     })
@@ -186,7 +210,6 @@ public class Homepage extends BaseActivity {
                         }
                     });
         } else {
-            Toast.makeText(Homepage.this, " You haven't accepted a task yet. ", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -274,5 +297,7 @@ public class Homepage extends BaseActivity {
                         // Handle the failure to fetch data
                     }
                 });
+
     }
+
 }

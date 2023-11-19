@@ -37,7 +37,7 @@
             android:text="code5678901"
             android:textColor="#354f52"
             android:textFontWeight="400"
-            android:textSize="30dp"
+            android:textSize="35dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/coupRewardName"
             app:layout_constraintEnd_toEndOf="parent"
@@ -67,6 +67,7 @@
             android:textColor="#2f3e46"
             android:textSize="15dp"
             android:textStyle="italic"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
