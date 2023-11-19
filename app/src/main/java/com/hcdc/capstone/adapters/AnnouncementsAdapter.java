@@ -96,13 +96,9 @@ public class AnnouncementsAdapter extends RecyclerView.Adapter<AnnouncementsAdap
         View dialogView = LayoutInflater.from(announceContext).inflate(R.layout.announce_dialog, null);
         builder.setView(dialogView);
         AlertDialog dialog = builder.create();
-
-        // Find the views in the custom dialog
         TextView dialogTitle = dialogView.findViewById(R.id.dialog_title);
         TextView dialogDescription = dialogView.findViewById(R.id.dialog_description);
         Button closeButton = dialogView.findViewById(R.id.close_button);
-
-        // Set the title and description in the dialog
         dialogTitle.setText(announcementModel.getTitle());
         dialogDescription.setText(announcementModel.getDescription());
 
