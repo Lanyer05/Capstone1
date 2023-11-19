@@ -55,25 +55,25 @@ public class TaskCompleteFragment extends Fragment {
     private void fetchCompletedTasksFromFirestore() {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         String currentUserUID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        firestore.collection("completed_task") // Replace with your Firestore collection name
-                .whereEqualTo("isConfirmed", true).whereEqualTo("acceptedBy",currentUserUID) // Fetch only confirmed tasks
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String taskName = document.getString("taskName");
-                            String location = document.getString("location");
-                            int points = document.getLong("points").intValue();
-                            boolean isConfirmed = Boolean.TRUE.equals(document.getBoolean("isConfirmed"));
 
-                            TaskCompleteData taskCompleteData = new TaskCompleteData(taskName, location, points, isConfirmed);
-                            completedTaskList.add(taskCompleteData);
-                        }
+        firestore.collection("completed_task")
+                .whereEqualTo("isConfirmed", true)
+                .whereEqualTo("acceptedBy", currentUserUID)
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        return;
+                    }
+                    completedTaskList.clear();
+                    for (QueryDocumentSnapshot document : value) {
+                        String taskName = document.getString("taskName");
+                        String location = document.getString("location");
+                        int points = document.getLong("points").intValue();
+                        boolean isConfirmed = Boolean.TRUE.equals(document.getBoolean("isConfirmed"));
 
-                        // Notify the adapter that data has changed
-                        taskCompletedAdapter.notifyDataSetChanged();
-                    }  // Handle the error if data retrieval fails
-
+                        TaskCompleteData taskCompleteData = new TaskCompleteData(taskName, location, points, isConfirmed);
+                        completedTaskList.add(taskCompleteData);
+                    }
+                    taskCompletedAdapter.notifyDataSetChanged();
                 });
     }
 }

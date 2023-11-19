@@ -38,18 +38,18 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected boolean handleBackPressed() {
-        Intent intent = new Intent(this, getClass());
-
         if (getClass() == Homepage.class) {
             return false;
         }
 
         boolean isExcludedActivity = getClass() == TaskProgress.class;
-        boolean isActivityInStack = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null;
+        Intent intent = new Intent(this, Homepage.class);
 
-        if (isActivityInStack && !isExcludedActivity) {
+        if (!isExcludedActivity && PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null) {
+            // If Homepage activity is already in the stack, bring it to the front
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
+            finish();
             return true;
         }
 
@@ -57,6 +57,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private boolean isLoggedIn() {
+        // Replace this with your actual login check logic
         return true;
     }
 
