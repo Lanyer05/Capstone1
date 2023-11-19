@@ -102,10 +102,8 @@ public class Homepage extends BaseActivity {
         });
 
         if (isTimerRunning) {
-            // If the timer is running, navigate to TaskProgress
             navigateToTaskProgress();
         } else {
-            // If the timer is not running, fetch user points and display them
             fetchAndDisplayCurrentUserPoints();
         }
         retrieveAndStoreFCMToken();

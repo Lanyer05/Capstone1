@@ -548,6 +548,8 @@ public class TaskProgress extends BaseActivity {
     public void onBackPressed() {
         if (timerRunning) {
             Toast.makeText(this, " Task is in progress. Cannot go back. ", Toast.LENGTH_SHORT).show();
+        } else if (selectedImageUri == null) {
+            Toast.makeText(this, " Please upload an image before going back. ", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(this, Task.class);
             startActivity(intent);
