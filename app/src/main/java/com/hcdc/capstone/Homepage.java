@@ -140,12 +140,10 @@ public class Homepage extends BaseActivity {
         stopNotificationTimer();
         adapter.stopAutoScroll();
     }
-
     private void stopNotificationTimer() {
         Intent stopTimerIntent = new Intent("StopTimerService");
         sendBroadcast(stopTimerIntent);
     }
-
     private boolean checkTimerRunning() {
         SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
         return sharedPreferences.getBoolean(PREF_TIMER_RUNNING, false);
