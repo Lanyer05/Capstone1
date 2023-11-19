@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_task"
-        android:icon="@drawable/ic_baseline_add_task_24"
+        android:icon="@drawable/ic_baseline_assignment_24"
         android:title="Task"
         app:showAsAction="ifRoom" />
     <item
@@ -19,7 +19,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_transaction"
-        android:icon="@drawable/ic_baseline_monetization_on_24"
+        android:icon="@drawable/ic_baseline_add_task_24"
         android:title="Transaction"
         app:showAsAction="ifRoom" />
 </menu>

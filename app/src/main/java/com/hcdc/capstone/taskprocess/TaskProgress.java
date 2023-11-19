@@ -114,11 +114,15 @@ public class TaskProgress extends BaseActivity {
                     int hours = minutes / 60;
                     minutes = minutes % 60;
                     timerTextView.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
-                    handler.postDelayed(this, 1000);
+
+                    if (remainingMillis > 1000) {
+                        handler.postDelayed(this, 1000);
+                    }
                 }
             }
         }
     };
+
     private void showToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
@@ -546,6 +550,8 @@ public class TaskProgress extends BaseActivity {
     public void onBackPressed() {
         if (timerRunning) {
             Toast.makeText(this, " Task is in progress. Cannot go back. ", Toast.LENGTH_SHORT).show();
+        } else if (selectedImageUri == null) {
+            Toast.makeText(this, " Please upload an image before going back. ", Toast.LENGTH_SHORT).show();
         } else {
             Intent intent = new Intent(this, Task.class);
             startActivity(intent);
