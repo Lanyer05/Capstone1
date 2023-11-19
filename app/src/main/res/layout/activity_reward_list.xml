@@ -111,20 +111,24 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/checkout_button"
-            android:layout_width="120dp"
+            android:layout_width="130dp"
             android:layout_height="60dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="30dp"
             android:layout_toEndOf="@id/selectedItems"
             android:background="@drawable/cirlce_solid"
+            android:drawableStart="@drawable/ic_baseline_shopping_cart_checkout_24"
+            android:paddingStart="15dp"
+            android:paddingEnd="10dp"
             android:text="Checkout"
             android:textColor="@android:color/white"
+            android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.545" />
+            app:layout_constraintVertical_bias="0.545"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
