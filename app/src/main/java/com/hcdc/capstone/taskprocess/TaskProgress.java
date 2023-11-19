@@ -36,6 +36,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.icu.text.SimpleDateFormat;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -647,6 +649,8 @@ public class TaskProgress extends BaseActivity {
         private Runnable timerRunnable;
         private long startTime;
         private long taskDurationMillis;
+
+        private boolean soundPlayed = false;
         private static final int NOTIFICATION_ID = 1;
         private static final String CHANNEL_ID = "TimerServiceChannel";
         private static final String SILENT_CHANNEL_ID = "SilentTimerChannel";
@@ -738,6 +742,12 @@ public class TaskProgress extends BaseActivity {
 
         @SuppressLint("MissingPermission")
         private void updateNotification(String timerValue) {
+            if (!soundPlayed) {
+                // Play the sound here
+                playNotificationSound();
+                soundPlayed = true;
+            }
+
             RemoteViews customView = new RemoteViews(getPackageName(), R.drawable.custom_notification_layout);
             customView.setTextViewText(R.id.notification_text, "Time Remaining: " + timerValue);
             builder.setCustomContentView(customView);
@@ -756,5 +766,20 @@ public class TaskProgress extends BaseActivity {
             builder.setCustomContentView(customView);
             return builder;
         }
+
+        @SuppressLint("MissingPermission")
+        private void playNotificationSound() {
+
+            Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            MediaPlayer mediaPlayer = MediaPlayer.create(this, defaultSoundUri);
+
+            mediaPlayer.start();
+
+            mediaPlayer.setOnCompletionListener(mp -> {
+                mp.release();
+                soundPlayed = true;
+            });
+        }
+
     }
 }
