@@ -9,12 +9,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:background="@drawable/custom_dialog"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -45,7 +44,9 @@
             android:layout_gravity="center"
             android:text="Tap the camera icon to take a photo"
             android:textColor="#fe6969"
-            android:textSize="16sp"
+            android:textSize="14sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             app:drawableLeftCompat="@drawable/info_alert" />
 
         <androidx.appcompat.widget.AppCompatButton
