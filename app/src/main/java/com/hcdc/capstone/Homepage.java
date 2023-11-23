@@ -144,6 +144,14 @@ public class Homepage extends BaseActivity {
         Intent stopTimerIntent = new Intent("StopTimerService");
         sendBroadcast(stopTimerIntent);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopNotificationTimer();
+        adapter.stopAutoScroll();
+    }
+
     private boolean checkTimerRunning() {
         SharedPreferences sharedPreferences = getSharedPreferences(TIMER_PREFS, MODE_PRIVATE);
         return sharedPreferences.getBoolean(PREF_TIMER_RUNNING, false);
