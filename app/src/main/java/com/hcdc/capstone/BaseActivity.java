@@ -47,9 +47,8 @@ public class BaseActivity extends AppCompatActivity {
 
         if (!isExcludedActivity && PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) != null) {
             // If Homepage activity is already in the stack, bring it to the front
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
-            finish();
             return true;
         }
 
