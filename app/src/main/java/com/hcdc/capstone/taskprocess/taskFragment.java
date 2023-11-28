@@ -21,6 +21,7 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.TaskAdapter;
@@ -67,6 +68,7 @@ public class taskFragment extends Fragment {
         String currentUserUid = currentUser != null ? currentUser.getUid() : null;
 
         db.collection("tasks")
+                .orderBy("createdAt", Query.Direction.DESCENDING) // Sort by createdAt in descending order
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @SuppressLint("SetTextI18n")
                     @Override
@@ -75,6 +77,9 @@ public class taskFragment extends Fragment {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
+
+                        tList.clear(); // Clear the existing list to avoid duplicates
+
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             TaskData task = dc.getDocument().toObject(TaskData.class);
 
@@ -98,18 +103,14 @@ public class taskFragment extends Fragment {
                                                 task.minutes = minutes;
                                             }
                                         }
-                                        // Check if the task already exists in tList before adding it
-                                        if (!containsTaskWithId(tList, task.getTaskName())) {
-                                            tList.add(task);
-                                        } else {
-                                            // Update the existing task in tList with the new data
-                                            updateTaskInList(tList, task);
-                                        }
+                                        tList.add(task);
                                     }
                                 }
                             }
                         }
+
                         ta.notifyDataSetChanged();
+
                         if (tList.isEmpty()) {
                             emptyTaskView.setText("No tasks available");
                             emptyTaskView.setVisibility(View.VISIBLE);
@@ -121,6 +122,8 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
+
+
     private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {
         return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
     }
