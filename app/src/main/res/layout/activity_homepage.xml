@@ -4,7 +4,7 @@
     android:id="@+id/hometab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAD7CD"
+    android:background="#f0efeb"
     android:clipToOutline="true"
     tools:context=".Homepage">
 
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
-        app:backgroundTint="#588157"
+        app:backgroundTint="#00A871"
         app:itemIconTint="#FFFFFF"
         app:itemTextColor="#FFFFFF"
         app:labelVisibilityMode="labeled"
@@ -113,5 +113,13 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:padding="16dp" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="208dp"
+        android:alpha="0.85"
+        android:layout_above="@+id/bottom_navigation_view"
+        android:baselineAlignBottom="true"
+        android:src="@drawable/peoplecleaning" />
 
 </RelativeLayout>
