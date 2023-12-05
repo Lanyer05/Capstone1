@@ -114,12 +114,4 @@
         android:orientation="horizontal"
         android:padding="16dp" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="208dp"
-        android:alpha="0.85"
-        android:layout_above="@+id/bottom_navigation_view"
-        android:baselineAlignBottom="true"
-        android:src="@drawable/peoplecleaning" />
-
 </RelativeLayout>
