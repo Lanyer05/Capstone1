@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToOutline="true"
-    android:background="#00A871"
+    android:background="@color/white"
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
 

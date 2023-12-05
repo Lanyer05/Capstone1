@@ -97,8 +97,8 @@ public class taskFragment extends Fragment {
                                             Map<String, Object> timeFrameMap = (Map<String, Object>) dc.getDocument().get("timeFrame");
                                             if (timeFrameMap != null) {
                                                 // Retrieve hours and minutes from the timeFrame map
-                                                int hours = ((Long) timeFrameMap.get("hours")).intValue();
-                                                int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                                int hours = ((Double) timeFrameMap.get("hours")).intValue();
+                                                int minutes = ((Double) timeFrameMap.get("minutes")).intValue();
                                                 task.hours = hours;
                                                 task.minutes = minutes;
                                             }
