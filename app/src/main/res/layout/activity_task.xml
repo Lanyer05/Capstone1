@@ -5,7 +5,7 @@
     android:id="@+id/tasktab"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAD7CD"
+    android:background="#f0efeb"
     android:clipToOutline="true"
     tools:context=".taskprocess.Task">
 
@@ -20,10 +20,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tabGravity="fill"
-        app:tabIndicatorColor="#dad7cd"
+        app:tabIndicatorColor="#80d4b8"
         app:tabMode="fixed"
         app:tabSelectedTextColor="@color/white"
-        app:tabTextColor="#dad7cd"
+        app:tabTextColor="#80d4b8"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.viewpager2.widget.ViewPager2

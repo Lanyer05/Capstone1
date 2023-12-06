@@ -5,7 +5,7 @@
     android:id="@+id/rewardtab"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="#DAD7CD"
+    android:background="#f0efeb"
     android:clipToOutline="true"
     tools:context=".rewardprocess.Reward">
 

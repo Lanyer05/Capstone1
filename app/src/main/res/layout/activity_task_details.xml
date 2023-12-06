@@ -15,7 +15,7 @@
         android:background="@drawable/cirlce_solid_noborder1"
         android:backgroundTint="#588157"
         android:text="Accept"
-        android:textColor="#DAD7CD"
+        android:textColor="#f0efeb"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
