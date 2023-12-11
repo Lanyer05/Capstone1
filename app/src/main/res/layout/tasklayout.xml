@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="10dp"
+    app:cardElevation="30dp"
     app:cardCornerRadius="15dp"
     android:layout_margin="16dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/tat2"
+        android:background="@drawable/lyout3"
         android:padding="15dp">
 
 
