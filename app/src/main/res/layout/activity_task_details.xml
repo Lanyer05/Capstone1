@@ -13,7 +13,6 @@
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/cirlce_solid_noborder1"
-        android:backgroundTint="#588157"
         android:text="Accept"
         android:textColor="#f0efeb"
         android:textSize="16sp"

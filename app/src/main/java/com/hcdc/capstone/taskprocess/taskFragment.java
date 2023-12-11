@@ -141,6 +141,9 @@ public class taskFragment extends Fragment {
                             return;
                         }
 
+                        // Clear the list before adding new tasks
+                        tList.clear();
+
                         // Handle the snapshot changes (similar to your existing code)
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             TaskData task = dc.getDocument().toObject(TaskData.class);
@@ -192,8 +195,6 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
-
-
 
 
     private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {

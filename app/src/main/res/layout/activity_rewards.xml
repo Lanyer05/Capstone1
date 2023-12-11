@@ -50,8 +50,8 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:background="@drawable/cirlce_solid"
-        android:padding="10dp"
         android:elevation="10dp"
+        android:padding="10dp"
         android:src="@drawable/animcoup"
         tools:ignore="MissingClass" />
 
