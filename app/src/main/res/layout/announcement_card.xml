@@ -9,12 +9,13 @@
     android:layout_margin="5dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="false">
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/glass_effect_background">
+        android:background="@drawable/lyout9">
 
 
         <TextView
@@ -29,6 +30,7 @@
             android:text="No current announcement posted"
             android:textSize="35dp"
             android:textStyle="bold"
+            android:textColor="#002217"
             app:layout_constraintBottom_toTopOf="@+id/announce_post_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -43,6 +45,7 @@
         android:gravity="center"
         android:text="Time Posted:"
         android:textSize="20dp"
+        android:textColor="#005439"
         android:fontFamily="@font/lora_italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

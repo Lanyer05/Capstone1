@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.hcdc.capstone"
-    >
+    package="com.hcdc.capstone">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,92 +19,94 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
-
         <activity
-            android:launchMode="singleTop"
+            android:name=".RequestForms"
+            android:exported="false" />
+        <activity
             android:name=".rewardprocess.RewardList"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".reward_category_items"
             android:exported="false"
-            tools:ignore="MissingClass"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            tools:ignore="MissingClass" />
+        <activity
             android:name=".Profile_Activity"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".rewardprocess.userCoupons"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".transactionprocess.Transaction"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".taskprocess.TaskDetails"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".taskprocess.Task"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".rewardprocess.Reward"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".rewardprocess.RewardsData"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            tools:ignore="Instantiatable"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            tools:ignore="Instantiatable" />
+        <activity
             android:name=".Homepage"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".accounthandling.RegisterActivity"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
-        <activity
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".accounthandling.LoginActivity"
             android:exported="false"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".taskprocess.TaskProgress"
             android:label="false"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

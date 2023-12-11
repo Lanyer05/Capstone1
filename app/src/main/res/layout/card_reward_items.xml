@@ -6,15 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/glass_effect_background"
     app:cardCornerRadius="15dp"
-    app:cardElevation="4dp"
-    app:cardUseCompatPadding="true">
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true"
+    >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="78dp"
-        android:background="@drawable/glass_effect_background">
+        android:background="@drawable/lyout5"
+
+        >
 
         <ImageView
             android:id="@+id/rewards"

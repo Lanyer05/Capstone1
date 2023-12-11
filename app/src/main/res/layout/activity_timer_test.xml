@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#DAD7CD"
+    android:background="#f0efeb"
     tools:context=".MainActivity">
 
     <pl.droidsonroids.gif.GifImageView
@@ -15,8 +15,10 @@
         android:src="@drawable/animtask"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="MissingClass" />
 
     <TextView
@@ -42,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/no_eco" />
+        app:srcCompat="@drawable/logo" />
 
     <TextView
         android:id="@+id/timerTextView"
@@ -106,11 +108,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="420 hrs"
             android:fontFamily="@font/lora_italic"
+            android:text="420 hrs"
             android:textColor="#605F5F"
-            android:textStyle="bold"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -170,16 +172,17 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="286dp"
         android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
         android:background="@drawable/cirlce_solid_noborder1"
         android:text="Start Task"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/gifImageView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timerTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/durationLayout"
+        app:layout_constraintVertical_bias="0.033" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/doneButton"

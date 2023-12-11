@@ -1,7 +1,11 @@
 package com.hcdc.capstone.taskprocess;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,23 +13,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hcdc.capstone.R;
 import com.hcdc.capstone.adapters.TaskAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -66,15 +70,78 @@ public class taskFragment extends Fragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         String currentUserUid = currentUser != null ? currentUser.getUid() : null;
 
+        // Initial data retrieval using get()
         db.collection("tasks")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            tList.clear();
+                            for (DocumentSnapshot document : task.getResult()) {
+                                TaskData tasks = document.toObject(TaskData.class);
+
+                                // Check if the task is accepted
+                                assert tasks != null;
+                                if (!tasks.isAccepted()) {
+                                    // Check if the current user's UID is not in the acceptedBy field
+                                    if (!containsUserUid(tasks.getAcceptedByUsers(), currentUserUid)) {
+                                        // Check if the timeFrame field exists in the document
+                                        if (document.contains("timeFrame")) {
+                                            // Retrieve the timeFrame map
+                                            Map<String, Object> timeFrameMap = (Map<String, Object>) document.get("timeFrame");
+                                            if (timeFrameMap != null) {
+                                                // Retrieve hours and minutes from the timeFrame map
+                                                int hours = ((Long) timeFrameMap.get("hours")).intValue();
+                                                int minutes = ((Long) timeFrameMap.get("minutes")).intValue();
+                                                tasks.hours = hours;
+                                                tasks.minutes = minutes;
+                                            }
+                                        }
+                                        tList.add(tasks);
+                                    }
+                                }
+                            }
+
+                            // Sort the list by createdAt in descending order
+                            Collections.sort(tList, new Comparator<TaskData>() {
+                                @Override
+                                public int compare(TaskData task1, TaskData task2) {
+                                    return task2.getCreatedAt().compareTo(task1.getCreatedAt());
+                                }
+                            });
+
+                            ta.notifyDataSetChanged();
+
+                            if (tList.isEmpty()) {
+                                emptyTaskView.setText("No tasks available");
+                                emptyTaskView.setVisibility(View.VISIBLE);
+                                emptyTaskView.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                            } else {
+                                emptyTaskView.setVisibility(View.GONE);
+                                emptyTaskView.getLayoutParams().height = 0;
+                            }
+                        } else {
+                            Log.e("Firestore Error", "Error getting documents: ", task.getException());
+                        }
+
+                    }
+                });
+
+        // Real-time updates using addSnapshotListener
+        db.collection("tasks")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null) {
                             Log.e("Firestore Error", error.getMessage());
                             return;
                         }
+
+                        // Handle the snapshot changes (similar to your existing code)
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             TaskData task = dc.getDocument().toObject(TaskData.class);
 
@@ -98,18 +165,22 @@ public class taskFragment extends Fragment {
                                                 task.minutes = minutes;
                                             }
                                         }
-                                        // Check if the task already exists in tList before adding it
-                                        if (!containsTaskWithId(tList, task.getTaskName())) {
-                                            tList.add(task);
-                                        } else {
-                                            // Update the existing task in tList with the new data
-                                            updateTaskInList(tList, task);
-                                        }
+                                        tList.add(task);
                                     }
                                 }
                             }
                         }
+
+                        // Sort the list by createdAt in descending order
+                        Collections.sort(tList, new Comparator<TaskData>() {
+                            @Override
+                            public int compare(TaskData task1, TaskData task2) {
+                                return task2.getCreatedAt().compareTo(task1.getCreatedAt());
+                            }
+                        });
+
                         ta.notifyDataSetChanged();
+
                         if (tList.isEmpty()) {
                             emptyTaskView.setText("No tasks available");
                             emptyTaskView.setVisibility(View.VISIBLE);
@@ -121,6 +192,10 @@ public class taskFragment extends Fragment {
                     }
                 });
     }
+
+
+
+
     private boolean containsUserUid(List<String> acceptedBy, String currentUserUid) {
         return acceptedBy != null && currentUserUid != null && acceptedBy.contains(currentUserUid);
     }

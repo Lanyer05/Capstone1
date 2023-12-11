@@ -145,7 +145,7 @@ public class Reward extends BaseActivity {
         // Customize the Snackbar view
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
         params.gravity = Gravity.TOP;
-        params.setMargins(400, 130, 100, 120); // Adjust the margin as needed
+        params.setMargins(500, 130, 100, 120); // Adjust the margin as needed
         snackbarView.setLayoutParams(params);
 
         // Set up fade-in animation

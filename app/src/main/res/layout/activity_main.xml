@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToOutline="true"
-    android:background="#DAD7CD"
+    android:background="@color/white"
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
 
@@ -29,7 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.499"
-        app:tint="#588157" />
+        app:tint="#00A871" />
 
     <ImageView
         android:id="@+id/imageView8"

@@ -15,12 +15,14 @@ public class TaskData {
     private Timestamp expirationDateTime;
     private long points;
 
+    private Timestamp createdAt;
+
     // Add public no-argument constructor
     public TaskData() {
         // Default constructor required by Firestore
     }
 
-    public TaskData(String taskName, String description, String difficulty, long points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime) {
+    public TaskData(String taskName, String description, String difficulty, long points, String location, String camera, boolean isAccepted, int hours, int minutes, int maxUsers, ArrayList<String> acceptedByUsers, Timestamp expirationDateTime, Timestamp createdAt) {
         this.taskName = taskName;
         this.description = description;
         this.points = points;
@@ -32,6 +34,7 @@ public class TaskData {
         this.camera = camera;
         this.expirationDateTime = expirationDateTime;
         this.difficulty = difficulty;
+        this.createdAt = createdAt;
 
         if (acceptedByUsers != null) {
             this.acceptedByUsers = acceptedByUsers;
@@ -84,12 +87,27 @@ public class TaskData {
         return expirationDateTime;
     }
 
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
+
     public String getDifficulty(){return difficulty;}
 
     public String getFormattedExpirationDateTime() {
         // Format expirationDateTime as a human-readable string with AM/PM indicator
         if (expirationDateTime != null) {
             Date date = expirationDateTime.toDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM/dd/yy", Locale.getDefault());
+            return sdf.format(date);
+        } else {
+            return "N/A";
+        }
+    }
+
+    public String getFormattedCreatedAt() {
+        // Format expirationDateTime as a human-readable string with AM/PM indicator
+        if (createdAt != null) {
+            Date date = createdAt.toDate();
             SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a | MM/dd/yy", Locale.getDefault());
             return sdf.format(date);
         } else {

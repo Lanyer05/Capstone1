@@ -10,7 +10,7 @@
         android:id="@+id/rewardrecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="#DAD7CD"
+        android:background="#f0efeb"
         app:layout_constraintBottom_toTopOf="@+id/custom_bottom_nav"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="5dp"
@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:background="#ccd5ae"
+        android:background="#80d4b8"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -113,9 +113,9 @@
             android:id="@+id/checkout_button"
             android:layout_width="130dp"
             android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="20dp"
             android:layout_toEndOf="@id/selectedItems"
             android:background="@drawable/cirlce_solid"
             android:drawableStart="@drawable/ic_baseline_shopping_cart_checkout_24"
@@ -128,7 +128,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.545"/>
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
