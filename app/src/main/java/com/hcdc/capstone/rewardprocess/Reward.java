@@ -74,7 +74,6 @@ public class Reward extends BaseActivity {
         firestore = FirebaseFirestore.getInstance();
 
 
-
         // Fetch and display the current user's points
         fetchAndDisplayCurrentUserPoints();
 
@@ -84,7 +83,7 @@ public class Reward extends BaseActivity {
         redeem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),RewardList.class);
+                Intent i = new Intent(getApplicationContext(), RewardList.class);
                 startActivity(i);
                 finish();
             }
@@ -112,10 +111,10 @@ public class Reward extends BaseActivity {
                 }
             }
         }).addOnFailureListener(e -> {
-         });
+        });
         batch.commit().addOnSuccessListener(aVoid -> {
         }).addOnFailureListener(e -> {
-         });
+        });
     }
 
     private void navigateToActivity(Class<?> targetActivity) {
@@ -145,7 +144,14 @@ public class Reward extends BaseActivity {
         // Customize the Snackbar view
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
         params.gravity = Gravity.TOP;
-        params.setMargins(500, 130, 100, 120); // Adjust the margin as needed
+
+        // Use relative margins based on screen size
+        int marginStart = (int) getResources().getDimension(R.dimen.snackbar_margin_start);
+        int marginTop = (int) getResources().getDimension(R.dimen.snackbar_margin_top);
+        int marginEnd = (int) getResources().getDimension(R.dimen.snackbar_margin_end);
+        int marginBottom = (int) getResources().getDimension(R.dimen.snackbar_margin_bottom);
+
+        params.setMargins(marginStart, marginTop, marginEnd, marginBottom);
         snackbarView.setLayoutParams(params);
 
         // Set up fade-in animation
@@ -162,6 +168,7 @@ public class Reward extends BaseActivity {
                 @Override
                 public void onAnimationStart(Animation animation) {
                 }
+
                 @Override
                 public void onAnimationEnd(Animation animation) {
                     if (snackbar.isShown()) {
