@@ -33,16 +33,23 @@
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_baseline_card_giftcard_24.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_baseline_list_alt_24.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_baseline_monetization_on_24.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_baseline_photo_camera_24.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_baseline_shopping_cart_checkout_24.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_check.xml" value="0.227" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_notification.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_person2.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/ic_timer.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/info_alert.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/location.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/notification_icon.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/person.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/point_s.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/rounded_border.xml" value="0.3715" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/splashbg.xml" value="0.3715" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/timer.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/toggle_hide.xml" value="0.3725" />
+        <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/drawable/toggle_show.xml" value="0.3725" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/font/lora_font.xml" value="0.4010416666666667" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/font/lora_italic.xml" value="0.40208333333333335" />
         <entry key="..\:/Users/Hi/AndroidStudioProjects/Capstone/app/src/main/res/layout-v31/activity_homepage.xml" value="0.371875" />

@@ -79,7 +79,6 @@ public class taskFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            tList.clear();
                             for (DocumentSnapshot document : task.getResult()) {
                                 TaskData tasks = document.toObject(TaskData.class);
 
@@ -100,7 +99,11 @@ public class taskFragment extends Fragment {
                                                 tasks.minutes = minutes;
                                             }
                                         }
-                                        tList.add(tasks);
+
+                                        // Only add new tasks, don't clear the entire list
+                                        if (!containsTaskWithId(tList, tasks.getTaskName())) {
+                                            tList.add(tasks);
+                                        }
                                     }
                                 }
                             }
@@ -141,9 +144,6 @@ public class taskFragment extends Fragment {
                             return;
                         }
 
-                        // Clear the list before adding new tasks
-                        tList.clear();
-
                         // Handle the snapshot changes (similar to your existing code)
                         for (DocumentChange dc : value.getDocumentChanges()) {
                             TaskData task = dc.getDocument().toObject(TaskData.class);
@@ -168,7 +168,13 @@ public class taskFragment extends Fragment {
                                                 task.minutes = minutes;
                                             }
                                         }
-                                        tList.add(task);
+
+                                        // Only add new tasks, don't add duplicates
+                                        if (!containsTaskWithId(tList, task.getTaskName())) {
+                                            tList.add(0, task); // Add to the beginning of the list to maintain descending order
+                                            ta.notifyItemInserted(0);
+                                        }
+
                                     }
                                 }
                             }

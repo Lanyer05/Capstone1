@@ -162,7 +162,7 @@
         android:fontFamily="sans-serif-medium"
         android:padding="8dp"
         android:text="Sign In"
-        android:textColor="#588157"
+        android:textColor="#00A871"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/registerRedirect1"
