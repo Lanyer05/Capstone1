@@ -3,14 +3,14 @@
     <item>
         <shape android:shape="rectangle">
             <solid android:color="#00A871" />
-            <corners android:radius="20dp"/> <!-- Background color -->
+            <corners android:radius="30dp"/> <!-- Background color -->
             <!-- Rounded corners -->
         </shape>
     </item>
     <item android:left="3dp" android:right="3dp" android:bottom="3dp" android:top="3dp">
         <shape android:shape="rectangle">
             <solid android:color="#f0efeb" /> <!-- Inner background color -->
-            <corners android:radius="18dp" /> <!-- Rounded corners -->
+            <corners android:radius="28dp" /> <!-- Rounded corners -->
         </shape>
     </item>
 </layer-list>
