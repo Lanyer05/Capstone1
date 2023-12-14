@@ -12,11 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="10dp"
-        android:background="@drawable/cirlce_solid_noborder1"
+        android:background="@drawable/custom_edittext1"
+        android:elevation="3dp"
         android:padding="10dp"
         android:text="Close"
-        android:elevation="3dp"
-        android:textColor="@color/white"
+        android:textColor="#fe6969"
         android:textStyle="bold" />
 
     <TextView

@@ -26,7 +26,7 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginBottom="30dp"
-        android:background="@drawable/cirlce_solid_noborder1"
+        android:background="@drawable/custom_edittext1"
         android:text="Cancel"
         android:textColor="#fe6969"
         android:textSize="16sp"

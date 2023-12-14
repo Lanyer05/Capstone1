@@ -38,7 +38,7 @@
             android:layout_width="120dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:background="@drawable/cirlce_solid_noborder1"
+            android:background="@drawable/custom_edittext1"
             android:text="No"
             android:textColor="#fe6969" />
     </LinearLayout>
