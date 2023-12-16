@@ -34,7 +34,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="-50dp"
             android:layout_marginBottom="5dp"
-            android:background="#344e41"
+            android:background="#00A871"
             android:src="@drawable/ic_baseline_photo_camera_24" />
 
         <TextView

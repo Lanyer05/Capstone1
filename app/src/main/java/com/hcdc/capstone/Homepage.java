@@ -63,7 +63,7 @@ public class Homepage extends BaseActivity {
         recyclerView = findViewById(R.id.recycler_announce);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         arrayList = new ArrayList<>();
-        adapter = new AnnouncementsAdapter(this,arrayList);
+        adapter = new AnnouncementsAdapter(this, arrayList);
         adapter.setRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
         adapter.startAutoScroll();
@@ -130,8 +130,6 @@ public class Homepage extends BaseActivity {
                 }
             }
         });
-
-
     }
 
     @Override
@@ -140,16 +138,17 @@ public class Homepage extends BaseActivity {
         stopNotificationTimer();
         adapter.stopAutoScroll();
     }
-    private void stopNotificationTimer() {
-        Intent stopTimerIntent = new Intent("StopTimerService");
-        sendBroadcast(stopTimerIntent);
-    }
 
     @Override
     protected void onPause() {
         super.onPause();
         stopNotificationTimer();
         adapter.stopAutoScroll();
+    }
+
+    private void stopNotificationTimer() {
+        Intent stopTimerIntent = new Intent("StopTimerService");
+        sendBroadcast(stopTimerIntent);
     }
 
     private boolean checkTimerRunning() {
@@ -213,6 +212,7 @@ public class Homepage extends BaseActivity {
                         }
                     });
         } else {
+            // Handle the case when the timer is not running
         }
     }
 
@@ -264,6 +264,7 @@ public class Homepage extends BaseActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // Handle success
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -301,5 +302,4 @@ public class Homepage extends BaseActivity {
                 });
 
     }
-
 }
